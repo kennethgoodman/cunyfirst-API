@@ -2,7 +2,6 @@
 
 A barebones Node.js app using [Express 4](http://expressjs.com/).
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
@@ -32,10 +31,16 @@ $ heroku open
 
 ## Documentation
 
-For more information about using Node.js on Heroku, see these Dev Center articles:
+For more information about using Node.js on Heroku or any of the node modules used, see these articles:
 
 - [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
 - [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
 - [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
 - [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
 - [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
+- [X-Ray](https://www.npmjs.com/package/x-ray)
+- [cheerio](https://www.npmjs.com/package/cheerio)
+- [querystring](https://www.npmjs.com/package/querystring)
+- [request](https://www.npmjs.com/package/request)
+- [form-data](https://www.npmjs.com/package/form-data)
+
