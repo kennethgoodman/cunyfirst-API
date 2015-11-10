@@ -11,10 +11,13 @@ This application supports the [Getting Started with Node on Heroku](https://devc
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
 ```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ cd /directory where you want files
+$ mkdir name\ of\ directory
+$ cd name\ of\ directory
+$ git clone https://github.com/kennethgoodman/cunyfirst-API.git # or clone your own fork
+$ cd cunyfirst-API
 $ npm install
-$ npm start
+$ npm start # or node index.js
 ```
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
