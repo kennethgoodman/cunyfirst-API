@@ -99,9 +99,10 @@ getClasses = function(inst,semester,subject,option,nbr,callback){
             request.post(submit_options, function(err, res, body){
                 var struct = addData(body, subject)
                 //console.log(struct)
-                console.log(struct['102']['58211']['Status']);
+                console.log('102, section 58211 is ' + struct['102']['58211']['Status']);
+                console.log('102, section 58210 is ' + struct['102']['58210']['Status']);
                 callback(struct['102']['58211']['Status'],'102, section 58211 is ' + struct['102']['58211']['Status'])
-                callback(struct['102']['58210']['Status'],'102, section 58211 is ' + struct['102']['58210']['Status'])
+                callback(struct['102']['58210']['Status'],'102, section 58210 is ' + struct['102']['58210']['Status'])
                 return struct
             })
         }) 
@@ -243,7 +244,6 @@ request.post(options, function(err, res, body) {
 });*/
 var texted = false;
 setInterval(function(){
-    console.log("here")
     var a = getClasses('QNS01','1162','ACCT','E','102',
         function(status,text){
             if(status != "Closed" && !texted){
