@@ -246,8 +246,8 @@ var texted = false;
 setInterval(function(){
     var a = getClasses('QNS01','1162','ACCT','E','102',
         function(status,text){
-            if(status == "Closed" && !texted){
-                var nbr = '5164046348'
+            if(status != "Closed" && !texted){
+                var nbr = '5165547727'
                 send_message(nbr,text)
                 texted = true
             }
