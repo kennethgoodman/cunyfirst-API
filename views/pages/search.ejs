@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <% include ../partials/header.ejs %>
+        <script type="text/javascript" src='../../bot.js'></script>
+    </head>
+    <body>
+        <select id="inst">
+            <option selected="selected" value="">Select one</option>
+            <% for(var i in classes){%>
+                <option value=<%=i%>><%=classes[i]%></option>
+            <%} %>
+        </select>
+        <script>
+            document.getElementById('inst').onchange = function(e){
+                console.log("here");
+                console.log(e)
+            }
+        </script>
+    </body>
+</html>
+<script>
+</script>

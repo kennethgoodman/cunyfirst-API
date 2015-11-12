@@ -7,9 +7,16 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "pg": "4.x",
+    "cheerio": "^0.19.0",
+    "dotenv": "^1.2.0",
     "ejs": "2.3.3",
-    "express": "4.13.3"
+    "email-templates": "^2.0.1",
+    "express": "4.13.3",
+    "form-data": "^0.2.0",
+    "pg": "4.x",
+    "request": "^2.65.0",
+    "x-ray": "^2.0.2",
+    "twilio": "^2.5.2"
   },
   "engines": {
     "node": "0.12.7"

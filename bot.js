@@ -14,6 +14,7 @@ var options = {
     headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
     jar: request.jar()
 };
+var text = require('./texting')
 var struct = {};
 addData = function(body, className){
     var struct = {};
@@ -80,7 +81,7 @@ addData = function(body, className){
             }
     return struct;
 }
-getClasses = function(inst,semester,subject,option,nbr){
+getClasses = function(inst,semester,subject,option,nbr,callback){
     request.post(options, function(err, res, body) {
         if(err) {
             console.error(err);
@@ -97,6 +98,10 @@ getClasses = function(inst,semester,subject,option,nbr){
         request.post(submit_options, function(err,res,body){
             request.post(submit_options, function(err, res, body){
                 var struct = addData(body, subject)
+                //console.log(struct)
+                console.log(struct['102']['58211']['Status']);
+                callback(struct['102']['58211']['Status'],'102, section 58211 is ' + struct['102']['58211']['Status'])
+                callback(struct['102']['58210']['Status'],'102, section 58211 is ' + struct['102']['58210']['Status'])
                 return struct
             })
         }) 
@@ -105,7 +110,8 @@ getClasses = function(inst,semester,subject,option,nbr){
 //var struct = getClasses('QNS01','1162','ARAB','E','102');
 
 //Gets Schools
-getSchools = function(){
+getSchools = function(callback){
+    console.log("here")
     request.post(options, function(err, res, body) {
         if(err) {
             console.error(err);
@@ -132,15 +138,18 @@ getSchools = function(){
                     schoolName = ""
                     data[e] = data[e].substring(6);
                 }
-                schoolName += data[e]
+                schoolName += " " + data[e]
             }
             schoolNames.push(schoolName)
             schoolNames.remove(0)
             var schoolStruct = {}
             for(var e in schools){
+                if(e == schools.length-1) break;
                 schoolStruct[schools[e]] = schoolNames[e]
             }
-            return schoolStruct
+            schoolStruct[schools[schools.length-1]] = schoolNames[schoolNames.length-1]
+            console.log("returning")
+            callback(schoolStruct)
         })
     })
 }
@@ -232,6 +241,18 @@ request.post(options, function(err, res, body) {
         });
     });
 });*/
+var texted = false;
+setInterval(function(){
+    console.log("here")
+    var a = getClasses('QNS01','1162','ACCT','E','102',
+        function(status,text){
+            if(status != "Closed" && !texted){
+                var nbr = '5164046348'
+                send_message(nbr,text)
+                texted = true
+            }
+        });
+},2500)
 getStruct = function(){
     return struct;
 }

@@ -1,11 +1,11 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
+var bot = require('./bot')
 
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
-
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -28,4 +28,10 @@ app.get('/db', function (request, response) {
        { response.render('pages/db', {results: result.rows} ); }
     });
   });
+})
+
+app.get('/search', function(request,response){
+  getSchools(function(x){
+    response.render('pages/search', {classes: x})
+  })
 })
