@@ -8,7 +8,6 @@ var x = Xray();
 var dotenv = require('dotenv')
 dotenv.load();
 var functions = require('./functions')
-var className = "ARAB"
 var options = {
     url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?PortalActualURL=https%3a%2f%2fhrsa.cunyfirst.cuny.edu%2fpsc%2fcnyhcprd%2fGUEST%2fHRMS%2fc%2fCOMMUNITY_ACCESS.CLASS_SEARCH.GBL&amp;PortalContentURL=https%3a%2f%2fhrsa.cunyfirst.cuny.edu%2fpsc%2fcnyhcprd%2fGUEST%2fHRMS%2fc%2fCOMMUNITY_ACCESS.CLASS_SEARCH.GBL&amp;PortalContentProvider=HRMS&amp;PortalCRefLabel=Class%20Search&amp;PortalRegistryName=GUEST&amp;PortalServletURI=https%3a%2f%2fhome.cunyfirst.cuny.edu%2fpsp%2fcnyepprd%2f&amp;PortalURI=https%3a%2f%2fhome.cunyfirst.cuny.edu%2fpsc%2fcnyepprd%2f&amp;PortalHostNode=ENTP&amp;NoCrumbs=yes',
     headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
@@ -16,72 +15,75 @@ var options = {
 };
 var text = require('./texting')
 var struct = {};
-addData = function(body, className){
+addData = function(body, className,callback){
+    //console.log("in addData")
     var struct = {};
     var p = cheerio.load(body)
-            x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){
-                var count = 0
-                for(var i in td){
-                    var data = td[i].split(/\n/);
-                    var newData = []
-                    for(var t in data){
-                        if(data[t] != ""){
-                            newData.push(data[t])
-                        }
+        x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
+            var count = 0
+            for(var i in td){
+                var data = td[i].split(/\n/);
+                var newData = []
+                for(var t in data){
+                    if(data[t] != ""){
+                        newData.push(data[t])
                     }
+                }
 
-                    if(newData[0].indexOf(className) != -1){
-                        if(count >= 2){ //so we dont get the first two results
-                            var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
-                            var nbr = newData[8]
-                            newData.remove(0)
-                            var d = {}
-                            d[nbr] = {}
-                            d[nbr]["Status"] = "0"
-                            try{
-                                for(var t = 0; t < newData.length; t++){  
-                                    if(newData[t] == 'Status'){
-                                        while(newData[t] != "Class"){
-                                            t++
-                                            if(newData[t].indexOf("Topic:" == 0)){
-                                                d[nbr]["Topic"] = newData[t].substring(6)
-                                            }
-                                            if(t > newData.length-2){
-                                                break;
-                                            }
+                if(newData[0].indexOf(className) != -1){
+                    if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
+                        var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
+                        var nbr = newData[8]
+                        newData.remove(0)
+                        var d = {}
+                        d[nbr] = {}
+                        d[nbr]["Status"] = "0"
+                        try{
+                            for(var t = 0; t < newData.length; t++){  
+                                if(newData[t] == 'Status'){
+                                    while(newData[t] != "Class"){
+                                        t++
+                                        if(newData[t].indexOf("Topic:" == 0)){
+                                            d[nbr]["Topic"] = newData[t].substring(6)
                                         }
                                         if(t > newData.length-2){
-                                                break;
-                                            }
-                                        nbr = newData[t+7]
-                                        d[nbr] = {}
-                                        d[nbr]["Status"] = "0"
+                                            break;
+                                        }
                                     }
-                                    d[nbr][newData[t]] = newData[t+7];
+                                    if(t > newData.length-2){
+                                            break;
+                                        }
+                                    nbr = newData[t+7]
+                                    d[nbr] = {}
+                                    d[nbr]["Status"] = "0"
                                 }
-                            } catch(err){
-                                //console.log(err)
+                                d[nbr][newData[t]] = newData[t+7];
                             }
-                            struct[name] = d
+                        } catch(err){
+                            //console.log(err)
                         }
-                        count += 1
+                        struct[name] = d
                     }
-                }
-                
-            })
-            var temp = [];
-            p('.SSSIMAGECENTER').each(function(err,open){
-                temp.push(open.attribs.alt)
-            })
-            var counter = 0
-            for(i in struct){
-                for(j in struct[i]){
-                    struct[i][j]["Status"] = temp[counter++]
+                    count += 1
                 }
             }
+            
+        })
+        var temp = [];
+        p('.SSSIMAGECENTER').each(function(err,open){
+            temp.push(open.attribs.alt)
+        })
+        var counter = 0
+        for(i in struct){
+            for(j in struct[i]){
+                struct[i][j]["Status"] = temp[counter++]
+            }
+        }
+    callback(struct)
     return struct;
 }
-getClasses = function(inst,semester,subject,option,nbr,callback){
+getClasses = function(inst,semester,subject,option,nbr,section,callback){
+    //console.log("in getClasses")
     request.post(options, function(err, res, body) {
         if(err) {
             console.error(err);
@@ -97,13 +99,16 @@ getClasses = function(inst,semester,subject,option,nbr,callback){
         };
         request.post(submit_options, function(err,res,body){
             request.post(submit_options, function(err, res, body){
-                var struct = addData(body, subject)
+                addData(body, subject, function(struct){
+                    callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
+                })
                 //console.log(struct)
-                console.log('102, section 58211 is ' + struct['102']['58211']['Status']);
-                console.log('102, section 58210 is ' + struct['102']['58210']['Status']);
-                callback(struct['102']['58211']['Status'],'102, section 58211 is ' + struct['102']['58211']['Status'])
-                callback(struct['102']['58210']['Status'],'102, section 58210 is ' + struct['102']['58210']['Status'])
-                return struct
+                //console.log(struct)
+                //console.log('102, section 58211 is ' + struct['102']['58211']['Status']);
+                //console.log(nbr +', ' + section + ' is ' + struct[nbr][section]['Status']);
+                //callback(struct[nbr][section]['Status'],nbr +', ' + section + 'is ' + struct[nbr][section]['Status'])
+                //callback(struct['102']['58210']['Status'],'102, section 58210 is ' + struct['102']['58210']['Status'])
+                //return struct[nbr][section]
             })
         }) 
     });
@@ -242,17 +247,21 @@ request.post(options, function(err, res, body) {
         });
     });
 });*/
-var texted = false;
-setInterval(function(){
-    var a = getClasses('QNS01','1162','ACCT','E','102',
+/*
+var a = getClasses('QNS01','1162','ACCT','E','102', '58212',
         function(status,text){
             if(status != "Closed" && !texted){
-                var nbr = '5165547727'
+                var nbr = '5164046348'
                 send_message(nbr,text)
                 texted = true
             }
         });
-},2500)
+/*
+
+var texted = false;
+setInterval(function(){
+    
+},2500)*/
 getStruct = function(){
     return struct;
 }

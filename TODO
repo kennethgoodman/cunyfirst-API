@@ -1,0 +1,10 @@
+~ Read from DB
+Tests
+Restructure files
+Concurrency
+Website to add to DB
+~ checks on if texted already
+more fns for API
+~Take out hard coded to env file
++ change PK’s to inst, dept, class, section
+check for errors on db connects
