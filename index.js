@@ -4,8 +4,8 @@ var app = express();
 var pg = require('pg');
 var bot = require('./bot')
 var mainLoop = require('./mainLoop')
-var dotenv = require('dotenv')
-dotenv.load();
+/*var dotenv = require('dotenv')
+dotenv.load();*/
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
