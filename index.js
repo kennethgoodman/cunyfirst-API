@@ -14,7 +14,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
-  response.render('pages/index');
+  response.render('pages/index',{options: ['inst','session','dept','section','your phone number']});
 });
 
 app.listen(app.get('port'), function() {
