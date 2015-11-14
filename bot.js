@@ -18,67 +18,67 @@ var struct = {};
 addData = function(body, className,callback){
     //console.log("in addData")
     var struct = {};
-    var p = cheerio.load(body)
-        x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
-            var count = 0
-            for(var i in td){
-                var data = td[i].split(/\n/);
-                var newData = []
-                for(var t in data){
-                    if(data[t] != ""){
-                        newData.push(data[t])
-                    }
+    x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
+        var count = 0
+        for(var i in td){
+            var data = td[i].split(/\n/);
+            var newData = []
+            for(var t in data){
+                if(data[t] != ""){
+                    newData.push(data[t])
                 }
+            }
 
-                if(newData[0].indexOf(className) != -1){
-                    if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
-                        var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
-                        var nbr = newData[8]
-                        newData.remove(0)
-                        var d = {}
-                        d[nbr] = {}
-                        d[nbr]["Status"] = "0"
-                        try{
-                            for(var t = 0; t < newData.length; t++){  
-                                if(newData[t] == 'Status'){
-                                    while(newData[t] != "Class"){
-                                        t++
-                                        if(newData[t].indexOf("Topic:" == 0)){
-                                            d[nbr]["Topic"] = newData[t].substring(6)
-                                        }
-                                        if(t > newData.length-2){
-                                            break;
-                                        }
+            if(newData[0].indexOf(className) != -1){
+                if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
+                    var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
+                    var nbr = newData[8]
+                    newData.remove(0)
+                    var d = {}
+                    d[nbr] = {}
+                    d[nbr]["Status"] = "0"
+                    try{
+                        for(var t = 0; t < newData.length; t++){  
+                            if(newData[t] == 'Status'){
+                                while(newData[t] != "Class"){
+                                    t++
+                                    if(newData[t].indexOf("Topic:" == 0)){
+                                        d[nbr]["Topic"] = newData[t].substring(6)
                                     }
                                     if(t > newData.length-2){
-                                            break;
-                                        }
-                                    nbr = newData[t+7]
-                                    d[nbr] = {}
-                                    d[nbr]["Status"] = "0"
+                                        break;
+                                    }
                                 }
-                                d[nbr][newData[t]] = newData[t+7];
+                                if(t > newData.length-2){
+                                        break;
+                                    }
+                                nbr = newData[t+7]
+                                d[nbr] = {}
+                                d[nbr]["Status"] = "0"
                             }
-                        } catch(err){
-                            //console.log(err)
+                            d[nbr][newData[t]] = newData[t+7];
                         }
-                        struct[name] = d
+                    } catch(err){
+                        //console.log(err)
                     }
-                    count += 1
+                    struct[name] = d
                 }
-            }
-            
-        })
-        var temp = [];
-        p('.SSSIMAGECENTER').each(function(err,open){
-            temp.push(open.attribs.alt)
-        })
-        var counter = 0
-        for(i in struct){
-            for(j in struct[i]){
-                struct[i][j]["Status"] = temp[counter++]
+                count += 1
             }
         }
+        
+    })
+    var temp = [];
+    var p = cheerio.load(body)
+    p('.SSSIMAGECENTER').each(function(err,open){
+        temp.push(open.attribs.alt)
+    })
+    var counter = 0
+    for(i in struct){
+        for(j in struct[i]){
+            struct[i][j]["Status"] = temp[counter++]
+        }
+    }
     callback(struct)
     return struct;
 }
@@ -117,7 +117,6 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
 
 //Gets Schools
 getSchools = function(callback){
-    console.log("here")
     request.post(options, function(err, res, body) {
         if(err) {
             console.error(err);
@@ -247,21 +246,6 @@ request.post(options, function(err, res, body) {
         });
     });
 });*/
-/*
-var a = getClasses('QNS01','1162','ACCT','E','102', '58212',
-        function(status,text){
-            if(status != "Closed" && !texted){
-                var nbr = '5164046348'
-                send_message(nbr,text)
-                texted = true
-            }
-        });
-/*
-
-var texted = false;
-setInterval(function(){
-    
-},2500)*/
 getStruct = function(){
     return struct;
 }

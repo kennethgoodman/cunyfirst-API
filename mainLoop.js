@@ -1,7 +1,5 @@
 var db = require('./database');
 var bot = require('./bot')
-var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
-
 
 a = function(data){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
@@ -10,24 +8,25 @@ a = function(data){
         	console.log(text)
             if(status != "Closed" && !data['texted']){
                 var nbr = data['phone_number']
-                send_message(nbr,text)
+                send_message(nbr,text) //send text to user
                 var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+data['dept'] + "\' AND class = \'" + data['class'] + "\' AND section = \'" +data['section'] +"\';";
-                sendQuery(query, function(result){
+                sendQuery(query, function(result){ //change texted to TRUE in DB
                 	console.log(result);
                 })
             }
         });
 }
+var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
 setInterval( function() {
 	sendQuery(q,function(result){
 		    		var k = 0
 			    	setInterval( function(){
-			    		if(k == result.rowCount) return //change to max number of rows
-			    		if(!result.rows[k].texted) a(result.rows[k])
+			    		if(k == result.rowCount) return //gone through the DB
+			    		if(!result.rows[k].texted) a(result.rows[k]) //if not texted
 			    		k += 1
-			    	}, 2500)
+			    	}, 2500) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 		    	})
-}, 5000);
+}, 5000); //run every five seconds
 /*
 //var data = queryDatabase(q,a);
 var dotenv = require('dotenv')

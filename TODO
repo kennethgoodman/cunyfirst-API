@@ -8,3 +8,7 @@ more fns for API
 ~Take out hard coded to env file
 + change PK’s to inst, dept, class, section
 check for errors on db connects
+google login
+facebook login
+change login to have texting
+change procfile to app.js instead of index.js

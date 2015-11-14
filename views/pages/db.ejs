@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <% include ../partials/header.ejs %>
+  
 </head>
 
 <body>
 
-<% include ../partials/nav.ejs %>
 
 <div class="container">
-<h2>Database Results</h2>
+<h2>Database Results:</h2>
 
-<ul>
-    <% results.forEach(function(r) { %>
-        <li><%= r.id %> - <%= r.name %></li>
-    <% }); %>
-</ul>
+    
+    
+<table>
+   <tr>
+      <th>Name</th><th>Inst</th><th>Dept</th><th>Class</th><th>Section</th><th>Texted</th><th>phone number</th><th>Session</th>
+   </tr>
+
+   <% results.forEach(function(r) { %>
+    <tr>
+        <% for(var data in r){ %>
+            <td><%=r[data]%></td>
+        <% } %>
+    </tr>    
+   <% }); %>
+</table>    
 
 </div>
 

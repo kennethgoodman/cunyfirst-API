@@ -20,7 +20,7 @@ queryDatabasePerRow = function(query,callback){
 sendQuery = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) console.log("err");
-		  console.log('Connected to postgres! Getting schemas...');
+		  //console.log('Connected to postgres! Getting schemas...');
 		  client
 		    .query(query, function(err, result) {
 		    	//done();
