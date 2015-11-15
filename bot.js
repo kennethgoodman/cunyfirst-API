@@ -23,6 +23,7 @@ addData = function(body, className,callback){
     //console.log("in addData")
     var struct = {};
     x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
+        
         var count = 0
         for(var i in td){
             var data = td[i].split(/\n/);
@@ -69,7 +70,9 @@ addData = function(body, className,callback){
                 count += 1
             }
         }
-        
+        if(struct == {}){
+            console.log(td)
+        }
     })
     var temp = [];
     var p = cheerio.load(body)
