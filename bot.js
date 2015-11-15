@@ -76,11 +76,14 @@ addData = function(body, className,callback){
     p('.SSSIMAGECENTER').each(function(err,open){
         temp.push(open.attribs.alt)
     })
-    var counter = 0
+    var counter = 0;
     for(i in struct){
         for(j in struct[i]){
-            struct[i][j]["Status"] = temp[counter++]
+            struct[i][j]["Status"] = temp[counter++];
         }
+    }
+    if(struct == {}){
+        return;
     }
     callback(struct)
     return struct;
@@ -106,7 +109,7 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
                     try{
                         callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
                     } catch(err){
-                        console.log(body)
+                        //console.log(body)
                         //process.exit(0);
                     }
                 })
