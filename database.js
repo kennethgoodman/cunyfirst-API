@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
-//var dotenv = require('dotenv')
-//dotenv.load();
+var dotenv = require('dotenv')
+dotenv.load();
 queryDatabasePerRow = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  if (err) console.log("err");
@@ -19,7 +19,11 @@ queryDatabasePerRow = function(query,callback){
 }
 sendQuery = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		  if (err) console.log("err");
+		  if (err) {
+		  	console.log(err);
+		  	console.log(query);
+		  	return;
+		  }
 		  //console.log('Connected to postgres! Getting schemas...');
 		  client
 		    .query(query, function(err, result) {

@@ -3,31 +3,60 @@
 <head>
   <% include ../partials/header.ejs %>
 </head>
-
+<script type='text/javascript'
+        src='http://code.jquery.com/jquery-1.9.1.js'></script>
+    <link rel="stylesheet" type="text/css"
+          href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
+    <script type='text/javascript'
+        src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>
 <body>
   <% include ../partials/nav.ejs %>
     <div class="wrap">
         <div class="fleft">
-            <p style="margin-left:100px">Add a new class</p>
+            <p style="margin-left:100px">Add a new class:</p>
             <form style="margin-left:100px">
                 <% for(var option in options){ %>
                     <%=options[option]%>: <input type="text" name=<%=options[option]%>><br><br>
                 <%}%>
                 <input type="submit" value="Submit" onclick="clicked()">
-                <script>
-                    clicked = function(){
-                        alert("clicked")
-                    }
-                    
-                </script>
             </form>
         </div>
         <div class="fright">
-        
+            Account Info!
+            <div>
+                <form>
+            <% for(var data in userInfo){ %>
+                <% if(data == 'href'){continue;}
+                    if(data == 'status'){break;}
+                %>
+                <label class="btn btn-primary" id=<%=data%>> 
+              <i class="icon-pencil icon-white"></i> 
+              <input type="checkbox" name="foo"
+                class="hide" data-toggle="button" value="1" />
+            </label>
+               <%= data %>:<input type="text" class<%=data%> value=<%= userInfo[data]%> readonly>
+            <br>
+            <% } %>  
+             </form>
         </div>
     </div>
 </body>
 </html>
+    <script>
+        $("#username").unbind('click').click( function (e) {
+            if(e.currentTarget.attributes['aria-pressed'].nodeValue == "true"){
+                
+            }
+            else{
+                
+            }
+            return false;
+        });
+        clicked = function(){
+            //get all dropdowns and submit data into DB
+            //var inst = 
+        }
+    </script>
 <style>
     .wrap {
         width: 100%;
@@ -43,7 +72,6 @@
 
     .fright {
         float: right;
-        background:pink;
         width: 50%;
     }
 </style>

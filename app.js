@@ -1,7 +1,7 @@
 // app.js
 var pg = require('pg');
-/*var dotenv = require('dotenv')
-dotenv.load();*/
+var dotenv = require('dotenv')
+dotenv.load();
 
 var express = require('express');
 var stormpath = require('express-stormpath');
@@ -21,9 +21,14 @@ app.use(stormpath.init(app, {
 app.on('stormpath.ready', function () {
   app.listen(5000);
 });
-app.get('/', function(request, response) {
-  response.render('pages/index',{options: ['inst','session','dept','section','your phone number']});
+app.get('/', stormpath.loginRequired, function(request, response) {
+  	response.render('pages/index',{options: ['inst','session','dept','section','your phone number'],userInfo: request.user});
 });
+
+app.get('/account', stormpath.loginRequired, function(request,response){
+	response.render('pages/account', {userInfo: request.user});
+});
+
 app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM clients_and_their_info', function(err, result) {

@@ -16,17 +16,22 @@ a = function(data){
             }
         });
 }
-var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
+
 setInterval( function() {
-	sendQuery(q,function(result){
-		    		var k = 0
-			    	setInterval( function(){
-			    		if(k == result.rowCount) return //gone through the DB
-			    		if(!result.rows[k].texted) a(result.rows[k]) //if not texted
-			    		k += 1
-			    	}, 2500) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
-		    	})
-}, 5000); //run every five seconds
+	try{
+		var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
+		sendQuery(q,function(result){
+			    		var k = 0
+				    	setInterval( function(){
+				    		if(k == result.rowCount) return //gone through the DB
+				    		if(!result.rows[k].texted) a(result.rows[k]) //if not texted
+				    		k += 1
+				    	}, 2500) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
+			    	})
+	} catch(err){
+		console.log(err)
+	}
+}, 4000); //run every five seconds
 /*
 //var data = queryDatabase(q,a);
 var dotenv = require('dotenv')

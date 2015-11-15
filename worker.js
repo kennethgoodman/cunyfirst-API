@@ -16,6 +16,7 @@ Array.prototype.remove = function(from, to) {
   this.length = from < 0 ? this.length + from : from;
   return this.push.apply(this, rest);
 };
+var classesArray = [];
 getSections = function(inst, session, dept, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
@@ -34,65 +35,101 @@ getSections = function(inst, session, dept, callback){
         	request.post(submit_options, function(err,res,body){
         		var struct = {}
         		var className = dept;
-        		x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
-			        var count = 0
-			        for(var i in td){
-			            var data = td[i].split(/\n/);
-			            var newData = []
-			            for(var t in data){
-			                if(data[t] != ""){
-			                    newData.push(data[t])
-			                }
-			            }
-
-			            if(newData[0].indexOf(className) != -1){
-			                if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
-			                    //var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
-			                    var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
-			                    //console.log(newData)
-			                    var nbr = newData[8]
-			                    var class_nbr = newData[0].substring(2 + className.length, 2+className.length + newData[0].indexOf("-"))
-			                    newData.remove(0)
-			                    var d = {}
-			                    d[nbr] = {}
-			                    d[nbr]["Status"] = "0"
-			                    try{
-			                        for(var t = 0; t < newData.length; t++){  
-			                            if(newData[t] == 'Status'){
-			                                while(newData[t] != "Class"){
-			                                    t++
-			                                    if(newData[t].indexOf("Topic:" == 0)){
-			                                        d[nbr]["Topic"] = newData[t].substring(6)
-			                                    }
-			                                    if(t > newData.length-2){
-			                                        break;
-			                                    }
-			                                }
-			                                if(t > newData.length-2){
-			                                        break;
-			                                    }
-			                                nbr = newData[t+7]
-			                                d[nbr] = {}
-			                                d[nbr]["Status"] = "0"
-			                            }
-			                            d[nbr][newData[t]] = newData[t+7];
-			                        }
-			                    } catch(err){
-			                        //console.log(err)
-			                    }
-			                    struct[name] = d
-			                }
-			                count += 1
-			            }
-			        }
-			    })
+        		try{
+	        		x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
+				        var count = 0
+				        	for(var i in td){
+					            var data = td[i].split(/\n/);
+					            var newData = []
+					            for(var t in data){
+					                if(data[t] != ""){
+					                    newData.push(data[t])
+					                }
+					            }
+					            try{
+						            if(newData[0].indexOf(className) != -1){
+						                if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
+						                    //var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
+						                    var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
+						                    //console.log(newData)
+						                    var nbr = newData[8]
+						                    var class_nbr = newData[0].substring(2 + className.length, 2+className.length + newData[0].indexOf("-"))
+						                    newData.remove(0)
+						                    var d = {}
+						                    d[nbr] = {}
+						                    d[nbr]["Status"] = "0"
+						                    try{
+						                        for(var t = 0; t < newData.length; t++){  
+						                            if(newData[t] == 'Status'){
+						                                while(newData[t] != "Class"){
+						                                    t++
+						                                    if(newData[t].indexOf("Topic:" == 0)){
+						                                        d[nbr]["Topic"] = newData[t].substring(6)
+						                                    }
+						                                    if(t > newData.length-2){
+						                                        break;
+						                                    }
+						                                }
+						                                if(t > newData.length-2){
+						                                        break;
+						                                    }
+						                                nbr = newData[t+7]
+						                                d[nbr] = {}
+						                                d[nbr]["Status"] = "0"
+						                            }
+						                            d[nbr][newData[t]] = newData[t+7];
+						                        }
+						                    } catch(err){
+						                        //console.log(err)
+						                    }
+						                    struct[name] = d
+						                }
+						                count += 1
+						            }
+						        } catch(err){
+						        	console.log(err);
+						        }
+				        	}
+				    	
+				    })
+				} catch(err){
+				    console.log(err)
+				}
 				//console.log(struct)
 				//console.log(inst + ": " + session + " " + dept + " got class_nbr")
-				for(var nbr in struct){
-					for(var section in struct[nbr]){
-						callback(inst, session, dept, nbr, section);
-					}
+				var k = 0;
+				var j = 0;
+				var nbrKeys;
+				var sectionKeys;
+				try{ 
+					var nbrKeys = Object.keys(struct);
+					var sectionKeys = Object.keys(struct[nbrKeys[k]])
+				} catch(err){
+					return;
 				}
+				var returnAlways = false;
+				setInterval( function(){
+					if (returnAlways) {return;};
+					if(j == sectionKeys.length){
+						j=0
+						k += 1;
+						if(k == nbrKeys.length){
+							returnAlways = true;
+							return;
+						}
+						else{
+							try{
+								sectionKeys = Object.keys(struct[nbrKeys[k]])	
+							} catch(err){
+								console.log(err)
+							}
+						}
+					}
+					else{
+						callback(inst, session, dept, nbrKeys[k], sectionKeys[j])
+						j += 1
+					}
+				}, 10);
         	})
         })
     })
@@ -136,7 +173,7 @@ getDept = function(inst, session, callback){
         			//console.log(inst + ": " + session + " " + dept[keys[k]])
         			callback(inst, session, dept[keys[k]])
         			k += 1;
-        		},2500)
+        		}, 2000)
         	})
         })
     })
@@ -169,13 +206,14 @@ getSession = function(inst, callback){
         			}
         		})
         		//console.log(inst + " in session")
-	            callback(inst, sessions['2015 Fall Term']);
+	            callback(inst, sessions['2016 Spring Term']);
 	        })
         });
     })
 }
 getInst = function(callback){
     request.post(options, function(err, res, body) {
+    	if(body.length == 0) return;
         if(err) {
             console.error(err);
             return;
@@ -212,36 +250,49 @@ getInst = function(callback){
             }
             schoolStruct[schools[schools.length-1]] = schoolNames[schoolNames.length-1].substring(1)
             var k = 0;
-            callback('GRD01')
-    		var keys = Object.keys(schoolStruct)
-    		setInterval( function(){
+      		callback("QNS01")
+    		//var keys = Object.keys(schoolStruct)
+    		/*setInterval( function(){
     			if(k == schoolStruct.length) return;
     			//console.log(keys[k])
-    			callback(keys[k])
+    			//callback(keys[k])
     			k += 1;
-    		},1500)
+    		},1500)*/
         })
     })
 }
-deleteTable(){
+deleteTable = function(){
 	sendQuery("TRUNCATE data_for_dropdowns", function(result){
 		console.log(result)
 	})
 }
-addDataToTable(){
+addDataToTable = function(callback){
 	getInst( function(inst){
 		getSession(inst, function(inst, session){
 			getDept(inst, session, function(inst,session,dept){
 				getSections(inst,session,dept,function(inst,session,dept, nbr, section){
-					var q = "INSERT INTO data_for_dropdowns Values (" + inst + ", " + session +", "+ dept + ", " + nbr  + ", " + section + ");" 
-					sendQuery(q, function(result){
-						console.log(result)
-					})
+					classesArray.push({inst:inst, session:session, dept:dept, nbr:nbr, section:section});
+					console.log(classesArray.length);
+					var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES (\'" + inst + "\', \'" + session +"\', \'"+ dept + "\', \'" + nbr  + "\', \'" + section + "\');" 
+					//console.log(q)
+					try{
+							//sendQuery(String(q), function(result){
+							//console.log(result)
+					} catch(err){
+						console.log(err)
+						console.log("#######" + q)
+					}
 				});
 			})
 		});
 	})
 }
+addDataToTable(function(){
+	setTimeout( function(){ 
+		console.log(classesArray.length);
+	}, 60000*10);
+});
+/*
 var CronJob = require('cron').CronJob;
 var worker = ('./worker');
 var deleteTableContent = new CronJob({
@@ -255,7 +306,7 @@ var job = new CronJob({
 	onTick: addDataToTable,
 	start: true,
 	timeZone: 'America/Los_Angeles'
-});
+});*/
 
 
 

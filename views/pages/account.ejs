@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <% include ../partials/header.ejs %>
+    </head>
+    <body>
+        <% include ../partials/nav.ejs %>
+        <div>
+            <% for(var data in userInfo){ %>
+                <% if(data == 'href'){continue;}
+                    if(data == 'status'){break;}
+                %>
+               <%= data %>: <%= userInfo[data]%>
+            <label class="btn btn-primary"> 
+              <i class="icon-pencil icon-white" id=<%=data%>></i> 
+              <input type="checkbox" name="foo"
+                class="hide" data-toggle="button" value="1" />
+            </label>
+            <br>
+            <% } %>     
+        </div>
+    </body>
+</html>
