@@ -32,7 +32,6 @@ addData = function(body, className,callback){
                     newData.push(data[t])
                 }
             }
-
             if(newData[0].indexOf(className) != -1){
                 if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
                     var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
@@ -107,8 +106,7 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
                     try{
                         callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
                     } catch(err){
-                        console.log(err)
-                        console.log(struct);
+                        console.log(body)
                         //process.exit(0);
                     }
                 })
