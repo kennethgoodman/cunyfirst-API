@@ -107,7 +107,8 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
                     try{
                         callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
                     } catch(err){
-                        process.exit(0);
+                        console.log(err)
+                        //process.exit(0);
                     }
                 })
                 //console.log(struct)

@@ -24,7 +24,7 @@ setInterval( function() {
 			    		var k = 0
 				    	setInterval( function(){
 				    		if(k == result.rowCount) k = 0; //gone through the DB
-				    		if(!result.rows[k].texted) a(result.rows[k]) //if not texted
+				    		if(!result.rows[k%result.rowCount].texted) a(result.rows[k%result.rowCount]) //if not texted
 				    		k += 1
 				    	}, 5000) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 			    	})
