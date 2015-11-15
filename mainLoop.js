@@ -31,7 +31,10 @@ setInterval( function() {
 	} catch(err){
 		console.log(err)
 	}
-}, 4000); //run every five seconds
+	setTimeout(function(){
+		process.exit(0);
+	}, 60*1000*15) //restart every fifteen minutes until problem is resolved
+}, 4000); //run every four seconds
 /*
 //var data = queryDatabase(q,a);
 var dotenv = require('dotenv')
