@@ -17,7 +17,7 @@ a = function(data){
         });
 }
 
-setInterval( function() {
+//setInterval( function() {
 	try{
 		var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
 		sendQuery(q,function(result){
@@ -26,7 +26,7 @@ setInterval( function() {
 				    		if(k == result.rowCount) k = 0; //gone through the DB
 				    		if(!result.rows[k%result.rowCount].texted) a(result.rows[k%result.rowCount]) //if not texted
 				    		k += 1
-				    	}, 15000) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
+				    	}, 5000) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 			    	})
 	} catch(err){
 		console.log(err)
@@ -35,7 +35,7 @@ setInterval( function() {
 	setTimeout(function(){
 		//process.exit(0);
 	}, 60*1000*15)*/ //restart every fifteen minutes until problem is resolved
-}, 15000); //run every four seconds
+//}, 150000000); //run every four seconds
 /*
 //var data = queryDatabase(q,a);
 var dotenv = require('dotenv')
