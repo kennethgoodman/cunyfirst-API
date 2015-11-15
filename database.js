@@ -18,6 +18,7 @@ queryDatabasePerRow = function(query,callback){
 	});
 }
 sendQuery = function(query,callback){
+	console.log("here")
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
 		  	console.log(err);
