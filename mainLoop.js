@@ -26,7 +26,7 @@ setInterval( function() {
 				    		if(k == result.rowCount) k = 0; //gone through the DB
 				    		if(!result.rows[k].texted) a(result.rows[k]) //if not texted
 				    		k += 1
-				    	}, 2500) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
+				    	}, 3500) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 			    	})
 	} catch(err){
 		console.log(err)
@@ -34,7 +34,7 @@ setInterval( function() {
 	setTimeout(function(){
 		process.exit(0);
 	}, 60*1000*15) //restart every fifteen minutes until problem is resolved
-}, 4000); //run every four seconds
+}, 5000); //run every four seconds
 /*
 //var data = queryDatabase(q,a);
 var dotenv = require('dotenv')
