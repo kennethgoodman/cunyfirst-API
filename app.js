@@ -2,7 +2,8 @@
 var pg = require('pg');
 /*var dotenv = require('dotenv')
 dotenv.load();*/
-
+var bot = require('./bot')
+var mainLoop = require('./mainLoop')
 var express = require('express');
 var stormpath = require('express-stormpath');
 
