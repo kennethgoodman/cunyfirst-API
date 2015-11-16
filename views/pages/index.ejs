@@ -2,6 +2,7 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+    
 </head>
 <script type='text/javascript'
         src='http://code.jquery.com/jquery-1.9.1.js'></script>
@@ -16,7 +17,7 @@
             <p style="margin-left:100px">Add a new class:</p>
             <form style="margin-left:100px">
                 <% for(var option in options){ %>
-                    <%=options[option]%>: <input type="text" name=<%=options[option]%>><br><br>
+                    <%=options[option]%>: <input type="text" id=<%=options[option]%>><br><br>
                 <%}%>
                 <input type="submit" value="Submit" onclick="clicked()">
             </form>
@@ -32,9 +33,9 @@
                 <label class="btn btn-primary" id=<%=data%>> 
               <i class="icon-pencil icon-white"></i> 
               <input type="checkbox" name="foo"
-                class="hide" data-toggle="button" value="1" />
+                class="hide" data-toggle="button" value="1"/>
             </label>
-               <%= data %>:<input type="text" class<%=data%> value=<%= userInfo[data]%> readonly>
+               <%=data%>:<input type="text" class=<%=data%> value=<%=userInfo[data]%>>
             <br>
             <% } %>  
              </form>
@@ -53,8 +54,14 @@
             return false;
         });
         clicked = function(){
-            //get all dropdowns and submit data into DB
-            //var inst = 
+            var userName = $('.fullName').val();
+            var inst = $('#inst').val();
+            var session = $('#session').val();
+            var dept = $('#dept').val();
+            var nbr = $('#class_nbr').val();
+            var section = $('#section').val();
+            var phoneNbr = $('#your_phone_number').val();
+            console.log(submitClass(userName,inst,dept,nbr,section,phoneNbr,session))
         }
     </script>
 <style>

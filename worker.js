@@ -97,6 +97,13 @@ getSections = function(inst, session, dept, callback){
 				}
 				//console.log(struct)
 				//console.log(inst + ": " + session + " " + dept + " got class_nbr")
+				var returnAlways = false;
+				for(var nbr in struct){
+					for(var section in struct[nbr]){
+						callback(inst, session, dept, nbr, section)
+					}
+				}
+				/*
 				var k = 0;
 				var j = 0;
 				var nbrKeys;
@@ -107,7 +114,6 @@ getSections = function(inst, session, dept, callback){
 				} catch(err){
 					return;
 				}
-				var returnAlways = false;
 				setInterval( function(){
 					if (returnAlways) {return;};
 					if(j == sectionKeys.length){
@@ -129,7 +135,7 @@ getSections = function(inst, session, dept, callback){
 						callback(inst, session, dept, nbrKeys[k], sectionKeys[j])
 						j += 1
 					}
-				}, 10);
+				}, 10);*/
         	})
         })
     })
@@ -173,7 +179,7 @@ getDept = function(inst, session, callback){
         			//console.log(inst + ": " + session + " " + dept[keys[k]])
         			callback(inst, session, dept[keys[k]])
         			k += 1;
-        		}, 2000)
+        		}, 8000)
         	})
         })
     })
@@ -250,14 +256,14 @@ getInst = function(callback){
             }
             schoolStruct[schools[schools.length-1]] = schoolNames[schoolNames.length-1].substring(1)
             var k = 0;
-      		callback("QNS01")
-    		//var keys = Object.keys(schoolStruct)
-    		/*setInterval( function(){
+      		//callback("QNS01")
+    		var keys = Object.keys(schoolStruct)
+    		setInterval( function(){
     			if(k == schoolStruct.length) return;
     			//console.log(keys[k])
-    			//callback(keys[k])
+    			callback(keys[k])
     			k += 1;
-    		},1500)*/
+    		}, 60000*4)
         })
     })
 }
@@ -271,9 +277,11 @@ addDataToTable = function(callback){
 		getSession(inst, function(inst, session){
 			getDept(inst, session, function(inst,session,dept){
 				getSections(inst,session,dept,function(inst,session,dept, nbr, section){
-					classesArray.push({inst:inst, session:session, dept:dept, nbr:nbr, section:section});
+					var temp = {inst:inst.trim(), session:session.trim(), dept:dept.trim(), nbr:nbr.trim(), section:section.trim()};
+					classesArray.push(temp);
 					console.log(classesArray.length);
-					var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES (\'" + inst + "\', \'" + session +"\', \'"+ dept + "\', \'" + nbr  + "\', \'" + section + "\');" 
+					console.log(temp)
+					//var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES (\'" + inst + "\', \'" + session +"\', \'"+ dept + "\', \'" + nbr  + "\', \'" + section + "\');" 
 					//console.log(q)
 					try{
 							//sendQuery(String(q), function(result){
@@ -287,11 +295,20 @@ addDataToTable = function(callback){
 		});
 	})
 }
-addDataToTable(function(){
-	setTimeout( function(){ 
-		console.log(classesArray.length);
-	}, 60000*10);
-});
+addDataToTable();
+setTimeout( function(){ 
+		var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES ";
+		for(var i in classesArray){
+			q += "(\'" + classesArray[i]['inst'] + "\', \'" + classesArray[i]['session'] +"\', \'"+ classesArray[i]['dept'] + "\', \'" + classesArray[i]['nbr']  + "\', \'" + classesArray[i]['section'] + "\')," 
+			if(i == classesArray.length - 1){
+				q[q.length-1]=';';
+				console.log(q);
+				sendQuery(String(q), function(result){
+					console.log(result);
+				});
+			}
+		}
+	}, 60000*4*30);
 /*
 var CronJob = require('cron').CronJob;
 var worker = ('./worker');
