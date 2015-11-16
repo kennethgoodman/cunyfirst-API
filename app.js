@@ -1,7 +1,7 @@
 // app.js
 var pg = require('pg');
-var dotenv = require('dotenv')
-dotenv.load();
+/*var dotenv = require('dotenv')
+dotenv.load();*/
 
 var express = require('express');
 var stormpath = require('express-stormpath');
