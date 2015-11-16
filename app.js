@@ -19,7 +19,7 @@ app.use(stormpath.init(app, {
 	  application:  process.env.STORMPATH_URL,
 }));
 app.on('stormpath.ready', function () {
-  app.listen(5000);
+  app.listen((process.env.PORT || 5000));
 });
 app.get('/', stormpath.loginRequired, function(request, response) {
   	response.render('pages/index',{options: ['inst','session','dept','class_nbr', 'section','your_phone_number'],userInfo: request.user});
