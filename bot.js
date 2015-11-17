@@ -35,7 +35,8 @@ addData = function(body, className,callback){
             }
             if(newData[0].indexOf(className) != -1){
                 if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
-                    var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
+                    var name = newData[0].substring(6,newData[0].indexOf("-"))
+                    name = name.trim();
                     var nbr = newData[8]
                     newData.remove(0)
                     var d = {}
@@ -112,22 +113,14 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
                     try{
                         callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
                     } catch(err){
-                        //console.log(body)
-                        //process.exit(0);
+                        console.log(err)
                     }
                 })
-                //console.log(struct)
-                //console.log(struct)
-                //console.log('102, section 58211 is ' + struct['102']['58211']['Status']);
-                //console.log(nbr +', ' + section + ' is ' + struct[nbr][section]['Status']);
-                //callback(struct[nbr][section]['Status'],nbr +', ' + section + 'is ' + struct[nbr][section]['Status'])
-                //callback(struct['102']['58210']['Status'],'102, section 58210 is ' + struct['102']['58210']['Status'])
-                //return struct[nbr][section]
             })
         }) 
     });
 };
-//var struct = getClasses('QNS01','1162','ARAB','E','102');
+//var struct = getClasses('QNS01','1162','ARAB','E','102', '59787');
 
 //Gets Schools
 getSchools = function(callback){

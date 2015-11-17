@@ -2,10 +2,10 @@
 var pg = require('pg');
 
 var worker = require('./worker');
-/*var dotenv = require('dotenv')
-dotenv.load();*/
-var bot = require('./bot')
-var mainLoop = require('./mainLoop')
+var dotenv = require('dotenv')
+dotenv.load();
+//var bot = require('./bot')
+//var mainLoop = require('./mainLoop')
 var WebSocketServer = require("ws").Server
 var http = require('http');
 var express = require('express');
@@ -19,7 +19,9 @@ console.log("http server listening on %d", port)
 var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 
-
+/*app.on('stormpath.ready', function () {
+  app.listen((process.env.PORT || 5000));
+});*/
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(stormpath.init(app, {
@@ -29,18 +31,11 @@ app.use(stormpath.init(app, {
 	  apiKeyId:     process.env.STORMPATH_API_KEY_ID,
 	  apiKeySecret: process.env.STORMPATH_API_KEY_SECRET,
 	  secretKey:    process.env.STORMPATH_SECRET_KEY,
-	  application:  process.env.STORMPATH_URL,
+	  application:  process.env.STORMPATH_APPLICATION_HREF,
 }));
 app.use(express.static(__dirname + '/public'));
-/*app.on('stormpath.ready', function () {
-  app.listen((process.env.PORT || 5000));
-});*/
 app.get('/', stormpath.loginRequired, function(request, response) {
   	response.render('pages/index',{options: ['inst','session','dept','class_nbr', 'section','your_phone_number'],userInfo: request.user});
-});
-
-app.get('/account', stormpath.loginRequired, function(request,response){
-	response.render('pages/account', {userInfo: request.user});
 });
 
 app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) {
@@ -59,7 +54,6 @@ wss.on("connection", function(ws) {
     ws.send(JSON.stringify(new Date()), function() {  })
   }, 1000000)
   console.log("websocket connection open")
-
   ws.on("close", function() {
     console.log("websocket connection close")
     clearInterval(id)
@@ -71,7 +65,8 @@ wss.on("connection", function(ws) {
   			var a = ["inst"];
 			getInst(function(data){
 				a.push(data);
-  				ws.send(JSON.stringify(a))
+				sendData(ws,a)
+  				//ws.send(JSON.stringify(a))
   			})
   		}
   		else if(data[0] == "get_session"){
@@ -86,21 +81,24 @@ wss.on("connection", function(ws) {
   					}
   				}
   				//a.remove(a.length-1)
-  				ws.send(JSON.stringify(a))
+  				sendData(ws,a)
+  				//ws.send(JSON.stringify(a))
   			})
   		}
   		else if(data[0] == "get_dept"){
   			var a = ["dept"];
   			getDept(data[1],data[2],function(data){
   				a.push(data);
-  				ws.send(JSON.stringify(a))
+  				sendData(ws,a)
+  				//ws.send(JSON.stringify(a))
   			})
   		}
   		else if(data[0] == "get_class"){
   			var a = ["class_nbr"];
   			getSections(data[1],data[2],data[3], function(data){
   				a.push(data);
-  				ws.send(JSON.stringify(a));
+  				sendData(ws,a)
+  				//ws.send(JSON.stringify(a));
   			})
   		}
   		else if(data[0] == "get_section"){
@@ -108,7 +106,7 @@ wss.on("connection", function(ws) {
   		}
   		else if(data[0] == "submit"){
   			var texted = "false";
-  			var query = "INSERT INTO clients_and_their_info (\'"+data[1]+"\', \'"+data[2]+"\', \'"+data[4]+"\', \'"+data[5]+"\', \'"+data[6]+"\', \'"+texted+"\', \'"+data[7]+"\', \'"+data[3]+"\');";
+  			var query = "INSERT INTO clients_and_their_info VALUES (\'"+data[1]+"\', \'"+data[2]+"\', \'"+data[4]+"\', \'"+data[5]+"\', \'"+data[6]+"\', \'"+texted+"\', \'"+data[7]+"\', \'"+data[3]+"\');";
 			console.log(query);
 			//send query
 			//
@@ -116,3 +114,11 @@ wss.on("connection", function(ws) {
   		//else: exit           
     });
 })
+function sendData(socket,data){
+	if (socket.readyState != socket.OPEN) { //check if socket is open before sending
+    	console.error('Client state is ' + socket.readyState);
+    //or any message you want
+	} else {
+	    socket.send(JSON.stringify(data)); //send data to client
+	}
+}

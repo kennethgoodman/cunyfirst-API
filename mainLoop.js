@@ -1,6 +1,7 @@
 var db = require('./database');
 var bot = require('./bot')
-
+var dotenv = require('dotenv')
+dotenv.load();
 a = function(data){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
@@ -26,22 +27,14 @@ a = function(data){
 				    		if(k == result.rowCount) k = 0; //gone through the DB
 				    		if(!result.rows[k%result.rowCount].texted) a(result.rows[k%result.rowCount]) //if not texted
 				    		k += 1
-				    	}, 5000) //run each query every 2.5 seconds, I assume CF is checking to make sure one IP doesnt overload server
+				    	}, 5000) //run each query every 5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 			    	})
 	} catch(err){
 		console.log(err)
 	}
-	/*
-	setTimeout(function(){
-		//process.exit(0);
-	}, 60*1000*15)*/ //restart every fifteen minutes until problem is resolved
-//}, 150000000); //run every four seconds
-/*
 //var data = queryDatabase(q,a);
-var dotenv = require('dotenv')
-dotenv.load();
 
-
+/*
 var pg = require('pg');
 pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  if (err) console.log("err");
