@@ -1,7 +1,5 @@
 var db = require('./database');
 var bot = require('./bot')
-var dotenv = require('dotenv')
-dotenv.load();
 a = function(data){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
