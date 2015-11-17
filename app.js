@@ -4,8 +4,8 @@ var pg = require('pg');
 var worker = require('./worker');
 /*var dotenv = require('dotenv')
 dotenv.load();*/
-//var bot = require('./bot')
-//var mainLoop = require('./mainLoop')
+var bot = require('./bot')
+var mainLoop = require('./mainLoop')
 var WebSocketServer = require("ws").Server
 var http = require('http');
 var express = require('express');
