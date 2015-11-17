@@ -97,10 +97,11 @@ getSections = function(inst, session, dept, callback){
 				}
 				//console.log(struct)
 				//console.log(inst + ": " + session + " " + dept + " got class_nbr")
+				callback(struct);
 				var returnAlways = false;
 				for(var nbr in struct){
 					for(var section in struct[nbr]){
-						callback(inst, session, dept, nbr, section)
+						//callback(inst, session, dept, nbr, section)
 					}
 				}
 				/*
@@ -168,6 +169,8 @@ getDept = function(inst, session, callback){
         				}
         			}
         		})
+        		callback(dept);
+        		return;
         		var k = 0;
         		//console.log(dept)
         		var keys = Object.keys(dept)
@@ -212,12 +215,12 @@ getSession = function(inst, callback){
         			}
         		})
         		//console.log(inst + " in session")
-	            callback(inst, sessions['2016 Spring Term']);
+	            callback(inst, sessions);
 	        })
         });
     })
 }
-getInst = function(callback){
+getInst = function(callback,interval){
     request.post(options, function(err, res, body) {
     	if(body.length == 0) return;
         if(err) {
@@ -255,15 +258,19 @@ getInst = function(callback){
                 schoolStruct[schools[e]] = schoolNames[e].substring(1)
             }
             schoolStruct[schools[schools.length-1]] = schoolNames[schoolNames.length-1].substring(1)
+            callback(schoolStruct);
+            return;
             var k = 0;
       		//callback("QNS01")
     		var keys = Object.keys(schoolStruct)
     		setInterval( function(){
     			if(k == schoolStruct.length) return;
     			//console.log(keys[k])
-    			callback(keys[k])
+    			var temp = {};
+    			temp[schoolNames[k]] = keys[k]
+    			callback(temp)
     			k += 1;
-    		}, 60000*4)
+    		}, interval)
         })
     })
 }
@@ -295,6 +302,7 @@ addDataToTable = function(callback){
 		});
 	})
 }
+/*
 addDataToTable();
 setTimeout( function(){ 
 		var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES ";
@@ -309,6 +317,7 @@ setTimeout( function(){
 			}
 		}
 	}, 60000*4*30);
+*/
 /*
 var CronJob = require('cron').CronJob;
 var worker = ('./worker');
@@ -324,8 +333,6 @@ var job = new CronJob({
 	start: true,
 	timeZone: 'America/Los_Angeles'
 });*/
-
-
 
 
 

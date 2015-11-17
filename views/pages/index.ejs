@@ -14,13 +14,27 @@
   <% include ../partials/nav.ejs %>
     <div class="wrap">
         <div class="fleft">
-            <p style="margin-left:100px">Add a new class:</p>
-            <form style="margin-left:100px">
-                <% for(var option in options){ %>
-                    <%=options[option]%>: <input type="text" id=<%=options[option]%>><br><br>
+            <p style="margin-left:100px" id="testing">Add a new class:</p>
+            <div style="margin-left:100px">
+                
+                <% for(var option = 0; option < 3 /*options.length-1*/;option++){ %>
+                    <%=options[option]%>: 
+                        <select id=<%=options[option]%>>
+                            <option selected="selected">
+                        </select>
+                        <br>
                 <%}%>
-                <input type="submit" value="Submit" onclick="clicked()">
-            </form>
+                <table id="myTable" style="width:90%" border="1">
+                    <tr>
+                        <th>Class nbr </th><th>Class section</th><th>Teacher</th>
+                    </tr>
+                    <tr>
+                    </tr>
+                </table>
+                <br>
+                <button type="button" id="submitData">Submit!</button>
+            </div>
+            
         </div>
         <div class="fright">
             Account Info!
@@ -43,6 +57,7 @@
     </div>
 </body>
 </html>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
         $("#username").unbind('click').click( function (e) {
             if(e.currentTarget.attributes['aria-pressed'].nodeValue == "true"){
@@ -53,6 +68,30 @@
             }
             return false;
         });
+        $("#submitData").unbind('click').click( function (e) {
+            clicked()
+        });
+        $('#inst').unbind('change').change(function(){
+            var e = document.getElementById("inst");
+            ws.send(JSON.stringify(["get_session",e.options[e.selectedIndex].value]));
+            //send message for get session
+        })
+        $('#session').unbind('change').change(function(){
+            var e = document.getElementById("inst");
+            var f = document.getElementById("session");
+            ws.send(JSON.stringify(["get_dept",e.options[e.selectedIndex].value,
+                                               f.options[f.selectedIndex].value]));
+            //send message for get session
+        })
+        $('#dept').unbind('change').change(function(){
+            var e = document.getElementById("inst");
+            var f = document.getElementById("session");
+            var g = document.getElementById("dept");
+            ws.send(JSON.stringify(["get_class",e.options[e.selectedIndex].value,
+                                               f.options[f.selectedIndex].value,
+                                               g.options[g.selectedIndex].value]));
+            //send message for get session
+        })
         clicked = function(){
             var userName = $('.fullName').val();
             var inst = $('#inst').val();
@@ -61,8 +100,69 @@
             var nbr = $('#class_nbr').val();
             var section = $('#section').val();
             var phoneNbr = $('#your_phone_number').val();
-            console.log(submitClass(userName,inst,dept,nbr,section,phoneNbr,session))
+            ws.send(JSON.stringify(["submit",userName,inst,dept,nbr,section,phoneNbr,session]));
         }
+        var host = location.origin.replace(/^http/, 'ws')
+        var ws = new WebSocket(host);
+        ws.onmessage = function (event) {
+          var data = JSON.parse(event.data);
+          try{
+              console.log(data);
+              if(data[0] == "inst"){
+                  var keys = Object.keys(data[1]);
+                  for(var i = 0; i < keys.length; i++){
+                      var dropdown = document.getElementById('inst');
+                      var option = document.createElement("option");
+                      var instName = keys[i]
+                      option.value = instName;
+                      option.text = data[1][instName];
+                      if(instName != undefined && data[1][instName] != undefined) dropdown.add(option);
+                  }
+              }
+              else if(data[0] == "session"){
+                  for(var i = 1; i < data.length; i++){
+                      var dropdown = document.getElementById('session');
+                      var option = document.createElement("option");
+                      var sessionName = Object.keys(data[i])[0];
+                      option.text = sessionName;
+                      option.value = data[i][sessionName];
+                      if(sessionName != undefined && data[i][sessionName] != undefined) dropdown.add(option);
+                  }
+              }
+              else if(data[0] == "dept"){
+                  var keys = Object.keys(data[1]);
+                  for(var i = 0; i < keys.length; i++){
+                      var dropdown = document.getElementById('dept');
+                      var option = document.createElement("option");
+                      var deptName = keys[i]
+                      option.text = deptName;
+                      option.value = data[1][deptName];
+                      if(deptName != undefined && data[1][deptName] != undefined) dropdown.add(option);
+                  }
+              }
+              else if(data[0] == "class_nbr"){
+                  var table = document.getElementById("myTable");
+                  data = data[1]
+                  //var nbrs = Object.keys(data);
+                  for(var nbr in data){
+                      for(var section in data[nbr]){
+                          var row = table.insertRow(-1);
+                          var c3 = row.insertCell(0)
+                          c3.innerHTML = data[nbr][section]['Instructor'];
+                          var c2 = row.insertCell(0)
+                          c2.innerHTML = section
+                          var c1 = row.insertCell(0)
+                          c1.innerHTML = nbr    
+                      }
+                  }
+              }
+              //ws.send("message to be sent")
+              //console.log(event.data)
+          } catch(err){
+              console.log(err)
+          }
+        };
+        setTimeout(function(){ws.send(JSON.stringify(["get_inst"]));},1500);
     </script>
 <style>
     .wrap {

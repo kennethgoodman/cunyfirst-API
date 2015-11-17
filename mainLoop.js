@@ -8,11 +8,11 @@ a = function(data){
         	console.log(text)
             if(status != "Closed" && !data['texted']){
                 var nbr = data['phone_number']
-                send_message(nbr,text) //send text to user
                 var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+data['dept'] + "\' AND class = \'" + data['class'] + "\' AND section = \'" +data['section'] +"\';";
                 sendQuery(query, function(result){ //change texted to TRUE in DB
                 	console.log(result);
                 })
+                send_message(nbr,text) //send text to user
             }
         });
 }

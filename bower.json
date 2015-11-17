@@ -1,0 +1,27 @@
+{
+  "name": "cf",
+  "description": "A sample Node.js app using Express 4",
+  "main": "index.js",
+  "authors": [
+    "kennethgoodman <kennethsgoodman@yahoo.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "moduleType": [],
+  "homepage": "cunyfirst.heroku.com",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
