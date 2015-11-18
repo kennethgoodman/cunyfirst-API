@@ -3,6 +3,7 @@ var app = express();
 var pg = require('pg');
 /*var dotenv = require('dotenv')
 dotenv.load();*/
+pg.defaults.poolIdleTimeout = 10000;
 queryDatabasePerRow = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  if (err) console.log("err");
@@ -13,25 +14,27 @@ queryDatabasePerRow = function(query,callback){
 	    	//console.log(row)
 	      //console.log(JSON.stringify(row));
 	      callback(row)
+	      done();
 	      return JSON.stringify(row)
 	    });
 	});
 }
 sendQuery = function(query,callback){
+	console.log(query)
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
 		  	console.log(err);
 		  	console.log(query);
-		  	callback(err)
+		  	pg.end();
 		  	return;
 		  }
 		  //console.log('Connected to postgres! Getting schemas...');
 		  client
 		    .query(query, function(err, result) {
-		    	//done();
+		    	
 			    if(err) {
 			      console.error('error running query', err);
-			      callback(err)
+			      //callback(err)
 			    }
 			    else{
 			    	callback(result);
