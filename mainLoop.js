@@ -41,9 +41,27 @@ checkopen = function(){
 	}
 }
 checkopen();
-/*var CronJob = require('cron').CronJob;
+var CronJob = require('cron').CronJob;
 var checkOpen = new CronJob({
-	cronTime: "7 * * * * *",
+	cronTime: "* 6 * * * *",
+	onTick: checkopen,
+	start: true,
+	timeZone: 'America/Los_Angeles'
+})
+var checkOpen = new CronJob({
+	cronTime: "* 12 * * * *",
+	onTick: checkopen,
+	start: true,
+	timeZone: 'America/Los_Angeles'
+})
+var checkOpen = new CronJob({
+	cronTime: "* 18 * * * *",
+	onTick: checkopen,
+	start: true,
+	timeZone: 'America/Los_Angeles'
+})
+var checkOpen = new CronJob({
+	cronTime: "* 0 * * * *",
 	onTick: checkopen,
 	start: true,
 	timeZone: 'America/Los_Angeles'
