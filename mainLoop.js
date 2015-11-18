@@ -29,15 +29,19 @@ checkopen = function(){
 		var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
 		sendQuery(q,function(result){
 						//intervalFn(result)
-						for(var k = 0; k < result.rowCount; k++){
+						var k =0;
+						var interval = setInterval( function(){
+							if(k == result.rowCount) k=0;
 							if(!result.rows[k%result.rowCount].texted) a(result.rows[k%result.rowCount]) //if not texted
-						}//run each query every 5 seconds, I assume CF is checking to make sure one IP doesnt overload server
+							k += 1
+						}, 5000)//run each query every 5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 			    	})
 	} catch(err){
 		console.log(err)
 	}
 }
-var CronJob = require('cron').CronJob;
+checkopen();
+/*var CronJob = require('cron').CronJob;
 var checkOpen = new CronJob({
 	cronTime: "7 * * * * *",
 	onTick: checkopen,
