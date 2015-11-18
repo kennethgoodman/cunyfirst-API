@@ -104,7 +104,7 @@ wss.on("connection", function(ws) {
   		}
   		else if(data[0] == "submit"){
   			var texted = "false";
-  			var query = "INSERT INTO clients_and_their_info VALUES (\'"+data[1]+"\', \'"+data[2]+"\', \'"+data[4]+"\', \'"+data[5]+"\', \'"+data[6]+"\', \'"+texted+"\', \'"+data[7]+"\', \'"+data[3]+"\');";
+  			var query = "INSERT INTO clients_and_their_info VALUES (\'"+data[1]+"\', \'"+data[2]+"\', \'"+data[3]+"\', \'"+data[4]+"\', \'"+data[5]+"\', \'"+texted+"\', \'"+data[6]+"\', \'"+data[7]+"\');";
 			console.log(query);
 			sendQuery(query, function(result){
 				console.log(result)
