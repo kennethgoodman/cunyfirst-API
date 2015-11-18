@@ -22,6 +22,7 @@
                         </select>
                         <br>
                 <%}%>
+                <input type="text" placeholder="9171234567" id="you_phone_nbr"><button type="button" id="submitData">Submit!</button>
                 <div style="overflow:scroll; height:400px;">
                     <table id="myTable" style="width:90%" border="1" data-toggle="table">
                         <thead>
@@ -34,16 +35,15 @@
                         </tbody>
                     </table>
                 </div>    
-                <input type="text" placeholder="cell phone number"><button type="button" id="submitData">Submit!</button>
             </div>
         </div>
         <div class="fright">
             Account Info:
             <div>
-                <table>
+                <table border="1">
                     <thead>
                         <tr>
-                            <th>  </th><th>info name</th><th>info</th>
+                            <!--<th>  </th>--><th>info name</th><th>info</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,10 +52,13 @@
                                if(data == 'status'){break;}
                             %>
                         <tr>
+                            
+                            <!--
                             <td>
-                                <button class="editbtn" id=<%=data%>>edit</button>
+                                <button class="editbtn" id=<%=data%>>edit data </button>
                             </td>
-                            <td >
+                            -->
+                            <td>
                                 <%=data%>
                             </td>
                             <td class=<%=data%> contenteditable='false'>
@@ -98,7 +101,7 @@
         });*/
         $(document).ready(function(){
             $('.editbtn').click(function(){
-                $(this).html($(this).html() == 'edit' ? 'modify' : 'edit');
+                $(this).html($(this).html() == 'edit data ' ? 'submit changes' : 'edit data ');
                 var td = $("." + this.id);
                 $("." + this.id).attr("contenteditable", ! $.parseJSON($("." + this.id).attr("contenteditable")));
                 
@@ -117,27 +120,34 @@
             var f = document.getElementById("session");
             ws.send(JSON.stringify(["get_dept",e.options[e.selectedIndex].value,
                                                f.options[f.selectedIndex].value]));
-            //send message for get session
+            //send message for get dept
         })
         $('#dept').unbind('change').change(function(){
             var e = document.getElementById("inst");
             var f = document.getElementById("session");
             var g = document.getElementById("dept");
             ws.send(JSON.stringify(["get_class",e.options[e.selectedIndex].value,
-                                               f.options[f.selectedIndex].value,
-                                               g.options[g.selectedIndex].value]));
-            //send message for get session
+                                                f.options[f.selectedIndex].value,
+                                                g.options[g.selectedIndex].value]));
+            //send message for get class
         })
-        
         clicked = function(){
-            var userName = $('.fullName').val();
+            var userName = $('.fullName')[0].textContent.trim();
             var inst = $('#inst').val();
             var session = $('#session').val();
             var dept = $('#dept').val();
-            var nbr = $('#class_nbr').val();
-            var section = $('#section').val();
-            var phoneNbr = $('#your_phone_number').val();
-            ws.send(JSON.stringify(["submit",userName,inst,dept,nbr,section,phoneNbr,session]));
+            var phoneNbr = $('#you_phone_nbr').val();
+            var nbr;
+            var section;
+            $( "input[type=checkbox]" ).each(function(){
+                if($(this).is(':checked')){
+                    var temp = $(this).parent().parent()[0]
+                    ///console.log($(this).parent().parent());
+                    nbr = temp.childNodes[0].textContent.trim();
+                    section = temp.childNodes[1].textContent.trim();
+                    ws.send(JSON.stringify(["submit",userName,inst,dept,nbr,section,phoneNbr,session]));
+                }
+            })
         }
         var host = location.origin.replace(/^http/, 'ws')
         var ws = new WebSocket(host);
@@ -187,6 +197,11 @@
                       for(var section in data[nbr]){
                           var row = table.insertRow(-1);
                           //row.className = "row";
+                          /*var c4 = row.insertCell(0);
+                          c4.className = "choosingClassBtn";
+                          var chkbox = document.createElement('input');
+                          chkbox.type = "checkbox";
+                          chkbox.id*/
                           var c3 = row.insertCell(0)
                           c3.className = "cell"
                           c3.innerHTML = data[nbr][section]['Instructor'];
@@ -198,6 +213,13 @@
                           c1.className = "cell"
                       }
                   }
+                  $("table td:first-child").each(function() {
+                      if($(this)[0].className != "cell") return;
+                    $(this).prepend('<input type="checkbox" class="basic-kpi-row"/>');
+                 });
+                  $( "input[type=checkbox]" ).on( "click", function(){
+                      $(this).parent().parent().toggleClass("highlight");
+                  })
               }
               //ws.send("message to be sent")
               //console.log(event.data)
@@ -210,7 +232,7 @@
             test = function(){
                 ws.send(JSON.stringify(["get_session", "QNS01"]));
                 ws.send(JSON.stringify(["get_dept","QNS01","1162"]));
-                ws.send(JSON.stringify(["get_class","QNS01","1162","MATH"]));
+                ws.send(JSON.stringify(["get_class","QNS01","1162","ARAB"]));
             }
             test();                 
                              },1250);
@@ -240,5 +262,15 @@
     .fright {
         float: right;
         width: 50%;
+    }
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 15px;
+    }
+    .highlight { 
+        background-color: red; 
     }
 </style>

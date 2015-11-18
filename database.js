@@ -22,6 +22,7 @@ sendQuery = function(query,callback){
 		  if (err) {
 		  	console.log(err);
 		  	console.log(query);
+		  	callback(err)
 		  	return;
 		  }
 		  //console.log('Connected to postgres! Getting schemas...');
@@ -30,6 +31,7 @@ sendQuery = function(query,callback){
 		    	//done();
 			    if(err) {
 			      console.error('error running query', err);
+			      callback(err)
 			    }
 			    else{
 			    	callback(result);

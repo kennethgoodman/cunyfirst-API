@@ -2,9 +2,10 @@
 var pg = require('pg');
 
 var worker = require('./worker');
-
-//var bot = require('./bot')
-//var mainLoop = require('./mainLoop')
+/*var dotenv = require('dotenv')
+dotenv.load();*/
+var bot = require('./bot')
+var mainLoop = require('./mainLoop')
 var WebSocketServer = require("ws").Server
 var http = require('http');
 var express = require('express');
@@ -14,7 +15,8 @@ var stormpath = require('express-stormpath');
 var server = http.createServer(app)
 server.listen(port)
 console.log("http server listening on %d", port)
-
+var sqlinjection = require('sql-injection');
+app.use(sqlinjection);
 var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 
@@ -100,13 +102,13 @@ wss.on("connection", function(ws) {
   				//ws.send(JSON.stringify(a));
   			})
   		}
-  		else if(data[0] == "get_section"){
-
-  		}
   		else if(data[0] == "submit"){
   			var texted = "false";
   			var query = "INSERT INTO clients_and_their_info VALUES (\'"+data[1]+"\', \'"+data[2]+"\', \'"+data[4]+"\', \'"+data[5]+"\', \'"+data[6]+"\', \'"+texted+"\', \'"+data[7]+"\', \'"+data[3]+"\');";
 			console.log(query);
+			sendQuery(query, function(result){
+				console.log(result)
+			})
 			//send query
 			//
   		}
