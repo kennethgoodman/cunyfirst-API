@@ -92,6 +92,17 @@ getSections = function(inst, session, dept, callback){
 				        	}
 				    	
 				    })
+					var temp = [];
+				    var p = cheerio.load(body)
+				    p('.SSSIMAGECENTER').each(function(err,open){
+				        temp.push(open.attribs.alt)
+				    })
+				    var counter = 0;
+				    for(i in struct){
+				        for(j in struct[i]){
+				            struct[i][j]["Status"] = temp[counter++];
+				        }
+				    }
 				} catch(err){
 				    console.log(err)
 				}

@@ -1,6 +1,7 @@
 var db = require('./database');
 var bot = require('./bot')
-a = function(data){
+var textedInSession;
+a = function(data,k){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
         	//console.log(status)
@@ -12,6 +13,7 @@ a = function(data){
                 	console.log(result);
                 })
                 send_message(nbr,text) //send text to user
+                textedInSession[k] = 1;
             }
         });
 }
@@ -28,11 +30,12 @@ checkopen = function(){
 	try{
 		var q = 'SELECT * FROM clients_and_their_info'// where section = 58212';
 		sendQuery(q,function(result){
-						//intervalFn(result)
+						textedInSession = Array.apply(null, Array(result.rowCount)).map(function (x, i) { return 0; })
+						//so that user only gets texted once
 						var k =0;
 						var interval = setInterval( function(){
 							if(k == result.rowCount) k=0;
-							if(!result.rows[k%result.rowCount].texted) a(result.rows[k%result.rowCount]) //if not texted
+							if(!result.rows[k%result.rowCount].texted && textedInSession[k] == 0) a(result.rows[k%result.rowCount],k) //if not texted
 							k += 1
 						}, 5000)//run each query every 5 seconds, I assume CF is checking to make sure one IP doesnt overload server
 			    	})
@@ -40,28 +43,30 @@ checkopen = function(){
 		console.log(err)
 	}
 }
+//var r = sendQuery('SELECT * FROM clients_and_their_info', function(){})
+//setTimeout( function(){ console.log(r)},5000)
 checkopen();
-var CronJob = require('cron').CronJob;
+/*var CronJob = require('cron').CronJob;
 var checkOpen = new CronJob({
-	cronTime: "* 6 * * * *",
+	cronTime: "* * 6 * * *",
 	onTick: checkopen,
 	start: true,
 	timeZone: 'America/Los_Angeles'
 })
 var checkOpen = new CronJob({
-	cronTime: "* 12 * * * *",
+	cronTime: "* * 12 * * *",
 	onTick: checkopen,
 	start: true,
 	timeZone: 'America/Los_Angeles'
 })
 var checkOpen = new CronJob({
-	cronTime: "* 18 * * * *",
+	cronTime: "* * 18 * * *",
 	onTick: checkopen,
 	start: true,
 	timeZone: 'America/Los_Angeles'
 })
 var checkOpen = new CronJob({
-	cronTime: "* 0 * * * *",
+	cronTime: "* * 0 * * *",
 	onTick: checkopen,
 	start: true,
 	timeZone: 'America/Los_Angeles'

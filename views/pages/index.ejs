@@ -4,10 +4,6 @@
   <% include ../partials/header.ejs %>
     
 </head>
-    <link rel="stylesheet" type="text/css"
-          href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
-    <script type='text/javascript'
-        src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>
 <body>
     
   <% include ../partials/nav.ejs %>
@@ -27,7 +23,7 @@
                     <table id="myTable" style="width:90%" border="1" data-toggle="table">
                         <thead>
                             <tr>
-                                <th>Class nbr </th><th>Class section</th><th>Teacher</th>
+                                <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -202,6 +198,9 @@
                           var chkbox = document.createElement('input');
                           chkbox.type = "checkbox";
                           chkbox.id*/
+                          var c4 = row.insertCell(0)
+                          c4.className = "cell"
+                          c4.innerHTML = data[nbr][section]['Status'];
                           var c3 = row.insertCell(0)
                           c3.className = "cell"
                           c3.innerHTML = data[nbr][section]['Instructor'];

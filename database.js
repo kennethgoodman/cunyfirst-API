@@ -20,7 +20,7 @@ queryDatabasePerRow = function(query,callback){
 	});
 }
 sendQuery = function(query,callback){
-	console.log(query)
+	//console.log(query)
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
 		  	console.log(err);
@@ -38,6 +38,8 @@ sendQuery = function(query,callback){
 			    }
 			    else{
 			    	callback(result);
+			    	//console.log("sending")
+			    	return result;
 			    }
 			})
 		})
