@@ -1,9 +1,6 @@
-var dotenv = require('dotenv')
-dotenv.load();
 var db = require('./database');
 var bot = require('./bot')
 var textedInSession;
-send_email('5164046348', "Verizon", "test");
 a = function(data,k){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){

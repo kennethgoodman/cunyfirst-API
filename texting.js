@@ -30,10 +30,10 @@ send_email = function(nbr, provider, body){
 	var to = nbr;
 	var carrier = returnCarriers();
 	if(provider != "@")
-		to += "@" + carrier[provider];
+		to +=  carrier[provider];
 	console.log(to)
 	client.sendEmail({
-	    "From": "yourClassIsOpen@classlock.com",
+	    "From": "kenneth@noclosedclass.com",
 	    "To": to,
 	    "Subject": "Class Opened!", 
 	    "TextBody": body

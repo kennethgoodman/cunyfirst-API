@@ -2,8 +2,6 @@
 var pg = require('pg');
 var car = require('./carrier')
 var worker = require('./worker');
-var dotenv = require('dotenv')
-dotenv.load();
 var bot = require('./bot')
 var mainLoop = require('./mainLoop')
 var WebSocketServer = require("ws").Server
@@ -35,7 +33,7 @@ app.use(stormpath.init(app, {
 	  application:  process.env.STORMPATH_APPLICATION_HREF,
 }));
 app.use(express.static(__dirname + '/public'));
-app.get('/', /*stormpath.loginRequired,*/ function(request, response) {
+app.get('/', stormpath.loginRequired, function(request, response) {
   	response.render('pages/index',{options: ['inst','session','dept','class_nbr', 'section','your_phone_number'],userInfo: request.user});
 });
 
