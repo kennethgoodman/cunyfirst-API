@@ -2,23 +2,30 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
-    
+    <meta name="google-site-verification" content="WjQd8jEuWn_bBRRZUN1MTbrMM7YFRbYAuwpR_WandHQ" />
 </head>
 <body>
     
   <% include ../partials/nav.ejs %>
     <div class="wrap">
         <div class="fleft">
-            <p style="margin-left:100px" id="testing">Add a new class:</p>
+            <p style="margin-left:100px">These dropdowns take time to load. Thank you for your patience.</p>
+            <p style="margin-left:100px" id="testing">Add a new class, find your class/classes, enter your phone number and wait to get texted: </p>
             <div style="margin-left:100px">
-                <% for(var option = 0; option < 3 /*options.length-1*/;option++){ %>
+                <% for(var option = 0; option < 3;option++){ %>
                     <%=options[option]%>:
                         <select id=<%=options[option]%>>
                             <option selected="selected">
                         </select>
                         <br>
                 <%}%>
-                <input type="text" placeholder="9171234567" id="you_phone_nbr"><button type="button" id="submitData">Submit!</button>
+                <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr">
+                <select id="carrier" default="pick a carrier">
+                    <option value="defualt" selected="selected">
+                        Pick A Carrier
+                    </option>
+                </select>
+                <button type="button" id="submitData">Get Classes!</button>
                 <div style="overflow:scroll; height:400px;">
                     <table id="myTable" style="width:90%" border="1" data-toggle="table">
                         <thead>
@@ -66,6 +73,29 @@
                     
                 </table>
         </div>
+            <br><br>
+            <p>This app costs me my time and money. It's always akward asking for donations. </p>
+            <p> Below is my cost, if you can help me fill some of that for this month, that would be great.</p><p> There is no need to donate to use this app, feel free to use as you please.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Item</th>
+                        <td>Heroku</td><td>Domain</td>
+                    </tr>
+                    <tr>
+                        <th>Cost</th>
+                        <td>7$/Month</td><td>15$/Year</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p> I'd like to get more servers on Heroku to speed up this app in the future as well. Thank you!</p>
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
     </div>
 </body>
 </html>
@@ -128,20 +158,22 @@
             //send message for get class
         })
         clicked = function(){
-            var userName = $('.fullName')[0].textContent.trim();
+            var fullName = $('.fullName')[0].textContent.trim();
+            var userName = $('.username')[0].textContent.trim();
             var inst = $('#inst').val();
             var session = $('#session').val();
             var dept = $('#dept').val();
             var phoneNbr = $('#you_phone_nbr').val();
             var nbr;
             var section;
+            var carrier = $('#carrier').val();
             $( "input[type=checkbox]" ).each(function(){
                 if($(this).is(':checked')){
                     var temp = $(this).parent().parent()[0]
                     ///console.log($(this).parent().parent());
                     nbr = temp.childNodes[0].textContent.trim();
                     section = temp.childNodes[1].textContent.trim();
-                    ws.send(JSON.stringify(["submit",userName,inst,dept,nbr,section,phoneNbr,session]));
+                    ws.send(JSON.stringify(["submit",fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]));
                 }
             })
         }
@@ -198,6 +230,9 @@
                           var chkbox = document.createElement('input');
                           chkbox.type = "checkbox";
                           chkbox.id*/
+                          if(data[nbr][section]['Status'] != "Closed"){
+                              return;
+                          }
                           var c4 = row.insertCell(0)
                           c4.className = "cell"
                           c4.innerHTML = data[nbr][section]['Status'];
@@ -220,6 +255,16 @@
                       $(this).parent().parent().toggleClass("highlight");
                   })
               }
+              else if(data[0] == "carriers"){
+                  var dropdown = document.getElementById('carrier');
+                  for(var i = 0; i < data[1].length; i++){
+                      var option = document.createElement("option");
+                      var carrier = data[1][i]
+                      option.text = carrier;
+                      option.value = carrier;
+                      if(carrier != undefined) dropdown.add(option);
+                  }
+              }
               //ws.send("message to be sent")
               //console.log(event.data)
           } catch(err){
@@ -228,6 +273,7 @@
         };
         setTimeout(function(){
             ws.send(JSON.stringify(["get_inst"]));
+            ws.send(JSON.stringify(["getCarriers"]));
             test = function(){
                 ws.send(JSON.stringify(["get_session", "QNS01"]));
                 ws.send(JSON.stringify(["get_dept","QNS01","1162"]));

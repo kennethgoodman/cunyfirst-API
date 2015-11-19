@@ -1,3 +1,4 @@
+var car = require('./carrier')
 var client = require('twilio')('AC5b14e195c9b22df44f8a4e61a520f03d','fc26c5d165ac9ee2d373485bdb83ff7e')
 send_message = function(nbr,body) {
 	client.sendMessage({
@@ -19,5 +20,28 @@ send_message = function(nbr,body) {
 	    	console.log(err)
 	    	console.log(responseData)
 	    }
+	});
+}
+var postmark = require("postmark");
+
+// Example request
+var client = new postmark.Client(process.env.POSTMARK_API_KEY);
+send_email = function(nbr, provider, body){
+	var to = nbr;
+	var carrier = returnCarriers();
+	if(provider != "@")
+		to += "@" + carrier[provider];
+	console.log(to)
+	client.sendEmail({
+	    "From": "yourClassIsOpen@classlock.com",
+	    "To": to,
+	    "Subject": "Class Opened!", 
+	    "TextBody": body
+	}, function(error, success) {
+	    if(error) {
+	        console.error("Unable to send via postmark: " + error.message);
+	        return;
+	    }
+	    console.info("Sent to postmark for delivery")
 	});
 }

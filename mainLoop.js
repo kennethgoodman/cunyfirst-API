@@ -1,6 +1,9 @@
+var dotenv = require('dotenv')
+dotenv.load();
 var db = require('./database');
 var bot = require('./bot')
 var textedInSession;
+send_email('5164046348', "Verizon", "test");
 a = function(data,k){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
@@ -12,7 +15,8 @@ a = function(data,k){
                 sendQuery(query, function(result){ //change texted to TRUE in DB
                 	console.log(result);
                 })
-                send_message(nbr,text) //send text to user
+                send_email(nbr, data['Provider'], text);
+                //send_message(nbr,text) //send text to user
                 textedInSession[k] = 1;
             }
         });
@@ -43,9 +47,10 @@ checkopen = function(){
 		console.log(err)
 	}
 }
+
 //var r = sendQuery('SELECT * FROM clients_and_their_info', function(){})
 //setTimeout( function(){ console.log(r)},5000)
-checkopen();
+//checkopen();
 /*var CronJob = require('cron').CronJob;
 var checkOpen = new CronJob({
 	cronTime: "* * 6 * * *",
