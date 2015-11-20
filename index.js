@@ -1,42 +1,23 @@
+var dotenv = require('dotenv')
+dotenv.load();
 var express = require('express');
-//var stormpath = require('express-stormpath');
+var stormpath = require('express-stormpath');
+
 var app = express();
-var pg = require('pg');
-var bot = require('./bot')
-var mainLoop = require('./mainLoop')
-/*var dotenv = require('dotenv')
-dotenv.load();*/
 
-app.set('port', (process.env.PORT || 5000));
-app.use(express.static(__dirname + '/public'));
-// views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
+app.use(stormpath.init(app, {
+  client: {
+    apiKey: {
+      id: process.env.STORMPATH_API_KEY_ID,
+      secret: process.env.STORMPATH_API_KEY_SECRET,
+    }
+  },
+  application: {
+    href: process.env.STORMPATH_URL
+  },
+  website: true
+}));
 
-app.get('/', function(request, response) {
-  response.render('pages/index',{options: ['inst','session','dept','section','your phone number']});
+app.on('stormpath.ready', function() {
+  app.listen(process.env.PORT || 3000);
 });
-
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
-
-app.get('/db', function (request, response) {
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM test_table', function(err, result) {
-      done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-      { 
-        response.render('pages/db', {results: result.rows} ); 
-      }
-    });
-  });
-})
-app.get('/search', function(request,response){
-  getSchools(function(x){
-    response.render('pages/search', {classes: x})
-  })
-})
-

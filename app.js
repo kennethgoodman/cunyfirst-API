@@ -1,6 +1,6 @@
 // app.js
-//var dotenv = require('dotenv')
-//dotenv.load();
+var dotenv = require('dotenv')
+dotenv.load();
 var pg = require('pg');
 var car = require('./carrier')
 var worker = require('./worker');
@@ -26,13 +26,16 @@ console.log("websocket server created")
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(stormpath.init(app, {
-	enableAccountVerification: true,
-	website: true,
-	enableForgotPassword: true,
-	  apiKeyId:     process.env.STORMPATH_API_KEY_ID,
-	  apiKeySecret: process.env.STORMPATH_API_KEY_SECRET,
-	  secretKey:    process.env.STORMPATH_SECRET_KEY,
-	  application:  process.env.STORMPATH_APPLICATION_HREF,
+  client: {
+    apiKey: {
+      id: process.env.STORMPATH_API_KEY_ID,
+      secret: process.env.STORMPATH_API_KEY_SECRET,
+    }
+  },
+  application: {
+    href: process.env.STORMPATH_URL
+  },
+  website: true
 }));
 app.use(express.static(__dirname + '/public'));
 app.get('/', stormpath.loginRequired, function(request, response) {
