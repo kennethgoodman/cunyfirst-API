@@ -5,7 +5,9 @@ var Heroku = require('heroku-client'),
 var app = heroku.apps(process.env.HEROKU_APP_NAME);
 
 app.info(function (err, app) {
-	console.log(app)
+	console.log(“testing”);
+	console.log(err);
+	console.log(app);
 });
 
 process.exit(0);
