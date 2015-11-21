@@ -29,9 +29,13 @@ readQue = function lambda(){
 	var item = queue.shift();
 	//console.log(item);
 	if(item != undefined){ 
-		a(item,function(){
-			lambda()
-		});
+		try{
+			a(item,function(){
+				lambda()
+			});
+		} catch(err){
+			lambda();
+		}
 	}
 	else{
 		setTimeout(function(){ lambda()}, 5000)
