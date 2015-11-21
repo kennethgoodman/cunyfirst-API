@@ -5,6 +5,7 @@ var client = new Heroku({email: 'kennethsgoodman@yahoo.com', api_key: 'a6e0511d-
 // Do something with client
 
 client.app('noclosedclass').dynos.list(function(err,dyno){
-	client.app('noclosedclass').dyno(dyno[0].id).restart(function(e,f,g){
+	client.app('noclosedclass').dyno(dyno[0].id).restart(function(e,f){
+	
 	})
 })
