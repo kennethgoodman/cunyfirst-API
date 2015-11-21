@@ -313,9 +313,6 @@ addDataToTable = function(callback){
 		});
 	})
 }
-getSession("QNS01", function(inst,data){
-	console.log(data)
-})
 /*
 addDataToTable();
 setTimeout( function(){ 
