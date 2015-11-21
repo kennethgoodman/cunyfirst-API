@@ -1,3 +1,2 @@
 #! /app/.heroku/node/bin/node
 var test = require('./test')
-process.exit(0);
