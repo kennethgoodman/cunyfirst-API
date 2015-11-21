@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $('#dataTables').DataTable({
     	select: {
-    		style: "os",
+    		style: "multi",
     		className: 'row-selected selected'
     	},
     	responsive: true,
