@@ -1,3 +1,4 @@
+console.log("Testing")
 var Heroku = require('heroku.node');
 
 var client = new Heroku({email: 'kennethsgoodman@yahoo.com', api_key: 'a6e0511d-0109-4209-b8c3-31f3f9e02273'});
