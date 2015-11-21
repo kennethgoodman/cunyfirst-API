@@ -1,5 +1,4 @@
-var dotenv = require('dotenv')
-dotenv.load();
+var morgan = require('morgan')
 var pg = require('pg');
 var car = require('./carrier')
 var worker = require('./worker');
@@ -40,6 +39,7 @@ app.use(stormpath.init(app, {
   },
   website: true
 }));
+app.use(morgan('combined'))
 var wss;
 var server = http.createServer(app)
 server.listen(port)
