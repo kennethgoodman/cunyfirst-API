@@ -1,6 +1,4 @@
 //RESTART HEROKU
-var dotenv = require('dotenv')
-dotenv.load();
 restartHeroku = function(){
 	var Heroku = require('heroku.node');
 
@@ -12,7 +10,7 @@ restartHeroku = function(){
 		})
 	})
 }
-//restartHeroku();
+restartHeroku();
 //DONE
 
 //DELTE THOSE WE TEXTED ALREADY

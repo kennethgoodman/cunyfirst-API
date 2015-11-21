@@ -5,8 +5,6 @@ var FormData = require('form-data');
 var formTemplate = require('./form');
 var Xray = require('x-ray');
 var x = Xray();
-var dotenv = require('dotenv')
-dotenv.load();
 //var dotenv = require('dotenv')
 //dotenv.load();
 Array.prototype.remove = function(from, to) {

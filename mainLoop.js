@@ -1,5 +1,3 @@
-var dotenv = require('dotenv')
-dotenv.load();
 var db = require('./database');
 var bot = require('./bot')
 var textedInSession;
@@ -51,7 +49,7 @@ setInterval( function(){
 		sendQuery2(q, function(row){
 			if(!row.texted) a(row)
 		})
-	}, 5000);
+	}, 10000);
 
 //var r = sendQuery('SELECT * FROM clients_and_their_info', function(){})
 //setTimeout( function(){ console.log(r)},5000)
