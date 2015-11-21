@@ -68,7 +68,12 @@
     		else if(data[0] == "submit"){
     			checkForEmptyData(data, function(data){
   	  			var texted = "false";
-  	  			var query = "INSERT INTO clients_and_their_info VALUES (\'"+data[1]+"\', \'"+data[2]+"\', \'"+data[3]+"\', \'"+data[4]+"\', \'"+data[5]+"\', \'"+texted+"\', \'"+data[6]+"\', \'"+data[7]+"\', \'"+data[8]+"\', \'"+data[9]+"\');";
+  	  			var query = "INSERT INTO clients_and_their_info VALUES (\'";
+            for(var i = 1; i < data.length; i++){
+              query += data[i][0]+"\', \'"+data[i][1]+"\', \'"+data[i][2]+"\', \'"+data[i][3]+"\', \'"+data[i][4]+"\', \'"+texted+"\', \'"+data[i][5]+"\', \'"+data[i][6]+"\', \'"+data[i][7]+"\', \'"+data[i][8]+"\')";
+              if(i+1 == data.length) query += ";"
+              else query += ", (\'"
+            }
   				console.log(query);
   				sendQuery(query, function(result){
   					console.log(result)

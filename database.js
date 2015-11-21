@@ -28,10 +28,10 @@ sendQuery = function(query,callback){
 		  	pg.end();
 		  	return;
 		  }
-		  //console.log('Connected to postgres! Getting schemas...');
+		  console.log('Connected to postgres! Getting schemas...');
 		  client
 		    .query(query, function(err, result) {
-		    	
+		    	console.log(result);
 			    if(err) {
 			      console.error('error running query', err);
 			      //callback(err)
