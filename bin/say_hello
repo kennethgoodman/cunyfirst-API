@@ -1,11 +1,17 @@
 #! /app/.heroku/node/bin/node
 var Heroku = require('heroku-client'),
     heroku = new Heroku({ token: process.env.HEROKU_API_TOKEN });
+console.log(process.env.HEROKU_API_TOKEN);
+console.log(process.env.HEROKU_APP_NAME);
 function sayHello() {
 	var app = heroku.apps(process.env.HEROKU_APP_NAME);
-
 	app.info(function (err, app) {
-		console.log(app);
+		if(err){
+			console.log(err);
+		}
+		else{
+			console.log(app);
+		}	
   	});
 }
 sayHello();
