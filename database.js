@@ -3,7 +3,7 @@ var app = express();
 var pg = require('pg');
 /*var dotenv = require('dotenv')
 dotenv.load();*/
-pg.defaults.poolIdleTimeout = 10000;
+pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  if (err) console.log("err");
@@ -43,6 +43,17 @@ sendQuery = function(query,callback){
 			    }
 			})
 		})
+}
+sendQuery2 = function(q, callback){
+	var client = new pg.Client(process.env.DATABASE_URL);
+	client.connect();
+	var query = client.query(q);
+	query.on('row', function(row){
+		callback(row)
+	})
+	query.on('end', function(){
+		client.end();
+	})
 }
 viewTable = function(callback){
 	sendQuery('SELECT * FROM clients_and_their_info', callback)

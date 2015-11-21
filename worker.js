@@ -36,6 +36,7 @@ getSections = function(inst, session, dept, callback){
         		var struct = {}
         		var className = dept;
         		try{
+        			var classOrder = [];
 	        		x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
 				        var count = 0
 				        	for(var i in td){
@@ -51,8 +52,10 @@ getSections = function(inst, session, dept, callback){
 						                if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
 						                    //var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
 						                    var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
+						                    var name = name.trim()
 						                    //console.log(newData)
 						                    var nbr = newData[8]
+						                    classOrder.push(name);
 						                    var class_nbr = newData[0].substring(2 + className.length, 2+className.length + newData[0].indexOf("-"))
 						                    newData.remove(0)
 						                    var d = {}
@@ -75,14 +78,17 @@ getSections = function(inst, session, dept, callback){
 						                                    }
 						                                nbr = newData[t+7]
 						                                d[nbr] = {}
+						                                classOrder.push(name);
 						                                d[nbr]["Status"] = "0"
 						                            }
 						                            d[nbr][newData[t]] = newData[t+7];
+						            
 						                        }
 						                    } catch(err){
 						                        //console.log(err)
 						                    }
 						                    struct[name] = d
+						                    //console.log(struct[name])
 						                }
 						                count += 1
 						            }
@@ -97,11 +103,12 @@ getSections = function(inst, session, dept, callback){
 				    p('.SSSIMAGECENTER').each(function(err,open){
 				        temp.push(open.attribs.alt)
 				    })
+				    //console.log(struct);
 				    var counter = 0;
-				    for(i in struct){
-				        for(j in struct[i]){
-				            struct[i][j]["Status"] = temp[counter++];
-				        }
+				    for(var classNbr in classOrder){
+				    	for(var sectionNbr in struct[classNbr]){
+				    		struct[classNbr][sectionNbr]["Status"] = temp[counter++];
+				    	}
 				    }
 				} catch(err){
 				    console.log(err)
@@ -152,6 +159,7 @@ getSections = function(inst, session, dept, callback){
         })
     })
 }
+getSections("QNS01","1162","ACCT",function(){});
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {

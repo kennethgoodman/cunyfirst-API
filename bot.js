@@ -5,6 +5,8 @@ var FormData = require('form-data');
 var formTemplate = require('./form');
 var Xray = require('x-ray');
 var x = Xray();
+var dotenv = require('dotenv')
+dotenv.load();
 //var dotenv = require('dotenv')
 //dotenv.load();
 Array.prototype.remove = function(from, to) {
@@ -111,6 +113,7 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
             request.post(submit_options, function(err, res, body){
                 addData(body, subject, function(struct){
                     try{
+                        console.log(struct)
                         callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
                     } catch(err){
                         console.log(err)
@@ -120,8 +123,9 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
         }) 
     });
 };
-//var struct = getClasses('QNS01','1162','ARAB','E','102', '59787');
-
+/*getClasses("QNS01","1162","ACCT","E","102","58210",function(result,text){
+    console.log(result)
+})*/
 //Gets Schools
 getSchools = function(callback){
     request.post(options, function(err, res, body) {

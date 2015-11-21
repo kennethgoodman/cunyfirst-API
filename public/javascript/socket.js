@@ -49,9 +49,10 @@ ws.onmessage = function (event) {
           t.clear();
           for(var nbr in data){
               for(var section in data[nbr]){
-                  if(data[nbr][section]['Status'] != "Closed"){
+                  //console.log(data[nbr][section])
+                  /*if(data[nbr][section]['Status'] != "Closed"){
                       continue;
-                  }
+                  }*/
                   t.row.add([nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status']])
               }
           }

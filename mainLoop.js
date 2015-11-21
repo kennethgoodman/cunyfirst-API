@@ -1,7 +1,9 @@
+var dotenv = require('dotenv')
+dotenv.load();
 var db = require('./database');
 var bot = require('./bot')
 var textedInSession;
-a = function(data,k){
+a = function(data){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
         	//console.log(status)
@@ -12,9 +14,9 @@ a = function(data,k){
                 sendQuery(query, function(result){ //change texted to TRUE in DB
                 	console.log(result);
                 })
-                send_email(nbr, data['Provider'], text);
+                send_email(nbr, data['provider'], text);
                 //send_message(nbr,text) //send text to user
-                textedInSession[k] = 1;
+                //textedInSession[k] = 1;
             }
         });
 }
@@ -44,6 +46,12 @@ checkopen = function(){
 		console.log(err)
 	}
 }
+var q = 'SELECT * FROM clients_and_their_info';
+setInterval( function(){
+		sendQuery2(q, function(row){
+			if(!row.texted) a(row)
+		})
+	}, 5000);
 
 //var r = sendQuery('SELECT * FROM clients_and_their_info', function(){})
 //setTimeout( function(){ console.log(r)},5000)
