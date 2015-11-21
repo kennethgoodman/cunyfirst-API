@@ -1,7 +1,7 @@
 #! /app/.heroku/node/bin/node
 function sayHello(){
 	var Heroku = require('heroku-client'),heroku = new Heroku({ token: process.env.HEROKU_API_TOKEN });
-heroku.apps({process.env.HEROKU_APP_NAME}).dynos().restartAll({console.log(heroku)});
+heroku.apps(process.env.HEROKU_APP_NAME).dynos().restartAll(function(){console.log(heroku)});
 }
 sayHello();
 process.exit(0);
