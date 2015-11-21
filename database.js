@@ -39,7 +39,6 @@ sendQuery = function(query,callback){
 			    else{
 			    	callback(result);
 			    	//console.log("sending")
-			    	return result;
 			    }
 			})
 		})

@@ -1,7 +1,11 @@
+
+var dotenv = require('dotenv')
+dotenv.load();
 var db = require('./database');
 var bot = require('./bot')
 var textedInSession;
-a = function(data){
+
+a = function(data,callback){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
         	//console.log(status)
@@ -13,12 +17,26 @@ a = function(data){
                 	console.log(result);
                 })
                 send_email(nbr, data['provider'], text);
+                
                 //send_message(nbr,text) //send text to user
                 //textedInSession[k] = 1;
             }
+            callback();
         });
 }
-
+var queue = []
+readQue = function lambda(){
+	var item = queue.shift();
+	//console.log(item);
+	if(item != undefined){ 
+		a(item,function(){
+			lambda()
+		});
+	}
+	else{
+		setTimeout(function(){ lambda()}, 5000)
+	}
+}
 intervalFn = function(result){
 	var k =0;
 	var interval = setInterval( function(){
@@ -47,10 +65,10 @@ checkopen = function(){
 var q = 'SELECT * FROM clients_and_their_info';
 setInterval( function(){
 		sendQuery2(q, function(row){
-			if(!row.texted) a(row)
+			if(!row.texted) queue.push(row)
 		})
-	}, 10000);
-
+	}, 5000);
+setTimeout(function(){readQue();},15000);
 //var r = sendQuery('SELECT * FROM clients_and_their_info', function(){})
 //setTimeout( function(){ console.log(r)},5000)
 //checkopen();
