@@ -3,4 +3,4 @@ function sayHello() {
   console.log('Hello');
 }
 sayHello();
-exit();
+process.exit(0);
