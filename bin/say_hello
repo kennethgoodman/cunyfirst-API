@@ -1,4 +1,4 @@
-#! /app/bin/node
+#! /usr/local/bin/node
 function sayHello() {
   console.log('Hello');
 }
