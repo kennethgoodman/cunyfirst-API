@@ -76,6 +76,10 @@ clicked = function(){
         var temp = $(this)[0] //get tr
         nbr = temp.childNodes[0].textContent.trim();
         section = temp.childNodes[1].textContent.trim();
-        ws.send(JSON.stringify(["submit",fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]));
+        try{
+            ws.send(JSON.stringify(["submit",fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]));
+        } catch(err){
+            console.log(err)
+        }
     })
 }

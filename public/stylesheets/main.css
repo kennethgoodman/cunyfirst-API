@@ -64,3 +64,9 @@ th, td {
 #selectable {
     cursor: 'pointer'
 }
+#dataTables tbody tr {
+  cursor: pointer;
+}
+#dataTables thead tr {
+  cursor: pointer;
+}

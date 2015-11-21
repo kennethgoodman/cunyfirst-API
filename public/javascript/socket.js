@@ -3,6 +3,7 @@ var ws = new WebSocket(host);
 ws.onmessage = function (event) {
   var data = JSON.parse(event.data);
   try{
+      if(data[0] == "keep open") return; //dont print
       console.log(data);
       if(data[0] == "inst"){
           removeDropdowns(["inst","session","dept"])
@@ -57,14 +58,14 @@ ws.onmessage = function (event) {
               }
           }
           t.draw()
-          $('#dataTables tbody').on('click', 'tr', function (){
+          /*$('#dataTables tbody').on('click', 'tr', function (){
               if ( $(this).hasClass('selected') ) {
                  $(this).removeClass('selected');
               }
               else{
                   $(this).addClass('selected');
               }     
-            });
+            });*/
       }
       else if(data[0] == "carriers"){
           var dropdown = document.getElementById('carrier');

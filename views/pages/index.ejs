@@ -11,12 +11,12 @@
     <div class="wrap">
         <div class="fleft">
             <p style="margin-left:90px">These dropdowns take time to load. Thank you for your patience.</p>
-            <p style="margin-left:90px" id="testing">Add a new class, find your class/classes, enter your phone number and wait to get texted: </p>
+            <p style="margin-left:90px" id="testing">To add a new class, fill out dropdowns, click on your class/classes, enter your phone number and provider and wait to get texted: </p>
             <div style="margin-left:90px">
                 <% for(var option = 0; option < 3;option++){ %>
                     <%=options[option]%>:
                         <select id=<%=options[option]%>>
-                            <option selected="selected">
+                            <option selected="selected">pick one</option>
                         </select>
                         <br>
                 <%}%>

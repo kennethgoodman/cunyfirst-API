@@ -10,7 +10,7 @@ restartHeroku = function(){
 		})
 	})
 }
-restartHeroku();
+//restartHeroku();
 //DONE
 
 //DELTE THOSE WE TEXTED ALREADY

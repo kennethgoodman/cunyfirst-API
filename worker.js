@@ -103,11 +103,15 @@ getSections = function(inst, session, dept, callback){
 				    p('.SSSIMAGECENTER').each(function(err,open){
 				        temp.push(open.attribs.alt)
 				    })
+				    //console.log(classOrder)
 				    //console.log(struct);
 				    var counter = 0;
+				    var last = "n/a"
 				    for(var classNbr in classOrder){
-				    	for(var sectionNbr in struct[classNbr]){
-				    		struct[classNbr][sectionNbr]["Status"] = temp[counter++];
+				    	if(classOrder[classNbr] == last) continue;
+				    	last = classOrder[classNbr]
+				    	for(var sectionNbr in struct[classOrder[classNbr]]){
+				    		struct[classOrder[classNbr]][sectionNbr]["Status"] = temp[counter++];
 				    	}
 				    }
 				} catch(err){
@@ -159,7 +163,7 @@ getSections = function(inst, session, dept, callback){
         })
     })
 }
-getSections("QNS01","1162","ACCT",function(){});
+//getSections("QNS01","1162","ACCT",function(){});
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
