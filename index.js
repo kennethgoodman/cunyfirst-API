@@ -15,13 +15,6 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(stormpath.init(app, {
-	enableFacebook: true,
-	social: {
-		facebook: {
-			appId: '430642067125422',
-			appSecret: 'dae283556b9ca5e52dd05d301df2b72f',
-		},
-	},
   client: {
     apiKey: {
       id: process.env.STORMPATH_API_KEY_ID,
@@ -94,16 +87,17 @@ wss.on("connection", function(ws) {
   			checkForEmptyData(data, function(data){
   				var a = ["session"];
   				getSession(data[1],function(inst,data){
-  				var keys = Object.keys(data);
-  				for(var sess in keys){
-  					if(sess != undefined){
-  						var temp = {};
-  						temp[keys[sess]] = data[keys[sess]];
-  						a.push(temp)
-  					}
-  				}
+	  				var keys = Object.keys(data);
+	  				for(var sess in keys){
+	  					if(sess != undefined){
+	  						var temp = {};
+	  						temp[keys[sess]] = data[keys[sess]];
+	  						a.push(temp)
+	  					}
+	  				}
+
   				//a.remove(a.length-1)
-  				sendData(ws,a)
+  					sendData(ws,a)
   				//ws.send(JSON.stringify(a))
   				})
   			})

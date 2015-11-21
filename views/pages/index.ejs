@@ -2,19 +2,17 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
-    <script src="//cdn.auth0.com/js/lock-7.9.min.js"></script>
-
 <!-- Setting the right viewport -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 </head>
 <body>
     
   <% include ../partials/nav.ejs %>
     <div class="wrap">
         <div class="fleft">
-            <p style="margin-left:100px">These dropdowns take time to load. Thank you for your patience.</p>
-            <p style="margin-left:100px" id="testing">Add a new class, find your class/classes, enter your phone number and wait to get texted: </p>
-            <div style="margin-left:100px">
+            <p style="margin-left:90px">These dropdowns take time to load. Thank you for your patience.</p>
+            <p style="margin-left:90px" id="testing">Add a new class, find your class/classes, enter your phone number and wait to get texted: </p>
+            <div style="margin-left:90px">
                 <% for(var option = 0; option < 3;option++){ %>
                     <%=options[option]%>:
                         <select id=<%=options[option]%>>
@@ -29,6 +27,7 @@
                     </option>
                 </select>
                 <button type="button" id="submitData">Get Classes!</button>
+                <!--
                 <div style="overflow:scroll; height:400px;">
                     <table id="myTable" style="width:90%" border="1" data-toggle="table">
                         <thead>
@@ -40,11 +39,33 @@
 
                         </tbody>
                     </table>
-                </div>    
+                </div>-->
+                <div>
+                    <table id="dataTables" class="display hover" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <script>
+                $(document).ready(function() {
+                    $('#dataTables').DataTable();
+                } );
+                </script>
             </div>
         </div>
         <div class="fright">
-            Account Info:
+            <p style="margin-left:10px">Account Info:</p>
+            <div style="margin-left:10px">
             <div>
                 <table border="1">
                     <thead>
@@ -76,7 +97,7 @@
                     
                 </table>
         </div>
-            <br><br>
+            <br>
             <p>This app costs me my time and money. It's always akward asking for donations. </p>
             <p> Below is my cost, if you can help me fill some of that for this month, that would be great.</p><p> There is no need to donate to use this app, feel free to use as you please.</p>
             <table>
@@ -99,10 +120,10 @@
 <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
             </form>
+        </div>
     </div>
 </body>
 </html>
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
         /*
        $(document).ready(function(){
@@ -160,6 +181,17 @@
                                                 g.options[g.selectedIndex].value]));
             //send message for get class
         })
+        removeDropdowns = function(dropdowns){
+            for(var select in dropdowns){
+                var id = "#" + dropdowns[select];
+                $(id)
+                        .find('option')
+                        .remove()
+                        .end()
+                        .append('<option value="defualt">pick one</option>')
+                    ;
+            }
+        }
         clicked = function(){
             var fullName = $('.fullName')[0].textContent.trim();
             var userName = $('.username')[0].textContent.trim();
@@ -169,15 +201,20 @@
             var phoneNbr = $('#you_phone_nbr').val();
             var nbr;
             var section;
+            if(phoneNbr == undefined){
+                alert("please enter a phone number");
+                return;
+            }
             var carrier = $('#carrier').val();
-            $( "input[type=checkbox]" ).each(function(){
-                if($(this).is(':checked')){
-                    var temp = $(this).parent().parent()[0]
-                    ///console.log($(this).parent().parent());
-                    nbr = temp.childNodes[0].textContent.trim();
-                    section = temp.childNodes[1].textContent.trim();
-                    ws.send(JSON.stringify(["submit",fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]));
-                }
+            if(carrier == "defualt"){
+                alert("please enter a carrier")
+                return;
+            }
+            $( ".selected" ).each(function(){
+                var temp = $(this)[0] //get tr
+                nbr = temp.childNodes[0].textContent.trim();
+                section = temp.childNodes[1].textContent.trim();
+                ws.send(JSON.stringify(["submit",fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]));
             })
         }
         var host = location.origin.replace(/^http/, 'ws')
@@ -187,6 +224,7 @@
           try{
               console.log(data);
               if(data[0] == "inst"){
+                  removeDropdowns(["inst","session","dept"])
                   var keys = Object.keys(data[1]);
                   for(var i = 0; i < keys.length; i++){
                       var dropdown = document.getElementById('inst');
@@ -198,6 +236,7 @@
                   }
               }
               else if(data[0] == "session"){
+                  removeDropdowns(["session","dept"])
                   for(var i = 1; i < data.length; i++){
                       var dropdown = document.getElementById('session');
                       var option = document.createElement("option");
@@ -208,6 +247,7 @@
                   }
               }
               else if(data[0] == "dept"){
+                  removeDropdowns(["dept"])
                   var keys = Object.keys(data[1]);
                   for(var i = 0; i < keys.length; i++){
                       var dropdown = document.getElementById('dept');
@@ -219,14 +259,15 @@
                   }
               }
               else if(data[0] == "class_nbr"){ 
-                  var table = document.getElementById("tableBody");
-                  $("#tableBody").empty();
+                  //var table = document.getElementById("tableBody");
+                  //$("#tableBody").empty();
                   
                   data = data[1]
                   //var nbrs = Object.keys(data);
+                  var t = $('#dataTables').DataTable();
+                  t.clear();
                   for(var nbr in data){
                       for(var section in data[nbr]){
-                          var row = table.insertRow(-1);
                           //row.className = "row";
                           /*var c4 = row.insertCell(0);
                           c4.className = "choosingClassBtn";
@@ -234,8 +275,11 @@
                           chkbox.type = "checkbox";
                           chkbox.id*/
                           if(data[nbr][section]['Status'] != "Closed"){
-                              return;
+                              continue;
                           }
+                          t.row.add([nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status']])
+                          /*var row = table.insertRow(-1);
+                          row.id = "selectable"
                           var c4 = row.insertCell(0)
                           c4.className = "cell"
                           c4.innerHTML = data[nbr][section]['Status'];
@@ -248,15 +292,35 @@
                           var c1 = row.insertCell(0)
                           c1.innerHTML = nbr 
                           c1.className = "cell"
+                          $(row).click(function(){
+                              $(this).toggleClass('selected');
+                          })
+                          row.style.cursor = 'pointer'*/
                       }
                   }
-                  $("table td:first-child").each(function() {
+                  t.draw()
+                  $('#dataTables tbody').on('click', 'tr', function (){
+                      if ( $(this).hasClass('selected') ) {
+                         $(this).removeClass('selected');
+                      }
+                      else{
+                          $(this).addClass('selected');
+                      }     
+                    });
+                  /*$('#selectable').each(function(){
+                      $(this).click(function(){
+                        $(this).toggleClass('selected');
+                      })
+                  })
+                  $('#selectable').css('cursor', 'pointer');*/
+                  //})
+                  /*$("table td:first-child").each(function() {
                       if($(this)[0].className != "cell") return;
-                    $(this).prepend('<input type="checkbox" class="basic-kpi-row"/>');
-                 });
+                      $(this).prepend('<input type="checkbox" class="basic-kpi-row"/>');
+                  });
                   $( "input[type=checkbox]" ).on( "click", function(){
                       $(this).parent().parent().toggleClass("highlight");
-                  })
+                  })*/
               }
               else if(data[0] == "carriers"){
                   var dropdown = document.getElementById('carrier');
@@ -284,16 +348,14 @@
             }
             //test();                 
                              },1250);
-        
-        
     </script>
 <style>
     tr {
         display: table-row;
     }
-    tr:hover {
+    /*tr:hover {
         background-color: #cccccc;
-    }
+    }*/
    
     .wrap {
         width: 100%;
@@ -318,7 +380,11 @@
     th, td {
         padding: 15px;
     }
-    .highlight { 
-        background-color: red; 
+    /*.selected { 
+        background: #F39814;
+        color: white;
+    }*/
+    #selectable {
+        cursor: 'pointer'
     }
 </style>
