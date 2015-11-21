@@ -1,6 +1,6 @@
 #! /app/.heroku/node/bin/node
 var Heroku = require('heroku-client'),
-    heroku = new Heroku({ token: HEROKU_API_TOKEN });
+    heroku = new Heroku({ token: process.env.HEROKU_API_TOKEN });
 function sayHello() {
 	var app = heroku.apps(‘noclosedclass’);
 
