@@ -4,7 +4,7 @@ function sayHello(){
 
 var client = new Heroku({email: 'kennethsgoodman@yahoo.com', api_key: 'a6e0511d-0109-4209-b8c3-31f3f9e02273'});
 console.log(client);
-console.log(client.app('noclosedclass’));
+console.log(client.app('noclosedclass'));
 console.log(client.app('noclosedclass').dynos);
 client.app('noclosedclass').dynos.list(function(err,dyno){
 	console.log('noclosedclass');
