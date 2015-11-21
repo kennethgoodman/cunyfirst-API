@@ -3,8 +3,9 @@ function sayHello(){
 	var Heroku = require('heroku-client'),heroku = new Heroku({ token: process.env.HEROKU_API_TOKEN });
 	console.log(heroku);
 	var app = heroku.apps(process.env.HEROKU_APP_NAME);
+	console.log(app)
 	app.info(function (err, app) {
-		console.log(‘testing’);
+		console.log('Hello');
 		console.log(err);
 		console.log(app);
 	});
