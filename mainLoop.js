@@ -78,6 +78,7 @@ checkopen = function(){
 		})
 	}, 5000);*/
 //setTimeout(function(){readQue();},15000);
+var queue = []
 var counter = 0;
 queueRead2 = function lambda(){
 	var item = queue.shift();
