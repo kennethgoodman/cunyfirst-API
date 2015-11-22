@@ -1,9 +1,10 @@
 
 /*var dotenv = require('dotenv')
-dotenv.load();*/
+dotenv.load(); */
 var db = require('./database');
-var bot = require('./bot')
-var textedInSession;
+//var bot = require('./bot')
+var worker = require('./worker')
+/*var textedInSession;
 
 a = function(data,callback){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
@@ -70,13 +71,71 @@ checkopen = function(){
 		console.log(err)
 	}
 }
-var q = 'SELECT * FROM clients_and_their_info';
-setInterval( function(){
+//var q = 'SELECT * FROM clients_and_their_info';
+/*setInterval( function(){
 		sendQuery2(q, function(row){
 			if(!row.texted) queue.push(row)
 		})
-	}, 5000);
-setTimeout(function(){readQue();},15000);
+	}, 5000);*/
+//setTimeout(function(){readQue();},15000);
+var counter = 0;
+queueRead2 = function lambda(){
+	var item = queue.shift();
+	if(item != undefined){ 
+		try{
+			getSections(item.inst, item.session, item.dept, function(struct){
+				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' order by class, section;";  
+				sendQuery2(q, function(row){
+					try{
+						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
+						console.log(new Date() + ": " + text)
+					} catch(err){
+						console.log(err)
+					}
+					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] != "Closed"){
+						var q = "SELECT phone_number, provider from clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' and class=\'" + row["class"] + "\' and section=\'" +row["section"] +"\' and texted=false";
+						sendQuery2(q, function(data){
+							send_email(data['phone_number'], data['provider'], text);
+						})
+						var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+item.dept + "\' AND class = \'" + row["class"] + "\' AND section = \'" +row["section"] +"\';";
+		                sendQuery(query, function(result){ //change texted to TRUE in DB
+		                	console.log(result);
+		                })
+					}
+					if(queue.length && counter < 1){
+						//counter++;
+						//lambda();
+					} 
+				})
+			})
+		} catch(err){
+			console.log(err)
+			//lambda()
+		}
+	}
+	else{
+		//lambda()
+	}
+	counter--;	
+}
+var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info order by inst, session, dept'
+var queryCount = 'Select count(*) from clients_and_their_info'
+var amount_of_rows = 1000000;
+sendQuery2(queryCount, function(result){
+	amount_of_rows = result["count"];
+})
+setInterval( function(){
+	sendQuery2(q, function(row){
+		if(queue.length < amount_of_rows*2) queue.push(row)
+	})
+},10000)
+setInterval(function(){ 
+	if(queue.length && counter < 1){ 
+		counter++;
+		queueRead2() 
+	}
+}, 7500);
+
 //var r = sendQuery('SELECT * FROM clients_and_their_info', function(){})
 //setTimeout( function(){ console.log(r)},5000)
 //checkopen();

@@ -43,6 +43,7 @@ sendQuery = function(query,callback){
 		})
 }
 sendQuery2 = function(q, callback){
+	//console.log(q);
 	var client = new pg.Client(process.env.DATABASE_URL);
 	client.connect();
 	var query = client.query(q);
