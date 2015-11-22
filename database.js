@@ -31,7 +31,6 @@ sendQuery = function(query,callback){
 		  console.log('Connected to postgres! Getting schemas...');
 		  client
 		    .query(query, function(err, result) {
-		    	console.log(result);
 			    if(err) {
 			      console.error('error running query', err);
 			      //callback(err)

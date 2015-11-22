@@ -111,7 +111,9 @@ getClasses = function(inst,semester,subject,option,nbr,section,callback){
             request.post(submit_options, function(err, res, body){
                 addData(body, subject, function(struct){
                     try{
-                        callback(struct[nbr][section]['Status'],nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
+                        if(struct == undefined || struct[nbr] == undefined ||struct[nbr][section] ==undefined)
+                            callback("err","err");
+                        callback(struct[nbr][section]['Status'],subject + ": "+ nbr +', ' + section + ' is ' + struct[nbr][section]['Status'] + ". Teacher: " + struct[nbr][section]['Instructor'])
                     } catch(err){
                         console.log(err)
                     }

@@ -8,6 +8,10 @@ var textedInSession;
 a = function(data,callback){
 	getClasses(data['inst'], data['session'], data['dept'], 'E', String(data['class']), String(data['section']),
         function(status,text){
+        	if(status == "err"){
+        		callback()
+        		return;
+        	}
         	//console.log(status)
         	console.log(text)
             if(status != "Closed" && !data['texted']){
