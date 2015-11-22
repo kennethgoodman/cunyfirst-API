@@ -78,8 +78,8 @@ checkopen = function(){
 		})
 	}, 5000);*/
 //setTimeout(function(){readQue();},15000);
-var queue = []
-var counter = 0;
+var queue = []   //queue for the classes, pop one off when we look at it
+var counter = 0; //count how many threads in the function, only want one at the max
 queueRead2 = function lambda(){
 	var item = queue.shift();
 	if(item != undefined){ 
@@ -122,13 +122,19 @@ queueRead2 = function lambda(){
 var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info order by inst, session, dept'
 var queryCount = 'Select count(*) from clients_and_their_info'
 var amount_of_rows = 1000000;
-sendQuery2(queryCount, function(result){
-	amount_of_rows = result["count"];
-})
 setInterval( function(){
-	sendQuery2(q, function(row){
-		if(queue.length < amount_of_rows*2) queue.push(row)
+	sendQuery2(queryCount, function(result){
+		amount_of_rows = result["count"];
 	})
+}, 1000*60*60) //every hour;
+setInterval( function(){
+	if(queue.length > amount_of_rows*3){
+		queue = [];
+	}
+	sendQuery2(q, function(row){
+		if(queue.length < amount_of_rows*5) queue.push(row)
+	})
+
 },10000)
 setInterval(function(){ 
 	if(queue.length && counter < 1){ 
