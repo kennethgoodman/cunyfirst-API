@@ -94,14 +94,17 @@ queueRead2 = function lambda(){
 						console.log(err)
 					}
 					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] != "Closed"){
-						var q = "SELECT phone_number, provider from clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' and class=\'" + row["class"] + "\' and section=\'" +row["section"] +"\' and texted=false";
+						var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' and class=\'" + row["class"] + "\' and section=\'" +row["section"] +"\' and texted=false";
 						sendQuery2(q, function(data){
-							send_email(data['phone_number'], data['provider'], text);
+							if(!data['texted']){
+								send_email(data['phone_number'], data['provider'], text);
+								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+item.dept + "\' AND class = \'" + row["class"] + "\' AND section = \'" +row["section"] +"\';";
+				                sendQuery(query, function(result){ //change texted to TRUE in DB
+				                	console.log(result);
+				                })
+				            }
 						})
-						var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+item.dept + "\' AND class = \'" + row["class"] + "\' AND section = \'" +row["section"] +"\';";
-		                sendQuery(query, function(result){ //change texted to TRUE in DB
-		                	console.log(result);
-		                })
+						
 					}
 					if(queue.length && counter < 1){
 						//counter++;
@@ -128,11 +131,11 @@ setInterval( function(){
 	})
 }, 1000*60*60) //every hour;
 setInterval( function(){
-	if(queue.length > amount_of_rows*3){
+	if(queue.length > parseInt(amount_of_rows*1.5)){
 		queue = [];
 	}
 	sendQuery2(q, function(row){
-		if(queue.length < amount_of_rows*5) queue.push(row)
+		if(queue.length < parseInt(amount_of_rows*1.5)) queue.push(row)
 	})
 
 },10000)

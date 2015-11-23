@@ -1,5 +1,5 @@
-/*var dotenv = require('dotenv')
-dotenv.load();*/
+var dotenv = require('dotenv')
+dotenv.load();
 var morgan = require('morgan')
 var pg = require('pg');
 var car = require('./carrier')
@@ -11,6 +11,7 @@ var http = require('http');
 var express = require('express');
 var stormpath = require('express-stormpath');
 var app = express();
+var websocket = require('./websocket')
 var port = process.env.PORT || 5000
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -23,10 +24,25 @@ app.use(stormpath.init(app, {
     }
   },
   web: {
+    /*
   	register: {
-  		//fieldOrder: [ "test","data","nbr","name","email", "password", "passwordConfirm" ],
+      fields:{
+        phone_number: {
+          required: false
+        },
+        name: {
+          required: false
+        },
+        email:{
+          required: true
+        },
+        password:{
+          required: true
+        }
+      },
+  		fieldOrder: [ "test","phone_number","name","email", "password", "passwordConfirm"],
   		//fieldOrder: [ ]
-  	}
+  	}*/
   },
   application: {
     href: process.env.STORMPATH_URL
@@ -40,12 +56,26 @@ server.listen(port)
 var wss = new WebSocketServer({server: server})
 app.on('stormpath.ready', function() {
   //app.listen(process.env.PORT || 5000);
-  	
 });
 app.use(express.static(__dirname + '/public'));
+app.get('/userData', function(req, res){
+  res.send(req.user)
+})
+var created = false;
 app.get('/', stormpath.loginRequired, function(request, response) {
-  	response.render('pages/index',{options: ['inst','session','dept','class_nbr', 'section','your_phone_number'],userInfo: request.user});
+  	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
+    
+    request.user.getCustomData(function(err,data){
+      response.render('pages/index',{options: ['inst','session','dept','class_nbr', 'section','your_phone_number'],userInfo: request.user, customData: data});
+      if(!created){
+        created = true;
+        websocket(wss,request);
+      }  
+    });
 });
+app.get('/account', stormpath.loginRequired, function(request,response){
+  response.render('pages/account', {userInfo: request.user})
+})
 app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM clients_and_their_info', function(err, result) {
@@ -57,5 +87,3 @@ app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) 
     });
   });
 })
-var websocket = require('./websocket')
-websocket(wss);

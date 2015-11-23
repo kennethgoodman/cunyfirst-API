@@ -43,7 +43,7 @@ ws.onmessage = function (event) {
       else if(data[0] == "class_nbr"){ 
           //var table = document.getElementById("tableBody");
           //$("#tableBody").empty();
-          
+          var dept = $('#dept').val();
           data = data[1]
           //var nbrs = Object.keys(data);
           var t = $('#dataTables').DataTable();
@@ -54,7 +54,7 @@ ws.onmessage = function (event) {
                   /*if(data[nbr][section]['Status'] != "Closed"){
                       continue;
                   }*/
-                  t.row.add([nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status']])
+                  t.row.add([dept + ": " + nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status']])
               }
           }
           t.draw()
@@ -67,6 +67,32 @@ ws.onmessage = function (event) {
               }     
             });*/
       }
+      else if(data[0] == "classesBeingTaken"){
+        data = data[1];
+        var t = $('#tableForAlreadySignedUp').DataTable();
+        t.clear();
+        for(var classTaken in data){
+          try{
+            t.row.add([data[classTaken]["inst"],data[classTaken]["session"],data[classTaken]["dept"],data[classTaken]["class"],data[classTaken]["section"]])
+          } catch(err){
+
+          }  
+        }
+        
+        t.draw()
+      }
+      else if(data[0] == "AddedAClass"){
+        data=data[1]
+        var t = $('#tableForAlreadySignedUp').DataTable();
+        try{
+          for(var i in data){
+            t.row.add(data[i])
+          }
+        } catch(err){
+          console.log(err)
+        } 
+        t.draw() 
+      }
       else if(data[0] == "carriers"){
           var dropdown = document.getElementById('carrier');
           for(var i = 0; i < data[1].length; i++){
@@ -77,6 +103,9 @@ ws.onmessage = function (event) {
               if(carrier != undefined) dropdown.add(option);
           }
       }
+      else if(data[0] == "err" || data[0] == "Success"){
+        alert(data[1]);
+      }
   } catch(err){
       console.log(err)
   }
@@ -84,10 +113,11 @@ ws.onmessage = function (event) {
 setTimeout(function(){
   ws.send(JSON.stringify(["get_inst"]));
   ws.send(JSON.stringify(["getCarriers"]));
+  //ws.send(JSON.stringify(["test"]))
   test = function(){
       ws.send(JSON.stringify(["get_session", "QNS01"]));
       ws.send(JSON.stringify(["get_dept","QNS01","1162"]));
-      ws.send(JSON.stringify(["get_class","QNS01","1162","ARAB"]));
+      ws.send(JSON.stringify(["get_class","QNS01","1162","ACCT"]));
   }
   //test();
 },1250);

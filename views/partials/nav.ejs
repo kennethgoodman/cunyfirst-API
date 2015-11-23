@@ -1,12 +1,37 @@
-<nav class="navbar navbar-default navbar-static-top navbar-inverse">
-  <div class="container">
-    <ul class="nav navbar-nav">
-      <li class="active">
-        <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a>
-      </li>
-      <li>
-        <a href="/logout">Log out</a>    
-    </li>
-    </ul>
+<!--<nav class="navbar navbar-default navbar-static-top navbar-inverse" id="navbar">-->
+<nav class="navbar navbar-default navbar-static-top navbar-inverse navbar-fixed-top" id="navbar">
+  <div class="container-fluid">
+      <div navbar-header>
+         <a class="navbar-brand" href="/">No Closed Class</a>
+      </div>
+      <div>
+        <ul class="nav navbar-nav">
+          <li class="active">
+              <button type="button" class="btn btn-default navbar-btn" id="Home" style="margin-top:9px">
+                <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a>
+              </button>
+          </li>
+          <li>
+              <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px; margin-left:2px">
+                <a href="/account"><span class="glyphicon glyphicon-user" style="margin-right:5px"></span>Account</a>
+              </button>
+          </li>
+        </ul>
+        <ul class="nav nav-pills pull-right">          
+            <li>
+                <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px">
+                    <a href="/logout"><span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log out</a>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default navbar-btn" id="Support" style="margin-top:9px">
+                    <a class="mailto" href='mailto:kenneth@noclosedclass.com?subject=Support'>
+                    <span class="glyphicon glyphicon-envelope"></span>
+                        Support
+                    </a>    
+                </button>
+            </li>
+        </ul>
+   </div>
   </div>
 </nav>

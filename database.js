@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
-/*var dotenv = require('dotenv')
-dotenv.load();*/
+var dotenv = require('dotenv')
+dotenv.load();
 pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
@@ -32,8 +32,9 @@ sendQuery = function(query,callback){
 		  client
 		    .query(query, function(err, result) {
 			    if(err) {
+			      err["Error"] = true;
 			      console.error('error running query', err);
-			      //callback(err)
+			      callback(err)
 			    }
 			    else{
 			    	callback(result);

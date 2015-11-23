@@ -1,4 +1,8 @@
+var userData = [];
 $(document).ready(function(){
+    $.get("/userData",function(data){
+        userData = data;
+    });
     $('.editbtn').click(function(){
         $(this).html($(this).html() == 'edit data ' ? 'submit changes' : 'edit data ');
         var td = $("." + this.id);
@@ -54,8 +58,8 @@ parsePhoneNumber = function(nbr){
     return nbr;
 }
 clicked = function(){
-    var fullName = $('.fullName')[0].textContent.trim();
-    var userName = $('.username')[0].textContent.trim();
+    var fullName = userData["fullName"].trim();
+    var userName = userData["username"].trim();
     var inst = $('#inst').val();
     var session = $('#session').val();
     var dept = $('#dept').val();
@@ -73,9 +77,10 @@ clicked = function(){
         return;
     }
     var queryArray = ["submit"]
-    $( ".selected" ).each(function(){
+    $( ".row-selected" ).each(function(){
         var temp = $(this)[0] //get tr
         nbr = temp.childNodes[0].textContent.trim();
+        nbr = nbr.substr(nbr.indexOf(":")+2);
         section = temp.childNodes[1].textContent.trim();
         try{
             queryArray.push([fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]);

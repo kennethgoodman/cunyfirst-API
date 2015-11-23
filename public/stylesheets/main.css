@@ -51,8 +51,20 @@ tr:hover {
 }
 
 .fright {
+    margin-top: 40px;
     float: right;
     width: 50%;
+}
+.tableHolder {
+    float: left;
+    width: 55%;
+}
+.classesSignedUpFor{
+    float: right;
+    width: 43.5%;
+}
+.toolbar {
+    float: left;
 }
 table, th, td {
     border: 1px solid black;
