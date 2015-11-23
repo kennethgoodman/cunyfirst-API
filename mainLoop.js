@@ -95,6 +95,7 @@ queueRead2 = function lambda(){
 					}
 					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] != "Closed"){
 						var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' and class=\'" + row["class"] + "\' and section=\'" +row["section"] +"\' and texted=false";
+						
 						sendQuery2(q, function(data){
 							if(!data['texted']){
 								send_email(data['phone_number'], data['provider'], text);
@@ -122,7 +123,7 @@ queueRead2 = function lambda(){
 	}
 	counter--;	
 }
-var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info order by inst, session, dept'
+var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info where texted = false order by inst, session, dept'
 var queryCount = 'Select count(*) from clients_and_their_info'
 var amount_of_rows = 1000000;
 setInterval( function(){
