@@ -1,15 +1,19 @@
-var userData = [];
+userData = [];
 loggedIn = false;
 $.get("/userData",function(data){
     userData = data;
     if(userData == ""){
-
         loggedIn = false;
-        $("#submitData").attr('disabled', true);
-        $("#buttonToDeleteClasses").attr('disabled', true);
+        $(document).ready(function(){
+            document.getElementById("submitData").disabled = true;
+            document.getElementById("buttonToDeleteClasses").disabled = true;
+        })
+        //$("#submitData").disabled = true;
+        /*$("#submitData").attr('disabled', true);
+        $("#buttonToDeleteClasses").attr('disabled', true);*/
     }
     else{
-
+        console.log(userData)
         loggedIn = true;
     }
 });
@@ -21,7 +25,10 @@ $(document).ready(function(){
     });
     if(loggedIn){
         $("#submitData").unbind('click').click( function (e) {
-            clicked()
+            $.get("/userData",function(data){
+                if(data != "") clicked();
+            });
+            
         });
     }
     $('#inst').unbind('change').change(function(){

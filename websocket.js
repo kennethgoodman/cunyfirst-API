@@ -1,22 +1,6 @@
 var sent = false; 
-module.exports = function(wss,request,loggedIn){
+module.exports = function(wss){
   wss.on("connection", function(ws) {
-    console.log(loggedIn)
-    if(loggedIn){
-      var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=\'"+request.user.username+"\';"
-      sendQuery(q,function(result){
-        var temp = [];
-        result = result.rows
-        for(var row in result){
-          //console.log(row["session"])
-          if(result[row]["session"] == "1162") {
-            result[row]["session"] = "Spring 2016";
-          }
-          temp.push(result[row])
-        }
-        sendData(ws,["classesBeingTaken",temp]);
-      })
-    }
     var id = setInterval(function() {
       ws.send(JSON.stringify(["keep open",new Date()]), function() {})
     }, 2500) //to keep connection open
@@ -89,7 +73,7 @@ module.exports = function(wss,request,loggedIn){
         else if(data[0] == "deleteClass"){
           checkForEmptyData(data, function(data){
             if(data[1][1] == "Spring 2016") data[1][1] = "1162";
-            var q = "DELETE FROM clients_and_their_info WHERE user_id=\'" + request.user.username +"\' and inst=\'"+ data[1][0] +"\' and session=\'"+data[1][1] +"\' and dept=\'"+data[1][2] +"\' and class=\'"+data[1][3] +"\' and section=\'"+data[1][4] +"\';"
+            var q = "DELETE FROM clients_and_their_info WHERE user_id=\'" + data[2] +"\' and inst=\'"+ data[1][0] +"\' and session=\'"+data[1][1] +"\' and dept=\'"+data[1][2] +"\' and class=\'"+data[1][3] +"\' and section=\'"+data[1][4] +"\';"
             console.log(q);
             sendQuery(q, function(result){
               if(result.hasOwnProperty("Error")){
@@ -100,6 +84,20 @@ module.exports = function(wss,request,loggedIn){
                 //sendData(ws, ["Success", "Your classes have succesfully been entered"])
               }
             })
+          })
+        }
+        else if(data[0] == "getCurrentClasses"){
+          var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=\'"+data[1]+"\';"
+          sendQuery(q,function(result){
+            var temp = [];
+            result = result.rows
+            for(var row in result){
+              if(result[row]["session"] == "1162") {
+                result[row]["session"] = "Spring 2016";
+              }
+              temp.push(result[row])
+            }
+            sendData(ws,["classesBeingTaken",temp]);
           })
         }
     		else if(data[0] == "submit"){

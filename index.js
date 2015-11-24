@@ -64,11 +64,8 @@ app.get('/userData', function(req, res){
 var created = false;
 app.get('/', function(request, response) {
   	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
+    //
     response.render('pages/index');
-    if(!created){
-      created = true;
-      websocket(wss,request, request.user != undefined);
-    }
     /*request.user.getCustomData(function(err,data){
       
       }  
@@ -91,3 +88,4 @@ app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) 
 app.get('/faq', function(request,response){
   response.render('pages/faq');
 })
+websocket(wss);

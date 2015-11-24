@@ -113,6 +113,8 @@ ws.onmessage = function (event) {
 setTimeout(function(){
   ws.send(JSON.stringify(["get_inst"]));
   ws.send(JSON.stringify(["getCarriers"]));
+  if(loggedIn) 
+    ws.send(JSON.stringify(["getCurrentClasses",userData["username"]]))
   //ws.send(JSON.stringify(["test"]))
   test = function(){
       ws.send(JSON.stringify(["get_session", "QNS01"]));

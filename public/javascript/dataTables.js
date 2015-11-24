@@ -18,7 +18,7 @@ $(document).ready(function() {
     if(loggedIn){
 	    $('#buttonToDeleteClasses').click( function () {
 	        var temp = table.row('.selectedToBeDeleted');
-	        ws.send(JSON.stringify(["deleteClass",temp.data()]));
+	        ws.send(JSON.stringify(["deleteClass",temp.data(),userData["username"]]));
 	        temp.remove().draw(false);
 	    } );
 	}
