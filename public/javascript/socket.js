@@ -58,7 +58,7 @@ ws.onmessage = function (event) {
                   /*if(data[nbr][section]['Status'] != "Closed"){
                       continue;
                   }*/
-                  t.row.add([dept + ": " + nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status']])
+                  t.row.add([dept + ": " + nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status'],data[nbr][section]['Days & Times'],data[nbr][section]['Room']])
               }
           }
           t.draw()
@@ -119,9 +119,8 @@ $(document).ready(function(){
   $("#ajax-loader").show();
   ws.send(JSON.stringify(["getCarriers"]));
   $.get("/userData",function(data){
-    userData = data;
-    if(userData != ""){
-      ws.send(JSON.stringify(["getCurrentClasses",userData["username"]]))
+    if(data != ""){
+      ws.send(JSON.stringify(["getCurrentClasses",data["username"]]))
     }
   }).fail(function(e) {
     console.log( "error" + e );

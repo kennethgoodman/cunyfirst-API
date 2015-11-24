@@ -99,4 +99,16 @@ app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) 
 app.get('/faq', function(request,response){
   response.render('pages/faq');
 })
+app.get('*', function(req,res,next){
+  var err = new Error();
+  err.status = 404;
+  next(err)
+})
+app.use(function(err, req, res, next){
+  if(err.status !== 404){
+    console.log(err);
+    return next();
+  }
+  res.send(err.message || 'There is no page at this link')
+})
 websocket(wss);
