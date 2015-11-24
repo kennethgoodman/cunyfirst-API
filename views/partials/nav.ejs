@@ -17,11 +17,15 @@
               </button>
           </li>
         </ul>
-        <ul class="nav nav-pills pull-right">          
+        <ul class="nav nav-pills pull-right"> 
             <li>
-                <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px">
-                    <a href="/logout"><span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log out</a>
+                <button type="button" class="btn btn-default navbar-btn" id="faq" style="margin-top:9px">
+                    <a href='/faq'>
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                        FAQ
+                    </a>    
                 </button>
+            
             </li>
             <li>
                 <button type="button" class="btn btn-default navbar-btn" id="Support" style="margin-top:9px">
@@ -29,6 +33,25 @@
                     <span class="glyphicon glyphicon-envelope"></span>
                         Support
                     </a>    
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px">
+                    <a href="/logout" id="logStatus"><span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out</a>
+                    <script>
+                        setTimeout(function(){
+                            var item = document.getElementById("logStatus");
+                            if(loggedIn){
+                                item.innerHTML = '<span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out';
+                                item.href = "/logout"
+                            }else{
+                                var item = document.getElementById("logStatus");
+                                item.innerHTML = '<span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log in';
+                                item.href = "/login"
+                            }  
+                        },500)
+                        
+                    </script>
                 </button>
             </li>
         </ul>

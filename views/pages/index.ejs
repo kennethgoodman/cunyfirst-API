@@ -8,7 +8,7 @@
 <body>
     
   <% include ../partials/nav.ejs %>
-        
+    
      <div class="classesSignedUpFor" style="margin-right:8px">
          <button id="buttonToDeleteClasses">
             Delete Selected Class
@@ -17,12 +17,12 @@
             <caption>Classes you are currently signed up to get texts for:</caption>
             <thead>
                 <tr>
-                    <th>Institution</th><th>Session</th><th>Department</th><th>Class number </th><th>Class Section</th>
+                    <th>Institution</th><th>Session</th><th>Department</th><th>Class number </th><th>Class Section</th><th>Have you been texted for this class?</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
-                    <th>Institution</th><th>Session</th><th>Department</th><th>Class number </th><th>Class Section</th>
+                    <th>Institution</th><th>Session</th><th>Department</th><th>Class number </th><th>Class Section</th><th>Have you been texted for this class?</th>
                 </tr>
             </tfoot>
             <tbody>
@@ -35,13 +35,25 @@
             <p style="margin-left:20px; margin-top:60px;">These dropdowns take time to load. Thank you for your patience.</p>
             <p style="margin-left:20px" id="testing">To add a new class, fill out dropdowns, click on your class/classes, enter your phone number and provider and wait to get texted: </p>
             <div style="margin-left:20px">
-                <% for(var option = 0; option < 3;option++){ %>
-                    <%=options[option]%>:
-                        <select id=<%=options[option]%>>
-                            <option selected="selected">pick one</option>
-                        </select>
-                        <br>
-                <%}%>
+                <select id="inst" default="pick a carrier">
+                    <option value="defualt" selected="selected">
+                        Pick an institution
+                    </option>
+                </select>
+                <select id="session" default="pick a carrier">
+                    <option value="defualt" selected="selected">
+                        Pick a session
+                    </option>
+                </select>
+                <select id="dept" default="pick a carrier">
+                    <option value="defualt" selected="selected">
+                        Pick a department
+                    </option>
+                </select>
+                <div class="checkbox checkbox-primary">
+                  <input id="deltedWhenTexted" type="checkbox" checked>
+                    Delete my class when I've been texted/e-mailed. <a href="/FAQ">(What does this mean)</a>
+                </div>
                 <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr">
                 <select id="carrier" default="pick a carrier">
                     <option value="defualt" selected="selected">
@@ -82,6 +94,6 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 </body>
 </html>

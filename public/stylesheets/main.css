@@ -82,3 +82,9 @@ th, td {
 #dataTables thead tr {
   cursor: pointer;
 }
+#tableForAlreadySignedUp tbody tr {
+  cursor: pointer;
+}
+#tableForAlreadySignedUp thead tr {
+  cursor: pointer;
+}

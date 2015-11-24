@@ -62,16 +62,17 @@ app.get('/userData', function(req, res){
   res.send(req.user)
 })
 var created = false;
-app.get('/', stormpath.loginRequired, function(request, response) {
+app.get('/', function(request, response) {
   	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
-    
-    request.user.getCustomData(function(err,data){
-      response.render('pages/index',{options: ['inst','session','dept','class_nbr', 'section','your_phone_number'],userInfo: request.user, customData: data});
-      if(!created){
-        created = true;
-        websocket(wss,request);
+    response.render('pages/index');
+    if(!created){
+      created = true;
+      websocket(wss,request, request.user != undefined);
+    }
+    /*request.user.getCustomData(function(err,data){
+      
       }  
-    });
+    });*/
 });
 app.get('/account', stormpath.loginRequired, function(request,response){
   response.render('pages/account', {userInfo: request.user})
@@ -86,4 +87,7 @@ app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) 
        { response.render('pages/db', {results: result.rows} ); }
     });
   });
+})
+app.get('/faq', function(request,response){
+  response.render('pages/faq');
 })

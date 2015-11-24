@@ -8,8 +8,8 @@ ws.onmessage = function (event) {
       if(data[0] == "inst"){
           removeDropdowns(["inst","session","dept"])
           var keys = Object.keys(data[1]);
+          var dropdown = document.getElementById('inst');
           for(var i = 0; i < keys.length; i++){
-              var dropdown = document.getElementById('inst');
               var option = document.createElement("option");
               var instName = keys[i]
               option.value = instName;
@@ -19,8 +19,8 @@ ws.onmessage = function (event) {
       }
       else if(data[0] == "session"){
           removeDropdowns(["session","dept"])
+          var dropdown = document.getElementById('session');
           for(var i = 1; i < data.length; i++){
-              var dropdown = document.getElementById('session');
               var option = document.createElement("option");
               var sessionName = Object.keys(data[i])[0];
               option.text = sessionName;
@@ -30,9 +30,9 @@ ws.onmessage = function (event) {
       }
       else if(data[0] == "dept"){
           removeDropdowns(["dept"])
+          var dropdown = document.getElementById('dept');
           var keys = Object.keys(data[1]);
           for(var i = 0; i < keys.length; i++){
-              var dropdown = document.getElementById('dept');
               var option = document.createElement("option");
               var deptName = keys[i]
               option.text = deptName;
@@ -73,7 +73,7 @@ ws.onmessage = function (event) {
         t.clear();
         for(var classTaken in data){
           try{
-            t.row.add([data[classTaken]["inst"],data[classTaken]["session"],data[classTaken]["dept"],data[classTaken]["class"],data[classTaken]["section"]])
+            t.row.add([data[classTaken]["inst"],data[classTaken]["session"],data[classTaken]["dept"],data[classTaken]["class"],data[classTaken]["section"],data[classTaken]["texted"]])
           } catch(err){
 
           }  

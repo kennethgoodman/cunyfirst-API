@@ -15,10 +15,12 @@ $(document).ready(function() {
     		className: "selected selectedToBeDeleted"
     	},
     });
-    $('#buttonToDeleteClasses').click( function () {
-        var temp = table.row('.selectedToBeDeleted');
-        ws.send(JSON.stringify(["deleteClass",temp.data()]));
-        temp.remove().draw(false);
-    } );
+    if(loggedIn){
+	    $('#buttonToDeleteClasses').click( function () {
+	        var temp = table.row('.selectedToBeDeleted');
+	        ws.send(JSON.stringify(["deleteClass",temp.data()]));
+	        temp.remove().draw(false);
+	    } );
+	}
 
 } );

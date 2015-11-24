@@ -101,7 +101,11 @@ queueRead2 = function lambda(){
 								send_email(data['phone_number'], data['provider'], text);
 								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+item.dept + "\' AND class = \'" + row["class"] + "\' AND section = \'" +row["section"] +"\';";
 				                sendQuery(query, function(result){ //change texted to TRUE in DB
-				                	console.log(result);
+				                	try{
+				                		console.log(result.command);
+				                	} catch(err){
+				                		console.log(result);
+				                	}
 				                })
 				            }
 						})
@@ -130,13 +134,13 @@ setInterval( function(){
 	sendQuery2(queryCount, function(result){
 		amount_of_rows = result["count"];
 	})
-}, 1000*60*60) //every hour;
+}, 1000*60*10) //every 10 min, TEST IF THIS IS OK!
 setInterval( function(){
-	if(queue.length > parseInt(amount_of_rows*1.5)){
+	if(queue.length > parseInt(amount_of_rows*1.2)){ //still testing good number
 		queue = [];
 	}
 	sendQuery2(q, function(row){
-		if(queue.length < parseInt(amount_of_rows*1.5)) queue.push(row)
+		if(queue.length < parseInt(amount_of_rows*1.5)) queue.push(row) //still testing good number
 	})
 
 },10000)

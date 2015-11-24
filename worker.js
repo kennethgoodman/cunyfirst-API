@@ -245,7 +245,11 @@ getSession = function(inst, callback){
 }
 getInst = function(callback,interval){
     request.post(options, function(err, res, body) {
-    	if(body.length == 0) return;
+    	try{
+    		if(body.length == 0) return;
+    	} catch(err){
+    		return false;
+    	}
         if(err) {
             console.error(err);
             return;

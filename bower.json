@@ -28,6 +28,7 @@
     "datatables.net-jqui": "~1.10.10",
     "datatables.net-select-jqui": "~1.1.0",
     "list.pagination.js": "~0.1.1",
-    "bootstrap-table": "~1.9.1"
+    "bootstrap-table": "~1.9.1",
+    "jquery-mobile": "~1.4.5"
   }
 }

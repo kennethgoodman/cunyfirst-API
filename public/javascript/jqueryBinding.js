@@ -1,17 +1,29 @@
 var userData = [];
+loggedIn = false;
+$.get("/userData",function(data){
+    userData = data;
+    if(userData == ""){
+
+        loggedIn = false;
+        $("#submitData").attr('disabled', true);
+        $("#buttonToDeleteClasses").attr('disabled', true);
+    }
+    else{
+
+        loggedIn = true;
+    }
+});
 $(document).ready(function(){
-    $.get("/userData",function(data){
-        userData = data;
-    });
     $('.editbtn').click(function(){
         $(this).html($(this).html() == 'edit data ' ? 'submit changes' : 'edit data ');
         var td = $("." + this.id);
         $("." + this.id).attr("contenteditable", ! $.parseJSON($("." + this.id).attr("contenteditable")));
-        
     });
-    $("#submitData").unbind('click').click( function (e) {
-        clicked()
-    });
+    if(loggedIn){
+        $("#submitData").unbind('click').click( function (e) {
+            clicked()
+        });
+    }
     $('#inst').unbind('change').change(function(){
         var e = document.getElementById("inst");
         ws.send(JSON.stringify(["get_session",e.options[e.selectedIndex].value]));
@@ -37,11 +49,18 @@ $(document).ready(function(){
 removeDropdowns = function(dropdowns){
     for(var select in dropdowns){
         var id = "#" + dropdowns[select];
+        var starting = "pick a";
+        if(dropdowns[select] == "inst")
+            starting += "n institution";
+        else if(dropdowns[select] == "session")
+            starting += " session";
+        else
+            starting += " department";
         $(id)
                 .find('option')
                 .remove()
                 .end()
-                .append('<option value="defualt">pick one</option>')
+                .append('<option value="starting">'+starting+'</option>')
             ;
     }
 }
@@ -75,18 +94,31 @@ clicked = function(){
     if(carrier == "defualt"){
         alert("please enter a carrier")
         return;
-    }
-    var queryArray = ["submit"]
+    } else if(inst == "defualt"){
+        alert("Please enter an institution")
+        return;
+    } else if(session == "defualt"){
+       alert("Please enter a session")
+        return;
+    } else if(dept == "defualt"){
+        alert("Please enter a department")
+        return;
+    } 
+    var shouldDeleted = $("#deltedWhenTexted").prop('checked');
+    var queryArray = ["submit"];
+    var count = 0;
     $( ".row-selected" ).each(function(){
+        count++;
         var temp = $(this)[0] //get tr
         nbr = temp.childNodes[0].textContent.trim();
         nbr = nbr.substr(nbr.indexOf(":")+2);
         section = temp.childNodes[1].textContent.trim();
         try{
-            queryArray.push([fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier]);
+            queryArray.push([fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier,shouldDeleted]);
         } catch(err){
             console.log(err)
         }
     })
-    ws.send(JSON.stringify(queryArray));
+    if(count > 0) ws.send(JSON.stringify(queryArray));
+    else          alert("Please select a class");
 }
