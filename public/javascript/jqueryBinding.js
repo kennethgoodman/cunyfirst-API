@@ -32,11 +32,13 @@ $(document).ready(function(){
         });
     }
     $('#inst').unbind('change').change(function(){
+        $("#ajax-loader").show();
         var e = document.getElementById("inst");
         ws.send(JSON.stringify(["get_session",e.options[e.selectedIndex].value]));
         //send message for get session
     })
     $('#session').unbind('change').change(function(){
+        $("#ajax-loader").show();
         var e = document.getElementById("inst");
         var f = document.getElementById("session");
         ws.send(JSON.stringify(["get_dept",e.options[e.selectedIndex].value,
@@ -44,6 +46,7 @@ $(document).ready(function(){
         //send message for get dept
     })
     $('#dept').unbind('change').change(function(){
+        $("#ajax-loader").show();
         var e = document.getElementById("inst");
         var f = document.getElementById("session");
         var g = document.getElementById("dept");

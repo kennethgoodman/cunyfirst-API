@@ -7,6 +7,7 @@ ws.onmessage = function (event) {
       console.log(data);
       if(data[0] == "inst"){
           removeDropdowns(["inst","session","dept"])
+          $("#ajax-loader").hide();
           var keys = Object.keys(data[1]);
           var dropdown = document.getElementById('inst');
           for(var i = 0; i < keys.length; i++){
@@ -19,6 +20,7 @@ ws.onmessage = function (event) {
       }
       else if(data[0] == "session"){
           removeDropdowns(["session","dept"])
+          $("#ajax-loader").hide();
           var dropdown = document.getElementById('session');
           for(var i = 1; i < data.length; i++){
               var option = document.createElement("option");
@@ -30,6 +32,7 @@ ws.onmessage = function (event) {
       }
       else if(data[0] == "dept"){
           removeDropdowns(["dept"])
+          $("#ajax-loader").hide();
           var dropdown = document.getElementById('dept');
           var keys = Object.keys(data[1]);
           for(var i = 0; i < keys.length; i++){
@@ -43,6 +46,7 @@ ws.onmessage = function (event) {
       else if(data[0] == "class_nbr"){ 
           //var table = document.getElementById("tableBody");
           //$("#tableBody").empty();
+          $("#ajax-loader").hide();
           var dept = $('#dept').val();
           data = data[1]
           //var nbrs = Object.keys(data);
@@ -112,6 +116,7 @@ ws.onmessage = function (event) {
 };
 setTimeout(function(){
   ws.send(JSON.stringify(["get_inst"]));
+  $("#ajax-loader").show();
   ws.send(JSON.stringify(["getCarriers"]));
   if(loggedIn) 
     ws.send(JSON.stringify(["getCurrentClasses",userData["username"]]))
