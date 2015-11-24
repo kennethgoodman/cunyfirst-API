@@ -36,7 +36,7 @@ tr {
     display: table-row;
   }
 tr:hover {
-    background-color: #cccccc;
+    background-color: #d81d1d;
 }
 .wrap {
     width: 100%;

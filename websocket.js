@@ -73,9 +73,10 @@ module.exports = function(wss){
         else if(data[0] == "deleteClass"){
           checkForEmptyData(data, function(data){
             if(data[1][1] == "Spring 2016") data[1][1] = "1162";
-            var q = "DELETE FROM clients_and_their_info WHERE user_id=\'" + data[2] +"\' and inst=\'"+ data[1][0] +"\' and session=\'"+data[1][1] +"\' and dept=\'"+data[1][2] +"\' and class=\'"+data[1][3] +"\' and section=\'"+data[1][4] +"\';"
+            var q = "DELETE FROM clients_and_their_info WHERE user_id=$1 and inst=$2 and session=$3 and dept=$4 and class=$5 and section=$6;"
+            var params = [data[2], data[1][0],data[1][1],data[1][2],data[1][3],data[1][4]]
             console.log(q);
-            sendQuery(q, function(result){
+            sendQuery(q, params, function(result){
               if(result.hasOwnProperty("Error")){
                 sendData(ws, ["err","An error occured, please contact support"])
                 console.log("Unknown error on query");
@@ -87,8 +88,8 @@ module.exports = function(wss){
           })
         }
         else if(data[0] == "getCurrentClasses"){
-          var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=\'"+data[1]+"\';"
-          sendQuery(q,function(result){
+          var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=$1;"
+          sendQuery(q,[data[1]],function(result){
             var temp = [];
             result = result.rows
             for(var row in result){
@@ -102,22 +103,29 @@ module.exports = function(wss){
         }
     		else if(data[0] == "submit"){
     			checkForEmptyData(data, function(data){
-            var q = "SELECT count(*) from clients_and_their_info where user_id = \'" + data[1][7] + "\';"
-            sendQuery2(q, function(result){
+            var q = "SELECT count(*) from clients_and_their_info where user_id = $1;";
+            sendQuery2(q, [data[1][7]], function(result){
               var number_of_classes = parseInt(result.count)+data.length;
-              if(number_of_classes > 500){ //check to see if user has too many classes filled out
-                sendData(ws, ["err", "You\'ve signed up for " +  number_of_classes + " classes, the limit on this website for now is 5."])
+              var classLimit = 7;
+              if(number_of_classes > classLimit){ //check to see if user has too many classes filled out
+                sendData(ws, ["err", "You\'ve signed up for " +  number_of_classes + " classes, the limit on this website for now is " + classLimit +"."])
               }
               else{
                 var texted = "false";
-                var query = "INSERT INTO clients_and_their_info VALUES (\'";
+                var query = "INSERT INTO clients_and_their_info VALUES (";
+                var params = [];
                 for(var i = 1; i < data.length; i++){
-                  query += data[i][0]+"\', \'"+data[i][1]+"\', \'"+data[i][2]+"\', \'"+data[i][3]+"\', \'"+data[i][4]+"\', \'"+texted+"\', \'"+data[i][5]+"\', \'"+data[i][6]+"\', \'"+data[i][7]+"\', \'"+data[i][8]+"\', \'" + data[i][9] +"\')";
+                  query += "$"+((i-1)*10 + 1)+",$"+((i-1)*10 + 2)+",$"+((i-1)*10 + 3)+",$"+((i-1)*10 + 4)+",$"+((i-1)*10 + 5)+",\'"+texted+"\',$"+((i-1)*10 + 6)+",$"+((i-1)*10 + 7)+",$"+((i-1)*10 + 8)+",$"+((i-1)*10 + 9)+",$"+((i-1)*10 + 10)+")";
+                  for(var k in data[i]){
+                    if(typeof data[i][k] != typeof function(){})
+                      params.push(data[i][k])
+                  }
+                  console.log(params);
                   if(i+1 == data.length) query += ";"
-                  else query += ", (\'"
+                  else query += ", ("
                 }
                 console.log(query);
-                sendQuery(query, function(result){
+                sendQuery(query, params, function(result){
                   if(result.hasOwnProperty("Error")){
                     //TODO: test to find all possible errors
                     if(result.code == '23505'){
@@ -131,10 +139,18 @@ module.exports = function(wss){
                   }
                   else{
                     var temp = [];
-                    for(var i = 1; i < data.length; i++){
-                      temp.push([data[i][1],data[i][6],data[i][2],data[i][3],data[i][4]]);
-                    }
-                    sendData(ws, ["AddedAClass", temp])
+                    var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=$1;"
+                    sendQuery(q,[data[1][7]],function(result){
+                      var temp = [];
+                      result = result.rows
+                      for(var row in result){
+                        if(result[row]["session"] == "1162") {
+                          result[row]["session"] = "Spring 2016";
+                        }
+                        temp.push(result[row])
+                      }
+                      sendData(ws,["classesBeingTaken",temp]);
+                    });
                     //sendData(ws, ["Success", "Your classes have succesfully been entered"])
                     console.log("Success adding query");
                   }

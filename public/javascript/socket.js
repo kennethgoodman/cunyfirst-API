@@ -114,12 +114,18 @@ ws.onmessage = function (event) {
       console.log(err)
   }
 };
-setTimeout(function(){
+$(document).ready(function(){
   ws.send(JSON.stringify(["get_inst"]));
   $("#ajax-loader").show();
   ws.send(JSON.stringify(["getCarriers"]));
-  if(loggedIn) 
-    ws.send(JSON.stringify(["getCurrentClasses",userData["username"]]))
+  $.get("/userData",function(data){
+    userData = data;
+    if(userData != ""){
+      ws.send(JSON.stringify(["getCurrentClasses",userData["username"]]))
+    }
+  }).fail(function(e) {
+    console.log( "error" + e );
+  });
   //ws.send(JSON.stringify(["test"]))
   test = function(){
       ws.send(JSON.stringify(["get_session", "QNS01"]));
@@ -127,4 +133,5 @@ setTimeout(function(){
       ws.send(JSON.stringify(["get_class","QNS01","1162","ACCT"]));
   }
   //test();
-},1250);
+});
+

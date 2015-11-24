@@ -16,21 +16,23 @@ $.get("/userData",function(data){
         console.log(userData)
         loggedIn = true;
     }
-});
+}).fail(function(e) {
+    console.log( "error" + e );
+  });
 $(document).ready(function(){
     $('.editbtn').click(function(){
         $(this).html($(this).html() == 'edit data ' ? 'submit changes' : 'edit data ');
         var td = $("." + this.id);
         $("." + this.id).attr("contenteditable", ! $.parseJSON($("." + this.id).attr("contenteditable")));
     });
-    if(loggedIn){
-        $("#submitData").unbind('click').click( function (e) {
-            $.get("/userData",function(data){
-                if(data != "") clicked();
-            });
-            
-        });
-    }
+    $("#submitData").unbind('click').click( function (e) {
+        $.get("/userData",function(data){
+            if(data != "") clicked();
+        }).fail(function(err) {
+            console.log( "error" + err );
+          });;
+        
+    });
     $('#inst').unbind('change').change(function(){
         $("#ajax-loader").show();
         var e = document.getElementById("inst");

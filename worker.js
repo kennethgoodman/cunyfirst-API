@@ -302,7 +302,7 @@ getInst = function(callback,interval){
     })
 }
 deleteTable = function(){
-	sendQuery("TRUNCATE data_for_dropdowns", function(result){
+	sendQuery("TRUNCATE data_for_dropdowns",[], function(result){
 		console.log(result)
 	})
 }

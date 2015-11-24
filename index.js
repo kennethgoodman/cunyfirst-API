@@ -12,10 +12,21 @@ var express = require('express');
 var stormpath = require('express-stormpath');
 var app = express();
 var websocket = require('./websocket')
+var session = require('express-session');
 var port = process.env.PORT || 5000
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
+app.use(session({
+  secret:'A super secret secret that has weird symbols !%@#$7*',
+  cookie: {
+    maxAge: 3600000,
+    secure: true,
+    httpOnly: true,
+  },
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(stormpath.init(app, {
   client: {
     apiKey: {

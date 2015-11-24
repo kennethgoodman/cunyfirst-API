@@ -19,7 +19,7 @@ queryDatabasePerRow = function(query,callback){
 	    });
 	});
 }
-sendQuery = function(query,callback){
+sendQuery = function(query, params, callback){
 	//console.log(query)
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
@@ -30,7 +30,7 @@ sendQuery = function(query,callback){
 		  }
 		  console.log('Connected to postgres! Getting schemas...');
 		  client
-		    .query(query, function(err, result) {
+		    .query(query, params, function(err, result) {
 			    if(err) {
 			      err["Error"] = true;
 			      console.error('error running query', err);
@@ -43,11 +43,11 @@ sendQuery = function(query,callback){
 			})
 		})
 }
-sendQuery2 = function(q, callback){
+sendQuery2 = function(q,params, callback){
 	//console.log(q);
 	var client = new pg.Client(process.env.DATABASE_URL);
 	client.connect();
-	var query = client.query(q);
+	var query = client.query(q,params);
 	query.on('row', function(row){
 		callback(row)
 	})

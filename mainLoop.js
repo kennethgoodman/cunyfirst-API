@@ -1,6 +1,5 @@
-
-/*var dotenv = require('dotenv')
-dotenv.load(); */
+var dotenv = require('dotenv')
+dotenv.load();
 var db = require('./database');
 //var bot = require('./bot')
 var worker = require('./worker')
@@ -85,8 +84,9 @@ queueRead2 = function lambda(){
 	if(item != undefined){ 
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
-				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' order by class, section;";  
-				sendQuery2(q, function(row){
+				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where inst = $1 and session=$2 and dept= $3 order by class, section;";  
+				var params = [item.inst,item.session,item.dept]
+				sendQuery2(q, params, function(row){
 					try{
 						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
 						console.log(new Date() + ": " + text)
@@ -94,13 +94,14 @@ queueRead2 = function lambda(){
 						console.log(err)
 					}
 					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] != "Closed"){
-						var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = \'" + item.inst + "\' and session=\'" + item.session + "\' and dept=\'" + item.dept + "\' and class=\'" + row["class"] + "\' and section=\'" +row["section"] +"\' and texted=false";
-						
-						sendQuery2(q, function(data){
+						var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = $1 and session=$2 and dept=$3 and class=$4 and section=$5 and texted=false";
+						var params = [item.inst,item.session,item.dept,row["class"],row["section"]]
+						sendQuery2(q, params, function(data){
 							if(!data['texted']){
 								send_email(data['phone_number'], data['provider'], text);
-								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = \'"+item.dept + "\' AND class = \'" + row["class"] + "\' AND section = \'" +row["section"] +"\';";
-				                sendQuery(query, function(result){ //change texted to TRUE in DB
+								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = $1 AND class = $2 AND section = $3;";
+				                var params = [item.dept, row["class"],row["section"]]
+				                sendQuery(query, params, function(result){ //change texted to TRUE in DB
 				                	try{
 				                		console.log(result.command);
 				                	} catch(err){
@@ -127,19 +128,19 @@ queueRead2 = function lambda(){
 	}
 	counter--;	
 }
-var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info where texted = false order by inst, session, dept'
 var queryCount = 'Select count(*) from clients_and_their_info'
 var amount_of_rows = 1000000;
 setInterval( function(){
-	sendQuery2(queryCount, function(result){
+	sendQuery2(queryCount,[], function(result){
 		amount_of_rows = result["count"];
 	})
 }, 1000*60*10) //every 10 min, TEST IF THIS IS OK!
+var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info where texted = false order by inst, session, dept'
 setInterval( function(){
 	if(queue.length > parseInt(amount_of_rows*1.2)){ //still testing good number
 		queue = [];
 	}
-	sendQuery2(q, function(row){
+	sendQuery2(q, [], function(row){
 		if(queue.length < parseInt(amount_of_rows*1.5)) queue.push(row) //still testing good number
 	})
 
