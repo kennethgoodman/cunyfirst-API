@@ -1,5 +1,5 @@
-var dotenv = require('dotenv')
-dotenv.load();
+/*var dotenv = require('dotenv')
+dotenv.load();*/
 var db = require('./database');
 //var bot = require('./bot')
 var worker = require('./worker')
