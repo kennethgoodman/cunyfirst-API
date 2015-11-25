@@ -87,6 +87,7 @@ queueRead2 = function lambda(){
 				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where texted = false and inst = $1 and session=$2 and dept= $3 order by class, section;";  
 				var params = [item.inst,item.session,item.dept]
 				sendQuery2(q, params, function(row){
+					if(row == undefined) setTimeout(function(){return;}, 5000);
 					try{
 						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
 						//console.log(new Date() + ": " + text)

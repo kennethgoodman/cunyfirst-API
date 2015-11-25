@@ -35,6 +35,7 @@ sendQuery = function(query, params, callback){
 			      err["Error"] = true;
 			      console.error('error running query', err);
 			      callback(err)
+			      client.end();
 			    }
 			    else{
 			    	callback(result);

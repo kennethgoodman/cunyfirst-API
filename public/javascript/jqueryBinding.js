@@ -61,7 +61,7 @@ $(document).ready(function(){
 removeDropdowns = function(dropdowns){
     for(var select in dropdowns){
         var id = "#" + dropdowns[select];
-        var starting = "pick a";
+        var starting = "Pick a";
         if(dropdowns[select] == "inst")
             starting += "n institution";
         else if(dropdowns[select] == "session")

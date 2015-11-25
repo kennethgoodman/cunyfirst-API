@@ -210,7 +210,7 @@ getDept = function(inst, session, callback){
         })
     })
 }
-getSession = function(inst, callback){
+getSession = function lambda(inst, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
             console.error(err);

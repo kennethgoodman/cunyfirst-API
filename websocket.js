@@ -23,6 +23,7 @@ module.exports = function(wss){
     			})
     		}
     		else if(data[0] == "get_session"){
+          var count = 0;
     			checkForEmptyData(data, function(data){
     				var a = ["session"];
     				getSession(data[1],function(inst,data){
@@ -34,6 +35,13 @@ module.exports = function(wss){
   	  						a.push(temp)
   	  					}
   	  				}
+              if(a.length == 0 && count++ < 3){
+                console.log("here")
+                getSession(data[1], callback(data))
+                return;
+              } else if(count >= 3){
+                sendData(ws,["err", "An error occured, please refresh the page or contact support."])
+              }
     				//a.remove(a.length-1)
     					sendData(ws,a)
     				//ws.send(JSON.stringify(a))
@@ -89,7 +97,16 @@ module.exports = function(wss){
         }
         else if(data[0] == "getCurrentClasses"){
           var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=$1;"
+          console.log(q);
+          sendQuery2(q,[data[1]], function(row){
+            if(row["session"] == "1162") {
+                row["session"] = "Spring 2016";
+              }
+            sendData(ws, ["addClassToDT", row])
+          })
+          /*
           sendQuery(q,[data[1]],function(result){
+            console.log(result)
             var temp = [];
             result = result.rows
             for(var row in result){
@@ -99,7 +116,7 @@ module.exports = function(wss){
               temp.push(result[row])
             }
             sendData(ws,["classesBeingTaken",temp]);
-          })
+          })*/
         }
     		else if(data[0] == "submit"){
     			checkForEmptyData(data, function(data){
@@ -150,6 +167,18 @@ module.exports = function(wss){
                         temp.push(result[row])
                       }
                       sendData(ws,["classesBeingTaken",temp]);
+                      if(data.length == 2){
+                          sendData(ws,["sendNotification"], "Your have succesfully added "+data[1][2] +": "+ data[1][3])
+                      }
+                      else{
+                        var temp = ""
+                        for(var i = 1; i < data.length; i++){
+                          temp += data[i][2] +": "+ data[i][3] + ", ";
+                        }
+                        temp[temp.length-1] = "";
+                          sendData(ws,["sendNotification"], "Your have succesfully added "+temp)
+                      }
+                      
                     });
                     //sendData(ws, ["Success", "Your classes have succesfully been entered"])
                     console.log("Success adding query");

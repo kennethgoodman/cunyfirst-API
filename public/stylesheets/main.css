@@ -39,9 +39,11 @@ tr:hover {
     background-color: #d81d1d;
 }
 .wrap {
-    width: 100%;
-    height: 1000px;
-    overflow:auo;
+    height: 100%;
+    overflow:auto;
+    margin: auto;
+    width: 60%;
+    text-align: center;
 }
 
 .fleft {
@@ -56,12 +58,12 @@ tr:hover {
     width: 50%;
 }
 .tableHolder {
-    float: left;
-    width: 55%;
+    width: 75%;
+    margin: auto;
+    text-align: center
 }
 .classesSignedUpFor{
     float: right;
-    width: 43.5%;
 }
 .toolbar {
     float: left;

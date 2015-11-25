@@ -8,49 +8,31 @@
 <body>
     
   <% include ../partials/nav.ejs %>
-     <div class="classesSignedUpFor" style="margin-right:8px">
-         <button id="buttonToDeleteClasses">
-            Delete Selected Class
-         </button>
-         
-<button type="button" onclick="show()">Notify me!</button>
-        <table id="tableForAlreadySignedUp" cellspacing="0">
-            <caption>Classes you are currently signed up to get texts for:</caption>
-            <thead>
-                <tr>
-                    <th>Institution</th><th>Session</th><th>Department</th><th>Class number </th><th>Class Section</th><th>Have you been texted for this class?</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <th>Institution</th><th>Session</th><th>Department</th><th>Class number </th><th>Class Section</th><th>Have you been texted for this class?</th>
-                </tr>
-            </tfoot>
-            <tbody>
-
-            </tbody>
-        </table>
-    </div>
-    <div class="wrap">
-        <div>
-            <p style="margin-left:20px; margin-top:60px;">These dropdowns take time to load. Thank you for your patience.</p>
-            <p style="margin-left:20px" id="testing">To add a new class, fill out dropdowns, click on your class/classes, enter your phone number and provider and wait to get texted: </p>
-            <div style="margin-left:20px">
-                <select id="inst" default="pick a carrier">
+     
+    <div class="wrap" style="margin:auto;">
+        <div style="margin:auto; margin-left:20px; margin-top:60px;">
+            <p style="">These dropdowns take time to load. Thank you for your patience.</p>
+            <br>
+            <p id="testing">To add a new class, wait for the institution dropdown to load and pick your institution. </p>
+            <div style="margin: auto;">
+                <select id="inst" default="pick an institution">
                     <option value="defualt" selected="selected">
                         Pick an institution
                     </option>
                 </select>
-                <select id="session" default="pick a carrier">
+               <p>Next, pick your session</p>
+                <select id="session" default="pick a session">
                     <option value="defualt" selected="selected">
                         Pick a session
                     </option>
                 </select>
-                <select id="dept" default="pick a carrier">
+                <p>Pick your department.</p>
+                <select id="dept" default="pick a department">
                     <option value="defualt" selected="selected">
                         Pick a department
                     </option>
                 </select>
+                <p>Last, fill out your phone number and provider.</p>
                 <div class="checkbox checkbox-primary">
                   <input id="deltedWhenTexted" type="checkbox" checked>
                     Delete my class when I've been texted/e-mailed. <a href="/FAQ#DeleteMyClassCheckbox">(What does this mean)</a>
@@ -64,23 +46,11 @@
                 <button type="button" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
                 <img src="/images/ajax-loader.gif" id="ajax-loader" style="display:none">
             </div>
-            
+            <p>When you finished filling out the forms, select the classes with your mouse, and click "Get Class!"</p><br>
+        </div>
+    </div>
             <div>
-                
-                <!--
-                <div style="overflow:scroll; height:400px;">
-                    <table id="myTable" style="width:90%" border="1" data-toggle="table">
-                        <thead>
-                            <tr>
-                                <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-
-                        </tbody>
-                    </table>
-                </div>-->
-                <div class="tableHolder" style="margin-left:10px">
+                <div class="tableHolder">
                     <table id="dataTables" cellspacing="0">
                         <thead>
                             <tr>
@@ -98,36 +68,7 @@
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
 </body>
 </html>
 <script>
-	var Notification = window.Notification || window.mozNotification || window.webkitNotification;
-
-	Notification.requestPermission(function (permission) {
-		// console.log(permission);
-	});
-
-	function show() {
-		var instance = new Notification(
-			"Class Added", {
-				body: "You have added the class",
-                icon: 'http://funcook.com/img/favicon.png',
-			}
-		);
-		instance.onclick = function () {
-			window.location.href = link;
-		};
-		instance.onerror = function () {
-			// Something to do
-		};
-		instance.onshow = function () {
-			// Something to do
-		};
-		instance.onclose = function () {
-			
-		};
-	}
-    show();
 </script>

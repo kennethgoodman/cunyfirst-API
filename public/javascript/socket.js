@@ -85,17 +85,18 @@ ws.onmessage = function (event) {
         
         t.draw()
       }
-      else if(data[0] == "AddedAClass"){
-        data=data[1]
-        var t = $('#tableForAlreadySignedUp').DataTable();
+      else if(data[0] == "sendNotification"){
+        showNotification(data[1],"http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/account");
+      }
+      else if(data[0] == "addClassToDT"){
+        data = data[1];
         try{
-          for(var i in data){
-            t.row.add(data[i])
-          }
+          var t = $('#tableForAlreadySignedUp').DataTable();
+          t.row.add([data["inst"],data["session"],data["dept"],data["class"],data["section"],data["texted"]]);
         } catch(err){
-          console.log(err)
-        } 
-        t.draw() 
+          console.log(err);
+        }
+        t.draw();
       }
       else if(data[0] == "carriers"){
           var dropdown = document.getElementById('carrier');
