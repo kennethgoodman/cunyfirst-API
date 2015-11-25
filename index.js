@@ -69,9 +69,13 @@ app.on('stormpath.ready', function() {
   //app.listen(process.env.PORT || 5000);
 });
 app.use(express.static(__dirname + '/public'));
-app.get('/userData', function(req, res){
-  res.send(req.user)
-})
+try{
+  app.get('/userData', function(req, res){
+    res.send(req.user)
+  })
+} catch(err){
+  console.log(err)
+}
 var created = false;
 app.get('/', function(request, response) {
   	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
@@ -107,8 +111,9 @@ app.get('*', function(req,res,next){
 app.use(function(err, req, res, next){
   if(err.status !== 404){
     console.log(err);
-    return next();
+    //return next();
   }
+  console.log(err)
   res.send(err.message || 'There is no page at this link')
 })
 websocket(wss);

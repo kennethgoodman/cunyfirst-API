@@ -84,7 +84,7 @@ queueRead2 = function lambda(){
 	if(item != undefined){ 
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
-				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where inst = $1 and session=$2 and dept= $3 order by class, section;";  
+				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where texted = false and inst = $1 and session=$2 and dept= $3 order by class, section;";  
 				var params = [item.inst,item.session,item.dept]
 				sendQuery2(q, params, function(row){
 					try{

@@ -8,11 +8,12 @@
 <body>
     
   <% include ../partials/nav.ejs %>
-    
      <div class="classesSignedUpFor" style="margin-right:8px">
          <button id="buttonToDeleteClasses">
             Delete Selected Class
          </button>
+         
+<button type="button" onclick="show()">Notify me!</button>
         <table id="tableForAlreadySignedUp" cellspacing="0">
             <caption>Classes you are currently signed up to get texts for:</caption>
             <thead>
@@ -101,3 +102,32 @@
     </div>
 </body>
 </html>
+<script>
+	var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+
+	Notification.requestPermission(function (permission) {
+		// console.log(permission);
+	});
+
+	function show() {
+		var instance = new Notification(
+			"Class Added", {
+				body: "You have added the class",
+                icon: 'http://funcook.com/img/favicon.png',
+			}
+		);
+		instance.onclick = function () {
+			window.location.href = link;
+		};
+		instance.onerror = function () {
+			// Something to do
+		};
+		instance.onshow = function () {
+			// Something to do
+		};
+		instance.onclose = function () {
+			
+		};
+	}
+    show();
+</script>

@@ -43,7 +43,7 @@
                             var item = document.getElementById("logStatus");
                             $.get("/userData",function(data){
                                 userData = data;
-                                if(userData == ""){
+                                if(userData != ""){
                                     item.innerHTML = '<span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out';
                                     item.href = "/logout"
                                 }

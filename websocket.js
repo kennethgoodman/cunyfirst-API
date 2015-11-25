@@ -105,7 +105,7 @@ module.exports = function(wss){
     			checkForEmptyData(data, function(data){
             var q = "SELECT count(*) from clients_and_their_info where user_id = $1;";
             sendQuery2(q, [data[1][7]], function(result){
-              var number_of_classes = parseInt(result.count)+data.length;
+              var number_of_classes = parseInt(result.count)+data.length - 1;
               var classLimit = 7;
               if(number_of_classes > classLimit){ //check to see if user has too many classes filled out
                 sendData(ws, ["err", "You\'ve signed up for " +  number_of_classes + " classes, the limit on this website for now is " + classLimit +"."])
