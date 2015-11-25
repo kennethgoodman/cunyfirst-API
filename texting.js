@@ -40,7 +40,7 @@ send_email = function(nbr, provider, body){
 	}
 	sendgrid.send(payload, function(err, json) {
 	  if (err) { console.error(err); }
-	  console.log(json);
+	  	console.log(json + " : " + to + ": " + body);
 	});
 }
 //send_email("5164046348","Verizon","test");
