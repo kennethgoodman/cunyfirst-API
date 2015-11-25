@@ -127,7 +127,7 @@ $(document).ready(function(){
     console.log( "error" + e );
   });
   //ws.send(JSON.stringify(["test"]))
-  test = function(){
+  var test = function(){
       ws.send(JSON.stringify(["get_session", "QNS01"]));
       ws.send(JSON.stringify(["get_dept","QNS01","1162"]));
       ws.send(JSON.stringify(["get_class","QNS01","1162","ACCT"]));

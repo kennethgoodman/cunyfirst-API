@@ -1,5 +1,3 @@
-var express = require('express');
-var app = express();
 var pg = require('pg');
 /*var dotenv = require('dotenv')
 dotenv.load();*/

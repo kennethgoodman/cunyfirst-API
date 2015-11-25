@@ -1,9 +1,9 @@
 var morgan = require('morgan')
 var pg = require('pg');
-var car = require('./carrier')
-var worker = require('./worker');
-var bot = require('./bot')
-var mainLoop = require('./mainLoop')
+require('./carrier')
+require('./worker');
+//require('./bot')
+require('./mainLoop')
 var WebSocketServer = require("ws").Server
 var http = require('http');
 var express = require('express');
@@ -14,6 +14,9 @@ var port = process.env.PORT || 5000
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
+var raygun = require('raygun');
+var raygunClient = new raygun.Client().init({ apiKey: process.env.RAYGUN_APIKEY });
+raygunClient.send(theError);
 var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 var store = new MongoDBStore(
@@ -22,7 +25,7 @@ var store = new MongoDBStore(
         collection: 'sessionCollection'
       });
 store.on('error', function(err){
-  assert.ifError(error);
+  assert.ifError(err);
   assert.ok(false);
 })
 app.use(require('express-session')({
@@ -69,9 +72,8 @@ app.use(stormpath.init(app, {
   },
   website: true
 }));
-
+app.use(raygunClient.expressHandler);
 app.use(morgan('combined'))
-var wss;
 var server = http.createServer(app)
 server.listen(port)
 var wss = new WebSocketServer({server: server})
@@ -86,7 +88,6 @@ try{
 } catch(err){
   console.log(err)
 }
-var created = false;
 app.get('/', function(request, response) {
   	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
     //
