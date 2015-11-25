@@ -4,6 +4,7 @@ require('./carrier')
 require('./worker');
 //require('./bot')
 require('./mainLoop')
+var assert = require('assert')
 var WebSocketServer = require("ws").Server
 var http = require('http');
 var express = require('express');
@@ -16,28 +17,24 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 var raygun = require('raygun');
 var raygunClient = new raygun.Client().init({ apiKey: process.env.RAYGUN_APIKEY });
-raygunClient.send(theError);
+app.use(raygunClient.expressHandler);
+try{
+  var err = new Error('help!');
+  //throw err;
+} catch(err){
+  raygunClient.send(err)
+}
 var session = require('express-session');
-var MongoDBStore = require('connect-mongodb-session')(session);
-var store = new MongoDBStore(
-      { 
-        uri: process.env.MONGOLAB_URI,
-        collection: 'sessionCollection'
-      });
-store.on('error', function(err){
-  assert.ifError(err);
-  assert.ok(false);
-})
-app.use(require('express-session')({
-  secret:'A super secret secret that has weird symbols !%@#$7*',
-  cookie: {
-    maxAge: 3600000,
+app.use(session({
+  store: new (require('connect-pg-simple')(session))(),
+  secret: 'My super secret password for sessions !#@$^53',
+  cookie: { 
+    maxAge: 30 * 24 * 60 * 60 * 1000,
     secure: true,
     httpOnly: true,
-  },
+    }, // 30 days
   resave: false,
   saveUninitialized: false,
-  store: store
 }));
 app.use(stormpath.init(app, {
   client: {

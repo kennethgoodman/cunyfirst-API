@@ -2,7 +2,8 @@
 dotenv.load();*/
 var db = require('./database');
 //var bot = require('./bot')
-var worker = require('./worker')
+var worker = require('./worker');
+var texts = require('./texting');
 /*var textedInSession;
 
 a = function(data,callback){
