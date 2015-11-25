@@ -12,12 +12,22 @@ var express = require('express');
 var stormpath = require('express-stormpath');
 var app = express();
 var websocket = require('./websocket')
-var session = require('express-session');
 var port = process.env.PORT || 5000
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
-app.use(session({
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
+var store = new MongoDBStore(
+      { 
+        uri: process.env.MONGOLAB_URI,
+        collection: 'sessionCollection'
+      });
+store.on('error', function(err){
+  assert.ifError(error);
+  assert.ok(false);
+})
+app.use(require('express-session')({
   secret:'A super secret secret that has weird symbols !%@#$7*',
   cookie: {
     maxAge: 3600000,
@@ -25,7 +35,8 @@ app.use(session({
     httpOnly: true,
   },
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: store
 }));
 app.use(stormpath.init(app, {
   client: {
@@ -60,6 +71,7 @@ app.use(stormpath.init(app, {
   },
   website: true
 }));
+
 app.use(morgan('combined'))
 var wss;
 var server = http.createServer(app)

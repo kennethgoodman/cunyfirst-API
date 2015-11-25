@@ -22,10 +22,33 @@ send_message = function(nbr,body) {
 	    }
 	});
 }
-var postmark = require("postmark");
+
+
+
+//var sendgrid = require("sendgrid")("app43697655@heroku.com", "qq3pw5fk3558");
+var sendgrid = require("sendgrid")(process.env.SENDGRID_API_KEY);
+send_email = function(nbr, provider, body){
+	var to = nbr;
+	var carrier = returnCarriers();
+	if(provider != "@")
+		to +=  carrier[provider];
+		var payload   = {
+	  to      : to,
+	  from    : 'kenneth@noclosedclass.com',
+	  subject : 'Class Opened!',
+	  text    : body
+	}
+	sendgrid.send(payload, function(err, json) {
+	  if (err) { console.error(err); }
+	  console.log(json);
+	});
+}
+//send_email("5164046348","Verizon","test");
+//var postmark = require("postmark");
+
 
 // Example request
-var client = new postmark.Client(process.env.POSTMARK_API_KEY);
+/*var client = new postmark.Client(process.env.POSTMARK_API_KEY);
 send_email = function(nbr, provider, body){
 	var to = nbr;
 	var carrier = returnCarriers();
@@ -44,4 +67,4 @@ send_email = function(nbr, provider, body){
 	    }
 	    console.info("Sent to postmark for delivery")
 	});
-}
+}*/
