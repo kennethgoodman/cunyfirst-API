@@ -5,6 +5,7 @@ Notification.requestPermission(function (permission) {
 });
 
 function showNotification(bodyText, icon, link) {
+	console.log(bodyText)
 	var instance = new Notification(
 		"Class Added", {
 			body: bodyText,
@@ -24,5 +25,5 @@ function showNotification(bodyText, icon, link) {
 		
 	};
 }
-showNotification("This Class","http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/account");
+//showNotification("This Class","http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/account");
 //showNotification("bodyText","",""); for testing notifications

@@ -168,7 +168,7 @@ module.exports = function(wss){
                       }
                       sendData(ws,["classesBeingTaken",temp]);
                       if(data.length == 2){
-                          sendData(ws,["sendNotification"], "Your have succesfully added "+data[1][2] +": "+ data[1][3])
+                          sendData(ws,["sendNotification", "Your have succesfully added "+data[1][2] +": "+ data[1][3]])
                       }
                       else{
                         var temp = ""
@@ -176,7 +176,7 @@ module.exports = function(wss){
                           temp += data[i][2] +": "+ data[i][3] + ", ";
                         }
                         temp[temp.length-1] = "";
-                          sendData(ws,["sendNotification"], "Your have succesfully added "+temp)
+                            sendData(ws,["sendNotification"], "Your have succesfully added "+temp)
                       }
                       
                     });
