@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <% include ../partials/header.ejs %>
+    </head>
+    <body>
+        <% include ../partials/nav.ejs %>
+        <div class="centerDiv" style="margin-top:60px;">
+            <p style="margin-left:10px">Account Info:</p>
+            <div style="margin-left:10px">
+            <div>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <!--<th>  </th>--><th>info name</th><th>info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var data in userInfo){ %>
+                            <% if(data == 'href'){continue;}
+                               if(data == 'status'){break;}
+                            %>
+                        <tr>
+                            
+                            <!--
+                            <td>
+                                <button class="editbtn" id=<%=data%>>edit data </button>
+                            </td>
+                            -->
+                            <td>
+                                <%=data%>
+                            </td>
+                            <td class=<%=data%> contenteditable='false'>
+                                <%=userInfo[data]%>
+                            </td>
+                        </tr>  
+                        <% } %>  
+                    </tbody>
+                    
+                </table>
+            </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -90,8 +90,7 @@ th, td {
 #tableForAlreadySignedUp thead tr {
   cursor: pointer;
 }
-.tableForClassesSignedUp{
-
+.centerDiv{
   margin: auto;
   width: 60%;
   padding: 10px;

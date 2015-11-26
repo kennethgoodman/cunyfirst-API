@@ -115,6 +115,12 @@ app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) 
 app.get('/faq', function(request,response){
   response.render('pages/faq');
 })
+app.get('/account_info', stormpath.loginRequired, function(request,response){
+  response.render('pages/account_info',{userInfo: request.user})
+})
+app.get('/donate', function(request,response){
+  response.render('pages/donate')
+})
 app.get('*', function(req,res,next){
   var err = new Error();
   err.status = 404;
