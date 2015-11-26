@@ -115,7 +115,9 @@ ws.onmessage = function (event) {
       console.log(err)
   }
 };
-$(document).ready(function(){
+ws.onopen = function(e){
+  if(e) console.log(e);
+  console.log("Conn established")
   ws.send(JSON.stringify(["get_inst"]));
   $("#ajax-loader").show();
   ws.send(JSON.stringify(["getCarriers"]));
@@ -123,8 +125,8 @@ $(document).ready(function(){
     if(data != ""){
       ws.send(JSON.stringify(["getCurrentClasses",data["username"]]))
     }
-  }).fail(function(e) {
-    console.log( "error" + e );
+  }).fail(function(err) {
+    console.log( "error" + err );
   });
   //ws.send(JSON.stringify(["test"]))
   var test = function(){
@@ -133,4 +135,7 @@ $(document).ready(function(){
       ws.send(JSON.stringify(["get_class","QNS01","1162","ACCT"]));
   }
   //test();
+}
+$(document).ready(function(){
+  
 });

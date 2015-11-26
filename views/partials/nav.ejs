@@ -55,18 +55,25 @@
             <li>
                 <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px">
                     <a href="/logout" id="logStatus"><span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out</a>
+            <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
                     <script>
                         $(document).ready(function(){
                             var item = document.getElementById("logStatus");
                             $.get("/userData",function(data){
                                 userData = data;
-                                if(userData != ""){
+                                console.log("here")
+                                if(userData !== ""){
+                                    console.log("here2")
                                     item.innerHTML = '<span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out';
                                     item.href = "/logout"
                                 }
                                 else{
+                                    console.log("here1")
                                     item.innerHTML = '<span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log in';
                                     item.href = "/login" 
+                                    document.getElementById("submitData").disabled = true;
+                                    document.getElementById("buttonToDeleteClasses").disabled = true;
+        
                                 }
                             }).fail(function(e) {
                                 console.log( "error" + e );
@@ -79,9 +86,3 @@
    </div>
   </div>
 </nav>
-<div
-  class="fb-like"
-  data-share="true"
-  data-width="450"
-  data-show-faces="true">
-</div>

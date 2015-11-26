@@ -5,9 +5,7 @@ $.get("/userData",function(data){
     if(userData == ""){
         loggedIn = false;
         $(document).ready(function(){
-            document.getElementById("submitData").disabled = true;
-            document.getElementById("buttonToDeleteClasses").disabled = true;
-        })
+            })
         //$("#submitData").disabled = true;
         /*$("#submitData").attr('disabled', true);
         $("#buttonToDeleteClasses").attr('disabled', true);*/
