@@ -5,7 +5,6 @@ Notification.requestPermission(function (permission) {
 });
 
 function showNotification(bodyText, icon, link) {
-	console.log(bodyText)
 	var instance = new Notification(
 		"Class Added", {
 			body: bodyText,

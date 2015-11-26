@@ -118,6 +118,24 @@ module.exports = function(wss){
             sendData(ws,["classesBeingTaken",temp]);
           })*/
         }
+        else if(data[0] == "changePhoneNumber"){
+          checkForEmptyData(data, function(data){
+            var q = "UPDATE users set phone_number = $1 where user_id = $2";
+            sendQuery2(q, [data[2], data[1]], function(result){
+              if(result.hasOwnProperty("Error")){
+                    //TODO: test to find all possible errors
+                if(result.code == '23505'){
+                  sendData(ws, ["err", "You\'ve signed up for one of these classes already, if this is a mistake, please contact support"])
+                  console.log("PK problem error on query");
+                }
+                else{
+                  sendData(ws, ["err","An error occured, please contact support"])
+                  console.log("Unknown error on query");
+                }
+              }
+            })
+          })
+        }
     		else if(data[0] == "submit"){
     			checkForEmptyData(data, function(data){
             var q = "SELECT count(*) from clients_and_their_info where user_id = $1;";

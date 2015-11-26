@@ -6,13 +6,12 @@
     <body>
         <% include ../partials/nav.ejs %>
         <div class="centerDiv" style="margin-top:60px;">
-            <p style="margin-left:10px">Account Info:</p>
-            <div style="margin-left:10px">
+            <p>Account Info:</p>
             <div>
                 <table border="1" class="centerDiv">
                     <thead>
                         <tr>
-                            <!--<th>  </th>--><th>info name</th><th>info</th>
+                            <th></th><th>info name</th><th>info</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,11 +21,12 @@
                             %>
                         <tr>
                             
-                            <!--
                             <td>
-                                <button class="editbtn" id=<%=data%>>edit data </button>
+                                <% if(data =='xusername'){ %>
+                                <button type="button" id='<%=data%>' class="btn btn-default navbar-btn editbtn" style="margin-top:9px; margin-left:2px"><span class="glyphicon glyphicon-pencil" style="margin-right:5px"></span>edit data                      <%}else{%>
+                                    not editable yet
+                                    <%}%>
                             </td>
-                            -->
                             <td>
                                 <%=data%>
                             </td>
@@ -34,11 +34,15 @@
                                 <%=userInfo[data]%>
                             </td>
                         </tr>  
-                        <% } %>  
+                        <% } %> 
+                        <tr>
+                            <td>
+                            <button type="button" id='phone_number' class="btn btn-default navbar-btn editbtn" style="margin-top:9px; margin-left:2px"><span class="glyphicon glyphicon-pencil" style="margin-right:5px"></span>edit data</td>
+                            <td>Phone Number</td><td class="phone_number" contenteditable='false'><%=phone_number%></td>
+                        </tr>
                     </tbody>
                     
                 </table>
-            </div>
             </div>
         </div>
     </body>

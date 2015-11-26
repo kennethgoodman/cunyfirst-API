@@ -6,9 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 </head>
 <body>
-    
-  <% include ../partials/nav.ejs %>
-     
+  <% include ../partials/nav.ejs %> 
     <div class="wrap" style="margin:auto;">
         <div style="margin:auto; margin-left:20px; margin-top:60px;">
             <p style="">These dropdowns take time to load. Thank you for your patience.</p>
@@ -32,42 +30,55 @@
                         Pick a department
                     </option>
                 </select>
-                <p>Last, fill out your phone number and provider.</p>
                 <div class="checkbox checkbox-primary">
                   <input id="deltedWhenTexted" type="checkbox" checked>
                     Delete my class when I've been texted/e-mailed. <a href="/FAQ#DeleteMyClassCheckbox">(What does this mean)</a>
                 </div>
+                <p>Last, fill out your phone number and provider.</p><br>
+                
                 <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr">
                 <select id="carrier" default="pick a carrier">
                     <option value="defualt" selected="selected">
                         Pick A Carrier
                     </option>
                 </select>
-                <button type="button" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
+                
                 <img src="/images/ajax-loader.gif" id="ajax-loader" style="display:none">
+                <p> and/or email</p>
+                <br><input type="text" name="email" placeholder="youremail@domain.com"><br>
+                <p>Contact you through: </p><br>
+                <div class="example">
+                   <form>
+                        <input id="radio1" type="radio" name="radio" value="text" checked="checked"><label for="radio1"><span><span></span></span>Text</label>
+                        <input id="radio2" type="radio" name="radio" value="email"><label for="radio2"><span><span></span></span>Email</label>
+                        <input id="radio3" type="radio" name="radio" value="both"><label for="radio3"><span><span></span></span>Both</label>
+                  </form>
+                </div>
+                </div>
+                <button type="button" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
             </div>
             <p>When you finished filling out the forms, select the classes with your mouse, and click "Get Class!"</p><br>
         </div>
     </div>
-            <div>
-                <div class="tableHolder">
-                    <table id="dataTables" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Class nbr </th><th>Class Section</th><th>Teacher</th><th>Status</th>
-                                <th>Days and Time</th><th>Room</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th><th>Days and Time</th><th>Room</th>
-                            </tr>
-                        </tfoot>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+        <div>
+            <div class="tableHolder">
+                <table id="dataTables" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Class nbr </th><th>Class Section</th><th>Teacher</th><th>Status</th>
+                            <th>Days and Time</th><th>Room</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th><th>Days and Time</th><th>Room</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
+        </div>
 </body>
 </html>
 <script>

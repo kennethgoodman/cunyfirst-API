@@ -7,7 +7,6 @@
       version    : 'v2.5'
     });
   };
-
   (function(d, s, id){
      var js, fjs = d.getElementsByTagName(s)[0];
      if (d.getElementById(id)) {return;}
@@ -73,14 +72,11 @@
                             var item = document.getElementById("logStatus");
                             $.get("/userData",function(data){
                                 userData = data;
-                                console.log("here")
                                 if(userData !== ""){
-                                    console.log("here2")
                                     item.innerHTML = '<span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out';
                                     item.href = "/logout"
                                 }
                                 else{
-                                    console.log("here1")
                                     item.innerHTML = '<span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log in';
                                     item.href = "/login" 
                                     document.getElementById("submitData").disabled = true;

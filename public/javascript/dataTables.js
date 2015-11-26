@@ -7,6 +7,7 @@ $(document).ready(function() {
     	responsive: true,
     	fixedHeader: true,
     });
+    $("#dataTables .dataTables_empty").text("Please choose your institution, session and department");
      var table = $('#tableForAlreadySignedUp').DataTable({
     	responsive: true,
     	"dom": '<"top">rtp<"bottom"><"clear">',
@@ -15,7 +16,7 @@ $(document).ready(function() {
     		className: "selected selectedToBeDeleted"
     	},
     });
-    
+    $("#tableForAlreadySignedUp .dataTables_empty").text("You are not signed up to be alerted for any classes");
     $('#buttonToDeleteClasses').click( function () {
         if(loggedIn){
             var temp = table.row('.selectedToBeDeleted');

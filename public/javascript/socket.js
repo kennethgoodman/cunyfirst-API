@@ -4,7 +4,7 @@ ws.onmessage = function (event) {
   var data = JSON.parse(event.data);
   try{
       if(data[0] == "keep open") return; //dont print
-      console.log(data);
+      //console.log(data);
       if(data[0] == "inst"){
           removeDropdowns(["inst","session","dept"])
           $("#ajax-loader").hide();
@@ -117,7 +117,7 @@ ws.onmessage = function (event) {
 };
 ws.onopen = function(e){
   if(e) console.log(e);
-  console.log("Conn established")
+  //console.log("Conn established")
   ws.send(JSON.stringify(["get_inst"]));
   $("#ajax-loader").show();
   ws.send(JSON.stringify(["getCarriers"]));

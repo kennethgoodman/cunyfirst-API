@@ -116,7 +116,10 @@ app.get('/faq', function(request,response){
   response.render('pages/faq');
 })
 app.get('/account_info', stormpath.loginRequired, function(request,response){
-  response.render('pages/account_info',{userInfo: request.user})
+  var q = "Select phone_number from users where user_id = $1";
+  sendQuery2(q, [request.user.username], function(row){
+    response.render('pages/account_info',{userInfo: request.user, phone_number: row.phone_number})
+  })
 })
 app.get('/donate', function(request,response){
   response.render('pages/donate')

@@ -1,3 +1,18 @@
+function ValidateEmail(inputText)  
+{  
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
+    var element; //fix this
+    if(inputText.value.match(mailformat))  {  
+        element.focus();  
+        return true;  
+    }  
+    else  {  
+        alert("You have entered an invalid email address!");  
+        element.focus();  
+        return false;  
+    }  
+}  
+
 userData = [];
 loggedIn = false;
 $.get("/userData",function(data){
@@ -11,7 +26,6 @@ $.get("/userData",function(data){
         $("#buttonToDeleteClasses").attr('disabled', true);*/
     }
     else{
-        console.log(userData)
         loggedIn = true;
     }
 }).fail(function(e) {
@@ -19,9 +33,15 @@ $.get("/userData",function(data){
   });
 $(document).ready(function(){
     $('.editbtn').click(function(){
-        $(this).html($(this).html() == 'edit data ' ? 'submit changes' : 'edit data ');
+        $(this).html($(this).html() == '<span class="glyphicon glyphicon-pencil" style="margin-right:5px"></span>edit data' ? '<span class="glyphicon glyphicon-ok" style="margin-right:5px"></span>Submit changes' : '<span class="glyphicon glyphicon-pencil" style="margin-right:5px"></span>edit data');
         var td = $("." + this.id);
-        $("." + this.id).attr("contenteditable", ! $.parseJSON($("." + this.id).attr("contenteditable")));
+        td.attr("contenteditable", ! $.parseJSON($("." + this.id).attr("contenteditable")));
+        td.toggleClass("editable");
+        if($(this).text() == 'edit data'){ //just clicked submit
+            $.get("/userData",function(data){
+                ws.send(JSON.stringify(["changePhoneNumber",data.username,td.text()]))
+            })
+        }
     });
     $("#submitData").unbind('click').click( function (e) {
         $.get("/userData",function(data){
@@ -87,6 +107,7 @@ parsePhoneNumber = function(nbr){
     return nbr;
 }
 clicked = function(){
+    var contactHow = $(".example input[type='radio']:checked").val();
     var fullName = userData["fullName"].trim();
     var userName = userData["username"].trim();
     var inst = $('#inst').val();
