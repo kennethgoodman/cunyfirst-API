@@ -90,6 +90,13 @@ th, td {
 #tableForAlreadySignedUp thead tr {
   cursor: pointer;
 }
+.tableForClassesSignedUp{
+
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+  margin-top: 50px;
+}​
 /*.ajax-loader {
   position: absolute;
   left: 0;

@@ -5,44 +5,9 @@
     </head>
     <body>
         <% include ../partials/nav.ejs %>
-        <div class="fleft" style="margin-top:60px;">
-            <p style="margin-left:10px">Account Info:</p>
-            <div style="margin-left:10px">
-            <div>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <!--<th>  </th>--><th>info name</th><th>info</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(var data in userInfo){ %>
-                            <% if(data == 'href'){continue;}
-                               if(data == 'status'){break;}
-                            %>
-                        <tr>
-                            
-                            <!--
-                            <td>
-                                <button class="editbtn" id=<%=data%>>edit data </button>
-                            </td>
-                            -->
-                            <td>
-                                <%=data%>
-                            </td>
-                            <td class=<%=data%> contenteditable='false'>
-                                <%=userInfo[data]%>
-                            </td>
-                        </tr>  
-                        <% } %>  
-                    </tbody>
-                    
-                </table>
-            </div>
-            </div>
-        </div>
+        
             <br>
-        <div class="fright">
+        <div class="tableForClassesSignedUp">
             <div class="classesSignedUpFor" style="margin-right:8px">
          <button id="buttonToDeleteClasses">
             Delete Selected Class
@@ -66,27 +31,6 @@
     </div>
             
             </div>
-        <p>This app costs me my time and money. It's always akward asking for donations. </p>
-            <p> Below is my cost, if you can help me fill some of that for this month, that would be great.</p><p> There is no need to donate to use this app, feel free to use as you please.</p>
-            <table>
-                <tbody>
-                    <tr>
-                        <th>Item</th>
-                        <td>Heroku</td><td>Domain</td><td>Google Apps</td>
-                    </tr>
-                    <tr>
-                        <th>Cost</th>
-                        <td>7$/Month</td><td>15$/Year</td><td>50$/Year</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p> I'd like to get more servers on Heroku to speed up this app and prevent failures/crashes in the future as well. This can be done with your support. Thank you!</p>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-            </form>
+        
     </body>
 </html>
