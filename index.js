@@ -1,13 +1,13 @@
-///*
+/*
 var dotenv = require('dotenv')
 dotenv.load();
-//*/
+*/
 var morgan = require('morgan')
 var pg = require('pg');
 require('./carrier')
 require('./worker');
 //require('./bot')
-//require('./mainLoop')
+require('./mainLoop')
 var assert = require('assert')
 var WebSocketServer = require("ws").Server
 var http = require('http');
