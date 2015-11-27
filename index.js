@@ -7,7 +7,7 @@ var pg = require('pg');
 require('./carrier')
 require('./worker');
 //require('./bot')
-require('./mainLoop')
+//require('./mainLoop')
 var assert = require('assert')
 var WebSocketServer = require("ws").Server
 var http = require('http');
@@ -105,10 +105,12 @@ app.get('/db', stormpath.groupsRequired(['Admin']),function (request, response) 
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM clients_and_their_info', function(err, result) {
       done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render('pages/db', {results: result.rows} ); }
+      if (err){ 
+        console.error(err); response.send("Error " + err); 
+      }
+      else{ 
+        response.render('pages/db', {results: result.rows} ); 
+      }
     });
   });
 })

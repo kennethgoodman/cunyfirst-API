@@ -100,7 +100,8 @@ queueRead2 = function lambda(){
 						var params = [item.inst,item.session,item.dept,row["class"],row["section"]]
 						sendQuery2(q, params, function(data){
 							if(!data['texted']){
-								send_email(data['phone_number'], data['provider'], text);
+								send_alert(data['user_id'], text)
+								//send_email(data['phone_number'], data['provider'], text);
 								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = $1 AND class = $2 AND section = $3;";
 				                var params = [item.dept, row["class"],row["section"]]
 				                sendQuery(query, params, function(result){ //change texted to TRUE in DB

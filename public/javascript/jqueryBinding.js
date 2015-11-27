@@ -129,7 +129,7 @@ clicked = function(){
         alert("Please enter an institution")
         return;
     } else if(session == "defualt"){
-       alert("Please enter a session")
+        alert("Please enter a session")
         return;
     } else if(dept == "defualt"){
         alert("Please enter a department")
@@ -138,6 +138,7 @@ clicked = function(){
     var shouldDeleted = $("#deltedWhenTexted").prop('checked');
     var queryArray = ["submit"];
     var count = 0;
+    var email = $('#emailInput').val();
     $( ".row-selected" ).each(function(){
         count++;
         var temp = $(this)[0] //get tr
@@ -145,11 +146,13 @@ clicked = function(){
         nbr = nbr.substr(nbr.indexOf(":")+2);
         section = temp.childNodes[1].textContent.trim();
         try{
-            queryArray.push([fullName,inst,dept,nbr,section,phoneNbr,session,userName, carrier,shouldDeleted]);
+            queryArray.push([fullName,inst,dept,nbr,section,phoneNbr,session,userName,carrier,shouldDeleted]);
         } catch(err){
             console.log(err)
         }
     })
+    queryArray.push(email)
+    queryArray.push(contactHow)
     if(count > 0) ws.send(JSON.stringify(queryArray));
     else          alert("Please select a class");
 }

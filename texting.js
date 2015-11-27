@@ -1,8 +1,8 @@
 var car = require('./carrier')
 var client = require('twilio')('AC5b14e195c9b22df44f8a4e61a520f03d','fc26c5d165ac9ee2d373485bdb83ff7e')
-send_message = function(nbr,body) {
+send_message = function(recepient,body) {
 	client.sendMessage({
-	    to: nbr, // Any number Twilio can deliver to
+	    to: recepient, // Any number Twilio can deliver to
 	    from: '+15165316243', // A number you bought from Twilio and can use for outbound communication
 	    body: body // body of the SMS message
 
@@ -24,14 +24,16 @@ send_message = function(nbr,body) {
 }
 
 
-
+var pg = require('pg');
+var db = require('./database');
 //var sendgrid = require("sendgrid")("app43697655@heroku.com", "qq3pw5fk3558");
 var sendgrid = require("sendgrid")(process.env.SENDGRID_API_KEY);
-send_email = function(nbr, provider, body){
-	var to = nbr;
-	var carrier = returnCarriers();
-	if(provider != "@")
+send_email = function(recepient, provider, body){
+	var to = recepient;
+	if(provider != "@"){
+		var carrier = returnCarriers();
 		to +=  carrier[provider];
+	}
 		var payload   = {
 	  to      : to,
 	  from    : 'kenneth@noclosedclass.com',
@@ -43,14 +45,33 @@ send_email = function(nbr, provider, body){
 	  	console.log(json + " : " + to + ": " + body);
 	});
 }
+send_alert = function(user_id,body){
+	var q = "Select * from users where user_id = $1";
+	sendQuery2(q, [user_id],function(row){
+		var sendwith = row.sendwith
+		if(sendwith == 'text'){
+			send_email(row.phone_number, row.provider, body)
+			console.log("SENT: " + row.user_id +": " + row.phone_number + " "+ body + " " + sendwith)
+		} else if(sendwith == 'email'){
+			send_email(row.email, '@', body)
+			console.log("SENT: " + row.user_id +": " + row.email + " " + body + " " + sendwith)
+		} else if(sendwith == 'both'){
+			send_email(row.phone_number, row.provider, body)
+			send_email(row.email, '@', body)
+			console.log("SENT: " + row.user_id +": " +  row.phone_number + " "+ row.email + " "+body + " " + sendwith)
+		} else{
+			console.log("Error: sendwith was not a correct value -" + sendwith + "- " + row.user_id)
+		}
+	})
+}
 //send_email("5164046348","Verizon","test");
 //var postmark = require("postmark");
 
 
 // Example request
 /*var client = new postmark.Client(process.env.POSTMARK_API_KEY);
-send_email = function(nbr, provider, body){
-	var to = nbr;
+send_email = function(recepient, provider, body){
+	var to = recepient;
 	var carrier = returnCarriers();
 	if(provider != "@")
 		to +=  carrier[provider];

@@ -1,6 +1,6 @@
 var pg = require('pg');
-/*var dotenv = require('dotenv')
-dotenv.load();*/
+var dotenv = require('dotenv')
+dotenv.load();
 pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
@@ -18,7 +18,7 @@ queryDatabasePerRow = function(query,callback){
 	});
 }
 sendQuery = function(query, params, callback){
-	//console.log(query)
+	console.log(query)
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
 		  	console.log(err);
@@ -42,8 +42,11 @@ sendQuery = function(query, params, callback){
 			})
 		})
 }
+/*sendQuery("SELECT * from users where user_id ='ken'", [], function(result){
+	console.log(result)
+});*/
 sendQuery2 = function(q,params, callback){
-	//console.log(q);
+	console.log(q);
 	var client = new pg.Client(process.env.DATABASE_URL);
 	client.connect();
 	var query = client.query(q,params);
