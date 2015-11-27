@@ -1,7 +1,7 @@
-/*
+
 var dotenv = require('dotenv')
 dotenv.load();
-*/
+
 var morgan = require('morgan')
 var pg = require('pg');
 require('./carrier')
@@ -72,13 +72,6 @@ app.use(stormpath.init(app, {
     href: process.env.STORMPATH_URL
   },
   website: true,
-  enableFacebook: true,
-  social: {
-    facebook: {
-      appId: '430642067125422',
-      appSecret: '33c64a33abf76d1ba3041f82b95a8266',
-    },
-  },
 }));
 app.use(raygunClient.expressHandler);
 app.use(morgan('combined'))

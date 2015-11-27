@@ -234,6 +234,9 @@ module.exports = function(wss){
       });
   })
   function sendData(socket,data){
+    if(socket == undefined){
+      return;
+    }
   	if (socket.readyState != socket.OPEN) { //check if socket is open before sending
       	console.error('Client state is ' + socket.readyState);
       //or any message you want
