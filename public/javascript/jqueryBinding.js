@@ -115,17 +115,37 @@ clicked = function(){
     var dept = $('#dept').val();
     var phoneNbr = $('#you_phone_nbr').val();
     phoneNbr = parsePhoneNumber(phoneNbr);
+    var carrier = $('#carrier').val();
     var nbr;
     var section;
-    if(phoneNbr.length < 10){
-        alert("please enter a valid phone number");
+    var email = $('#emailInput').val();
+    if(email == "" && phoneNbr == ""){
+        alert("Enter your phone number please")
         return;
     }
-    var carrier = $('#carrier').val();
-    if(carrier == "defualt"){
-        alert("please enter a carrier")
-        return;
-    } else if(inst == "defualt"){
+    if(contactHow == "text" || contactHow == "both"){
+        if(phoneNbr.length < 10){
+            alert("That phone number was not a 10 digit phone number, 9171234567 is the correct way to enter it.");
+            return;
+        }
+        else if(carrier == "defualt"){
+            alert("please enter a carrier")
+            return;
+        }
+    }
+    else if(contactHow == "email" || contactHow == "both"){
+        if(email == ""){
+            alert("please enter a valid email address")
+            return;
+        }
+    }
+    if(email == "")
+        email = "N/A";
+    if(phoneNbr == ""){
+        phoneNbr = "N/A";
+    }
+
+    if(inst == "defualt"){
         alert("Please enter an institution")
         return;
     } else if(session == "defualt"){
@@ -138,7 +158,7 @@ clicked = function(){
     var shouldDeleted = $("#deltedWhenTexted").prop('checked');
     var queryArray = ["submit"];
     var count = 0;
-    var email = $('#emailInput').val();
+    
     $( ".row-selected" ).each(function(){
         count++;
         var temp = $(this)[0] //get tr
@@ -156,3 +176,4 @@ clicked = function(){
     if(count > 0) ws.send(JSON.stringify(queryArray));
     else          alert("Please select a class");
 }
+

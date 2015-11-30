@@ -1,7 +1,6 @@
-/*
+
 var dotenv = require('dotenv')
 dotenv.load();
-*/
 var morgan = require('morgan')
 var pg = require('pg');
 require('./carrier')

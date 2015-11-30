@@ -91,19 +91,25 @@ queueRead2 = function lambda(){
 					if(row == undefined) setTimeout(function(){return;}, 5000);
 					try{
 						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
-						//console.log(new Date() + ": " + text)
+						console.log(new Date() + ": " + text)
 					} catch(err){
 						console.log(err)
 					}
 					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] != "Closed"){
-						var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = $1 and session=$2 and dept=$3 and class=$4 and section=$5 and texted=false";
+						//var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = $1 and session=$2 and dept=$3 and class=$4 and section=$5 and texted=false";
+						var q = "select users.user_id, users.phone_number, users.provider, users.email, clients_and_their_info.sendwith, clients_and_their_info.texted \
+								from users \
+								INner join clients_and_their_info \
+								on users.user_id = clients_and_their_info.user_id \
+								where clients_and_their_info.inst = $1 and clients_and_their_info.session=$2 and clients_and_their_info.dept=$3 and clients_and_their_info.class=$4 and clients_and_their_info.section=$5 and texted=false"
 						var params = [item.inst,item.session,item.dept,row["class"],row["section"]]
+						console.log(q)
 						sendQuery2(q, params, function(data){
 							if(!data['texted']){
-								send_alert(data['user_id'], text)
+								send_alert2(data, text)
 								//send_email(data['phone_number'], data['provider'], text);
-								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = $1 AND class = $2 AND section = $3;";
-				                var params = [item.dept, row["class"],row["section"]]
+								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = $1 AND class = $2 AND section = $3 AND user_id=$4";
+				                var params = [item.dept, row["class"],row["section"], data["user_id"]]
 				                sendQuery(query, params, function(result){ //change texted to TRUE in DB
 				                	try{
 				                		console.log(result.command);
