@@ -124,7 +124,7 @@ app.get('/account_info', stormpath.loginRequired, function(request,response){
 })
 app.get('/donate', function(request,response){
   response.render('pages/donate')
-})
+})/*
 app.get('*', function(req,res,next){
   var err = new Error();
   err.status = 404;
