@@ -124,23 +124,18 @@ app.get('/account_info', stormpath.loginRequired, function(request,response){
 })
 app.get('/donate', function(request,response){
   response.render('pages/donate')
-})/*
+})
 app.get('*', function(req,res,next){
   var err = new Error();
   err.status = 404;
   next(err)
 })
-/*app.use(function(err, req, res, next){
-  //console.log(Object.keys(req.client._httpMessage.req.IncomingMessage));
-  //console.log(req.client._httpMessage.req.headers)
-  if(req.client._httpMessage.req.headers.cookie.indexOf("verified") != 0){
-    return;
-  }
+app.use(function(err, req, res, next){
   if(err.status !== 404){
     console.log(err);
     //return next();
   }
   console.log(err)
-  res.send(err.message || 'There is no page at this link') //error is 404
-})*/
+  //res.send(err.message || 'There is no page at this link') //error is 404
+})
 websocket(wss);
