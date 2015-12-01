@@ -43,7 +43,7 @@ module.exports = function(wss){
     		}
     		else if(data[0] == "get_session"){
           var count = 0;
-    			checkForEmptyData(data, function(data){
+    			checkForEmptyData(data, ws,function(data){
     				var a = ["session"];
     				getSession(data[1],function(inst,data){
   	  				var keys = Object.keys(data);
@@ -67,7 +67,7 @@ module.exports = function(wss){
     			})
     		}
     		else if(data[0] == "get_dept"){
-    			checkForEmptyData(data, function(data){
+    			checkForEmptyData(data, ws,function(data){
   	  			var a = ["dept"];
   	  			getDept(data[1],data[2],function(data){
   	  				a.push(data);
@@ -77,7 +77,7 @@ module.exports = function(wss){
     			})
     		}
     		else if(data[0] == "get_class"){
-    			checkForEmptyData(data, function(data){
+    			checkForEmptyData(data, ws,function(data){
   	  			var a = ["class_nbr"];
   	  			getSections(data[1],data[2],data[3], function(data){
   	  				a.push(data);
@@ -87,7 +87,7 @@ module.exports = function(wss){
     			})
     		}
     		else if(data[0] == "getCarriers"){
-    			checkForEmptyData(data, function(data){
+    			checkForEmptyData(data, ws,function(data){
     				var a = ["carriers"];
     				a.push(returnCarriersNames());
     				sendData(ws,a);
@@ -97,7 +97,7 @@ module.exports = function(wss){
 
         }
         else if(data[0] == "deleteClass"){
-          checkForEmptyData(data, function(data){
+          checkForEmptyData(data, ws,function(data){
             if(data[1][1] == "Spring 2016") data[1][1] = "1162";
             var q = "DELETE FROM clients_and_their_info WHERE user_id=$1 and inst=$2 and session=$3 and dept=$4 and class=$5 and section=$6;"
             var params = [data[2], data[1][0],data[1][1],data[1][2],data[1][3],data[1][4]]
@@ -135,7 +135,7 @@ module.exports = function(wss){
           })*/
         }
         else if(data[0] == "changePhoneNumber"){
-          checkForEmptyData(data, function(data){
+          checkForEmptyData(data, ws,function(data){
             var q = "UPDATE users set phone_number = $1 where user_id = $2";
             sendQuery2(q, [data[2], data[1]], function(result){
               if(result.hasOwnProperty("Error")){
@@ -153,7 +153,7 @@ module.exports = function(wss){
           })
         }
     		else if(data[0] == "submit"){
-    			checkForEmptyData(data, function(data){
+    			checkForEmptyData(data, ws,function(data){
             var q = "SELECT count(*) from clients_and_their_info where user_id = $1;";
             //console.log(q)
             sendQuery2(q, [data[1][7]], function(result){
@@ -274,16 +274,18 @@ module.exports = function(wss){
   	    socket.send(JSON.stringify(data)); //send data to client
   	}
   }
-  function checkForEmptyData(data,callback, socket){
+  function checkForEmptyData(data,socket,callback){
   	for(var d in data){
       if(data[d] == ""){
         sendData(socket,["err", "One of your fields is empty, if this is a mistake, please contact support"])
+        console.log("Error: empty field");
         return false;
       }
       try{
         for(var e in data[d]){
       		if(data[d][e] == ""){
             sendData(socket, ["err", "One of your fields is empty, if this is a mistake, please contact support"])
+            console.log("Error: empty field");
             return false;
           }
         }

@@ -119,6 +119,9 @@ clicked = function(){
     var nbr;
     var section;
     var email = $('#emailInput').val();
+    if(!ValidateEmail(email)){
+        return;
+    }
     if(email == "" && phoneNbr == ""){
         alert("Enter your phone number please")
         return;
@@ -139,9 +142,9 @@ clicked = function(){
             return;
         }
     }
-    if(email == "")
+    if(email == "" || contactHow == "text")
         email = "N/A";
-    if(phoneNbr == ""){
+    if(phoneNbr == "" || contactHow == "email"){
         phoneNbr = "N/A";
     }
 
