@@ -279,14 +279,14 @@ module.exports = function(wss){
   }
   function checkForEmptyData(data,socket,callback){
   	for(var d in data){
-      if(data[d] == ""){
-        sendData(socket,["err", "One of your fields is empty, if this is a mistake, please contact support"])
+      if(data[d] === ""){
+        sendData(socket,["err", "One of your fields is empty, if this is a mistake, please contact support."])
         console.log("Error: empty field");
         return false;
       }
       try{
         for(var e in data[d]){
-      		if(data[d][e] == ""){
+      		if(data[d][e] === ""){
             sendData(socket, ["err", "One of your fields is empty, if this is a mistake, please contact support"])
             console.log("Error: empty field");
             return false;

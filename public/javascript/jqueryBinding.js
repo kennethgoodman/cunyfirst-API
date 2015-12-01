@@ -107,6 +107,7 @@ parsePhoneNumber = function(nbr){
 }
 clicked = function(){
     var contactHow = $(".example input[type='radio']:checked").val();
+    console.log(contactHow)
     var fullName = userData["fullName"].trim();
     var userName = userData["username"].trim();
     var inst = $('#inst').val();
