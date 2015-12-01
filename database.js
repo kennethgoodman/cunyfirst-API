@@ -1,5 +1,5 @@
-var dotenv = require('dotenv')
-dotenv.load();
+/*var dotenv = require('dotenv')
+dotenv.load();*/
 var pg = require('pg');
 pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
