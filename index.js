@@ -46,25 +46,20 @@ app.use(stormpath.init(app, {
     }
   },
   web: {
-    /*
   	register: {
+      /*
       fields:{
         phone_number: {
-          required: false
+          enabled: true,
+          required: false,
+          name: 'phone_number',
+          placeholder: 'Your phone number',
+          type: 'text'
         },
-        name: {
-          required: false
-        },
-        email:{
-          required: true
-        },
-        password:{
-          required: true
-        }
-      },
-  		fieldOrder: [ "test","phone_number","name","email", "password", "passwordConfirm"],
+      },*/
+  		//fieldOrder: [ "test","phone_number","name","email", "password", "passwordConfirm"],
   		//fieldOrder: [ ]
-  	}*/
+  	}
   },
   application: {
     href: process.env.STORMPATH_URL
@@ -136,11 +131,16 @@ app.get('*', function(req,res,next){
   next(err)
 })
 app.use(function(err, req, res, next){
+  //console.log(Object.keys(req.client._httpMessage.req.IncomingMessage));
+  console.log(req.client._httpMessage.req.headers.referer)
+  if(req.client._httpMessage.req.headers.referer.indexOf('/verified') != 0){
+    return;
+  }
   if(err.status !== 404){
     console.log(err);
     //return next();
   }
   console.log(err)
-  res.send(err.message || 'There is no page at this link')
+  res.send(err.message || 'There is no page at this link') //error is 404
 })
 websocket(wss);

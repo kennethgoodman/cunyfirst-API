@@ -22,7 +22,7 @@ job1.start();
 var job2 = new CronJob('00 00 * * * *', function() {
     var changeFromText = function(){
       var pg = require('pg');
-      var q = "UPDATE clients_and_their_info SET texted = false WHERE texted = true AND delete_when_texted=false";
+      var q = "UPDATE clients_and_their_info SET texted = false WHERE texted = true AND delete_when_texted = false";
       var client = new pg.Client(process.env.DATABASE_URL);
       client.connect();
       var query = client.query(q);
