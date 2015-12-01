@@ -1,6 +1,6 @@
-var dotenv = require('dotenv')
-dotenv.load();
-const WEBSITE_DOWN = false
+/*var dotenv = require('dotenv')
+dotenv.load();*/
+const WEBSITE_DOWN = false;
 var morgan = require('morgan')
 var pg = require('pg');
 require('./carrier')
@@ -81,17 +81,17 @@ app.on('stormpath.ready', function() {
   //app.listen(process.env.PORT || 5000);
 });
 app.use(express.static(__dirname + '/public'));
+if(WEBSITE_DOWN || process.env.WEBSITE_DOWN == "DOWN"){
+  app.get('*', function(req,res,next){
+    res.render('pages/maintenance');
+  })
+}
 try{
   app.get('/userData', function(req, res){
     res.send(req.user)
   })
 } catch(err){
   //console.log(err)
-}
-if(WEBSITE_DOWN){
-  app.get('*', function(req,res,next){
-    res.render('pages/maintenance');
-  })
 }
 app.get('/', function(request, response) {
   	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
