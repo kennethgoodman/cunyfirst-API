@@ -81,13 +81,13 @@ app.on('stormpath.ready', function() {
   //app.listen(process.env.PORT || 5000);
 });
 app.use(express.static(__dirname + '/public'));
-/*try{
+try{
   app.get('/userData', function(req, res){
     res.send(req.user)
   })
 } catch(err){
-  console.log(err)
-}*/
+  //console.log(err)
+}
 if(WEBSITE_DOWN){
   app.get('*', function(req,res,next){
     res.render('pages/maintenance');
