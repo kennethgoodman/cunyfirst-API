@@ -64,7 +64,8 @@ tr:hover {
 .centerDiv{
     width: 75%;
     margin: auto;
-    text-align: center
+    text-align: center;
+    margin-top: 50px;
 }
 .toolbar {
     float: left;
@@ -176,6 +177,11 @@ input[type=radio]:not(old):checked +  label > span > span{
 .editable{
   background-color: yellow;
 }
+.logo{
+  font-size: 4em;
+  color: yellow;
+  margin-left: 20px;
+} 
 /*.ajax-loader {
   position: absolute;
   left: 0;

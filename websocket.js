@@ -160,7 +160,7 @@ module.exports = function(wss){
               var number_of_classes = parseInt(result.count)+data.length - 3;
               var classLimit = 7;
               if(number_of_classes > classLimit){ //check to see if user has too many classes filled out
-                sendData(ws, ["err", "You\'ve signed up for " +  number_of_classes + " classes, the limit on this website for now is " + classLimit +"."])
+                sendData(ws, ["err", "You\'ve signed up for " +  number_of_classes + " classes, the limit on this website for now is " + classLimit +". You can delete a class in the account tab."])
               }
               else{
                 var sendFunction = function(data){
