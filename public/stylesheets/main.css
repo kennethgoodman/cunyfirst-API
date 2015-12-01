@@ -182,6 +182,9 @@ input[type=radio]:not(old):checked +  label > span > span{
   color: yellow;
   margin-left: 20px;
 } 
+.logo a:hover{
+    text-decoration: none;
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;
