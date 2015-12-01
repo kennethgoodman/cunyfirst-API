@@ -7,7 +7,6 @@ function ValidateEmail(inputText)
     }  
     else  {  
         alert("You have entered an invalid email address!");  
-        element.focus();  
         return false;  
     }  
 }  
@@ -119,9 +118,6 @@ clicked = function(){
     var nbr;
     var section;
     var email = $('#emailInput').val();
-    if(!ValidateEmail(email)){
-        return;
-    }
     if(email == "" && phoneNbr == ""){
         alert("Enter your phone number please")
         return;
@@ -136,7 +132,10 @@ clicked = function(){
             return;
         }
     }
-    else if(contactHow == "email" || contactHow == "both"){
+    if(contactHow == "email" || contactHow == "both"){
+        if(!ValidateEmail(email)){
+            return;
+        }
         if(email == ""){
             alert("please enter a valid email address")
             return;
