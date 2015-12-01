@@ -130,7 +130,7 @@ app.get('*', function(req,res,next){
   err.status = 404;
   next(err)
 })
-app.use(function(err, req, res, next){
+/*app.use(function(err, req, res, next){
   //console.log(Object.keys(req.client._httpMessage.req.IncomingMessage));
   //console.log(req.client._httpMessage.req.headers)
   if(req.client._httpMessage.req.headers.cookie.indexOf("verified") != 0){
@@ -142,5 +142,5 @@ app.use(function(err, req, res, next){
   }
   console.log(err)
   res.send(err.message || 'There is no page at this link') //error is 404
-})
+})*/
 websocket(wss);
