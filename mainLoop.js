@@ -91,7 +91,7 @@ queueRead2 = function lambda(){
 					if(row == undefined) setTimeout(function(){return;}, 5000);
 					try{
 						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
-						console.log(new Date() + ": " + text)
+						//console.log(new Date() + ": " + text)
 					} catch(err){
 						console.log(err)
 					}

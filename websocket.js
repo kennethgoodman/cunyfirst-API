@@ -155,7 +155,7 @@ module.exports = function(wss){
     		else if(data[0] == "submit"){
     			checkForEmptyData(data, function(data){
             var q = "SELECT count(*) from clients_and_their_info where user_id = $1;";
-            console.log(q)
+            //console.log(q)
             sendQuery2(q, [data[1][7]], function(result){
               var number_of_classes = parseInt(result.count)+data.length - 3;
               var classLimit = 7;
@@ -177,7 +177,7 @@ module.exports = function(wss){
                     }
                     params.push(data[data.length-1]);
                   }
-                  console.log(query)
+                  //console.log(query)
                   sendQuery(query, params, function(result){
                     if(result.hasOwnProperty("Error")){
                       //TODO: test to find all possible errors
@@ -195,7 +195,7 @@ module.exports = function(wss){
                     else{
                       var temp = [];
                       var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=$1;"
-                      console.log(q)
+                      //console.log(q)
                       sendQuery(q,[data[1][7]],function(result){
                         var temp = [];
                         result = result.rows
@@ -225,7 +225,7 @@ module.exports = function(wss){
                   })
                 }
                 var q = "SELECT * FROM users WHERE user_id = $1";
-                console.log(q)
+                //console.log(q)
                 sendQuery(q, [data[1][7]], function(result){
                   var phnNbr = data[1][5];
                   var provider = data[1][8];
@@ -236,7 +236,7 @@ module.exports = function(wss){
                     var q = "INSERT INTO users VALUES($1,$2,$3,$4,$5);";
                     sendQuery(q, [user_id,data[1][0],phnNbr,provider,email],function(result){
                       sendFunction(data);
-                      console.log(result);
+                      //console.log(result);
                     })
                   } else{
                     var q = "UPDATE users SET phone_number = $1, provider = $2, email = $3 WHERE user_id = $4";
@@ -252,7 +252,7 @@ module.exports = function(wss){
                     }
                     sendQuery(q, [phnNbr,provider,email,user_id], function(result){
                       sendFunction(data);
-                      console.log(result)
+                      //console.log(result)
                     })
                   }
                 })
