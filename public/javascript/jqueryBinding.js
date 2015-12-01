@@ -2,8 +2,7 @@ function ValidateEmail(inputText)
 {  
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
     var element; //fix this
-    if(inputText.value.match(mailformat))  {  
-        element.focus();  
+    if(inputText.match(mailformat))  {   
         return true;  
     }  
     else  {  
@@ -44,6 +43,7 @@ $(document).ready(function(){
         }
     });
     $("#submitData").unbind('click').click( function (e) {
+        console
         $.get("/userData",function(data){
             if(data != "") clicked();
         }).fail(function(err) {

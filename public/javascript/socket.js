@@ -75,9 +75,13 @@ ws.onmessage = function (event) {
         data = data[1];
         var t = $('#tableForAlreadySignedUp').DataTable();
         t.clear();
+        var textedString =""
         for(var classTaken in data){
           try{
-            t.row.add([data[classTaken]["inst"],data[classTaken]["session"],data[classTaken]["dept"],data[classTaken]["class"],data[classTaken]["section"],data[classTaken]["texted"]])
+            if(data[classTaken]["texted"] == true){
+              textedString = "Yes"
+            } else textedString = "No"
+            t.row.add([data[classTaken]["inst"],data[classTaken]["session"],data[classTaken]["dept"],data[classTaken]["class"],data[classTaken]["section"],textedString])
           } catch(err){
 
           }  
@@ -90,9 +94,13 @@ ws.onmessage = function (event) {
       }
       else if(data[0] == "addClassToDT"){
         data = data[1];
+        var textedString = "";
         try{
           var t = $('#tableForAlreadySignedUp').DataTable();
-          t.row.add([data["inst"],data["session"],data["dept"],data["class"],data["section"],data["texted"]]);
+          if(data["texted"] == true){
+            textedString = "Yes"
+          } else textedString = "No"
+          t.row.add([data["inst"],data["session"],data["dept"],data["class"],data["section"],textedString]);
         } catch(err){
           console.log(err);
         }
