@@ -132,11 +132,10 @@ app.get('*', function(req,res,next){
 })
 app.use(function(err, req, res, next){
   //console.log(Object.keys(req.client._httpMessage.req.IncomingMessage));
-  console.log(req.client._httpMessage.req.headers)
-  if(req.client._httpMessage.req.headers.indexOf("-") != 0){
+  //console.log(req.client._httpMessage.req.headers)
+  if(req.client._httpMessage.req.headers.cookie.indexOf("verified") != 0){
     return;
   }
-  return;
   if(err.status !== 404){
     console.log(err);
     //return next();
