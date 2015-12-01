@@ -143,8 +143,8 @@ queueRead2 = function lambda(){
 var queryCount = 'Select count(*) from clients_and_their_info'
 var amount_of_rows = 1000000;
 setInterval( function(){
-	sendQuery2(queryCount,[], function(result){
-		amount_of_rows = result["count"];
+	sendQuery(queryCount,[], function(result){
+		amount_of_rows = result.rows[0].count;
 	})
 }, 1000*60*10) //every 10 min, TEST IF THIS IS OK!
 var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info where texted = false order by inst, session, dept'

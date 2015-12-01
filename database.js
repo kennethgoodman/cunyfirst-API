@@ -66,28 +66,27 @@ var queueAdd = function(query, params){
 	queue.push(query);
 	queueParams.push(params);
 }
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1 and user_id=$2;", ['ARAB',"ken"])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
-queueAdd("SELECT * from users where user_id =$1;", ['ken'])
-queueAdd("SELECT * from clients_and_their_info where dept =$1;", ['ARAB'])
+/*var k = setInterval( function(){
+	sendQuery2(queue[i],queueParams[i], function(result){
+		//console.log(result);
+		console.log(count++)
+		setTimeout(function(){
+			console.log("in setTimeout: "+ count);
+		},1000*i)
+		i += 1;
+		if(i >= 21){
+			i = 0;
+			//clearInterval(k);
+		}
+	})
+},10)
+//}
+var queueRead2 = function lambda(callback){
+	var i = 0;
+	var interval = setInterval(function(){
+		sendQuery(qu)
+	})
+}*/
 var queueRead = function lambda(){
 	//console.log(queue.length)
 	//var query = queue.join(";");

@@ -138,7 +138,7 @@ module.exports = function(wss){
         else if(data[0] == "changePhoneNumber"){
           checkForEmptyData(data, ws,function(data){
             var q = "UPDATE users set phone_number = $1 where user_id = $2";
-            sendQuery2(q, [data[2], data[1]], function(result){
+            sendQuery(q, [data[2], data[1]], function(result){
               if(result.hasOwnProperty("Error")){
                     //TODO: test to find all possible errors
                 if(result.code == '23505'){
@@ -157,8 +157,8 @@ module.exports = function(wss){
     			checkForEmptyData(data, ws,function(data){
             var q = "SELECT count(*) from clients_and_their_info where user_id = $1;";
             //console.log(q)
-            sendQuery2(q, [data[1][7]], function(result){
-              var number_of_classes = parseInt(result.count)+data.length - 3;
+            sendQuery(q, [data[1][7]], function(result){
+              var number_of_classes = parseInt(result.rows[0].count)+data.length - 3;
               var classLimit = 7;
               if(number_of_classes > classLimit){ //check to see if user has too many classes filled out
                 sendData(ws, ["err", "You\'ve signed up for " +  number_of_classes + " classes, the limit on this website for now is " + classLimit +". You can delete a class in the account tab."])

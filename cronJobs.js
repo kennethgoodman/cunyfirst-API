@@ -2,7 +2,7 @@ var CronJob = require('cron').CronJob;
 var job1 = new CronJob('00 30 02 * * *', function() {
     deleteTexted = function(){
       var pg = require('pg');
-      var q = 'DELETE FROM clients_and_their_info where texted = true';
+      var q = 'DELETE FROM clients_and_their_info WHERE texted = true AND delete_when_texted = true';
       var client = new pg.Client(process.env.DATABASE_URL);
       client.connect();
       var query = client.query(q);
@@ -22,7 +22,7 @@ job1.start();
 var job2 = new CronJob('00 00 * * * *', function() {
     var changeFromText = function(){
       var pg = require('pg');
-      var q = "UPDATE clients_and_their_info SET texted = false where texted = true and delete_when_texted=false";
+      var q = "UPDATE clients_and_their_info SET texted = false WHERE texted = true AND delete_when_texted=false";
       var client = new pg.Client(process.env.DATABASE_URL);
       client.connect();
       var query = client.query(q);
