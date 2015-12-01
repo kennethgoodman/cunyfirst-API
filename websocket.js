@@ -90,6 +90,7 @@ module.exports = function(wss){
     			checkForEmptyData(data, ws,function(data){
     				var a = ["carriers"];
     				a.push(returnCarriersNames());
+            //console.log(a)
     				sendData(ws,a);
     			})
     		}
