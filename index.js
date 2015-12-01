@@ -73,7 +73,7 @@ app.use(stormpath.init(app, {
   website: true,
 }));
 app.use(raygunClient.expressHandler);
-app.use(morgan('combined'))
+//app.use(morgan('combined'))
 var server = http.createServer(app)
 server.listen(port)
 var wss = new WebSocketServer({server: server})
@@ -97,6 +97,7 @@ app.get('/', function(request, response) {
       }  
     });*/
 });
+app.use("/favicon.ico", express.static(__dirname+'/public/images/favicon.ico'));
 app.get('/account', stormpath.loginRequired, function(request,response){
   response.render('pages/account', {userInfo: request.user})
 })
