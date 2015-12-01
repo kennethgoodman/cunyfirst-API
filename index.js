@@ -1,10 +1,9 @@
-/*var dotenv = require('dotenv')
-dotenv.load();*/
+var dotenv = require('dotenv')
+dotenv.load();
 const WEBSITE_DOWN = false;
-var morgan = require('morgan')
+//var morgan = require('morgan')
 var pg = require('pg');
-require('./carrier')
-require('./worker');
+require('./carrier'),require('./worker'), require('./cronJobs');
 //require('./bot')
 require('./mainLoop')
 var assert = require('assert')

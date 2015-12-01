@@ -1,6 +1,6 @@
-/*var pg = require('pg');
-var dotenv = require('dotenv')*/
+var dotenv = require('dotenv')
 dotenv.load();
+var pg = require('pg');
 pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
