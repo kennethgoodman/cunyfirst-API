@@ -103,16 +103,19 @@ queueRead2 = function lambda(){
 								on users.user_id = clients_and_their_info.user_id \
 								where clients_and_their_info.inst = $1 and clients_and_their_info.session=$2 and clients_and_their_info.dept=$3 and clients_and_their_info.class=$4 and clients_and_their_info.section=$5 and texted=false"
 						var params = [item.inst,item.session,item.dept,row["class"],row["section"]]
-						console.log(q)
+						//console.log(q)
 						sendQuery2(q, params, function(data){
 							if(!data['texted']){
 								send_alert2(data, text)
 								//send_email(data['phone_number'], data['provider'], text);
 								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = $1 AND class = $2 AND section = $3 AND user_id=$4";
+				               
 				                var params = [item.dept, row["class"],row["section"], data["user_id"]]
+				                //console.log(query)
+				                //console.log(params)
 				                sendQuery(query, params, function(result){ //change texted to TRUE in DB
 				                	try{
-				                		console.log(result.command);
+				                		console.log(result.command + " " + data["user_id"] + " "  + item.dept + " " + row["class"] + " " +row["section"]);
 				                	} catch(err){
 				                		console.log(result);
 				                	}

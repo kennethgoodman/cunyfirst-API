@@ -178,6 +178,7 @@ module.exports = function(wss){
                     params.push(data[data.length-1]);
                   }
                   //console.log(query)
+                  console.log("inserting into table");
                   sendQuery(query, params, function(result){
                     if(result.hasOwnProperty("Error")){
                       //TODO: test to find all possible errors
@@ -250,6 +251,7 @@ module.exports = function(wss){
                     if(email == "N/A"){
                       email = result.rows[0]["email"];
                     }
+                    console.log("inserting user");
                     sendQuery(q, [phnNbr,provider,email,user_id], function(result){
                       sendFunction(data);
                       //console.log(result)

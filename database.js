@@ -22,11 +22,11 @@ sendQuery = function(query, params, callback){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
 		  	console.log(err);
-		  	console.log(query);
+		  	//console.log(query);
 		  	pg.end();
 		  	return;
 		  }
-		  console.log('Connected to postgres! Getting schemas...');
+		  //console.log('Connected to postgres! Getting schemas...');
 		  client
 		    .query(query, params, function(err, result) {
 			    if(err) {
