@@ -125,9 +125,6 @@ app.get('/account_info', stormpath.loginRequired, function(request,response){
 app.get('/donate', function(request,response){
   response.render('pages/donate')
 })
-app.get('/verified', function(req,res){
-
-})
 app.get('*', function(req,res,next){
   var err = new Error();
   err.status = 404;
@@ -139,6 +136,6 @@ app.use(function(err, req, res, next){
     //return next();
   }
   console.log(err)
-  //res.send(err.message || 'There is no page at this link') //error is 404
+  res.send(err.message || 'There is no page at this link') //error is 404
 })
 websocket(wss);
