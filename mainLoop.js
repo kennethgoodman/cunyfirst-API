@@ -27,7 +27,7 @@ queueRead2 = function lambda(){
 					} catch(err){
 						console.log(err)
 					}
-					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] != "Closed"){
+					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] == "Open"){
 						//var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = $1 and session=$2 and dept=$3 and class=$4 and section=$5 and texted=false";
 						var q = "select users.user_id, users.phone_number, users.provider, users.email, clients_and_their_info.sendwith, clients_and_their_info.texted \
 								from users \
