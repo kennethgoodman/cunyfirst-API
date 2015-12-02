@@ -179,4 +179,3 @@ clicked = function(){
     if(count > 0) ws.send(JSON.stringify(queryArray));
     else          alert("Please select a class");
 }
-

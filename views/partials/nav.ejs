@@ -82,9 +82,12 @@
                                 else{
                                     item.innerHTML = '<span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log in';
                                     item.href = "/login" 
-                                    document.getElementById("submitData").disabled = true;
-                                    document.getElementById("buttonToDeleteClasses").disabled = true;
-        
+                                    var submitDataButton = document.getElementById("submitData");
+                                    submitDataButton.disabled = true;
+                                    var divHoldingButton = $(".SubmitButton");
+                                    divHoldingButton.css("cursor", "help");
+                                    divHoldingButton.attr("tooltip", "You need to log in to use this feature.");
+                                    divHoldingButton.prop('tooltip-persistent', true);
                                 }
                             }).fail(function(e) {
                                 console.log( "error" + e );
