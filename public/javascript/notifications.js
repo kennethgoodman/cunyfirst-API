@@ -1,7 +1,7 @@
 var Notification = window.Notification || window.mozNotification || window.webkitNotification;
 
 Notification.requestPermission(function (permission) {
-	// console.log(permission);
+	console.log(permission);
 });
 
 function showNotification(bodyText, icon, link) {

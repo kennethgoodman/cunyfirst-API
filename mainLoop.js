@@ -88,10 +88,10 @@ setInterval( function(){
 		if(queue.length < parseInt(amount_of_rows*1.5)) queue.push(row) //still testing good number
 	})
 
-},10000)
+},15000)
 setInterval(function(){ 
 	if(queue.length && counter < 1){ 
 		counter++;
 		queueRead2() 
 	}
-}, 7500);
+}, 10000);
