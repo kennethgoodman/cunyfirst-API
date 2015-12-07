@@ -1,5 +1,3 @@
-var dotenv = require('dotenv')
-dotenv.load();
 const WEBSITE_DOWN = false;
 //var morgan = require('morgan')
 var pg = require('pg');
