@@ -1,3 +1,6 @@
+var dotenv = require('dotenv')
+dotenv.load();
+
 var car = require('./carrier')
 var client = require('twilio')('AC5b14e195c9b22df44f8a4e61a520f03d','fc26c5d165ac9ee2d373485bdb83ff7e')
 send_message = function(recepient,body) {
@@ -42,9 +45,10 @@ send_email = function(recepient, provider, body){
 	}
 	sendgrid.send(payload, function(err, json) {
 	  if (err) { console.error(err); }
-	  	console.log(json + " : " + to + ": " + body);
+	  console.log(JSON.stringify(json) + " : " + to + ": " + body);
 	});
 }
+//send_email('5164046348','Verizon', 'Test');
 send_alert = function(user_id,body){
 	var q = "Select * from users where user_id = $1";
 	sendQuery2(q, [user_id],function(row){

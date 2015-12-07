@@ -103,6 +103,9 @@ parsePhoneNumber = function(nbr){
     if(nbr.indexOf("+") != 0){
         nbr = nbr.replace("+","");
     }
+    if(nbr.length > 10 && nbr[0] == '1'){
+        nbr = nbr.substring(1);
+    }
     return nbr;
 }
 clicked = function(){
@@ -124,7 +127,7 @@ clicked = function(){
         return;
     }
     if(contactHow == "text" || contactHow == "both"){
-        if(phoneNbr.length < 10){
+        if(phoneNbr.length != 10){
             alert("That phone number was not a 10 digit phone number, 9171234567 is the correct way to enter it.");
             return;
         }

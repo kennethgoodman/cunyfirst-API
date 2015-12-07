@@ -236,9 +236,17 @@ module.exports = function(wss){
                   var user_id = data[1][7];
                   if(result.rowCount == 0){
                     var q = "INSERT INTO users VALUES($1,$2,$3,$4,$5);";
-                    sendQuery(q, [user_id,data[1][0],phnNbr,provider,email],function(result){
-                      sendFunction(data);
-                      //console.log(result);
+                    sendQuery(q, [user_id,data[1][0],phnNbr,provider,email],function(result){                    
+                      if(result.hasOwnProperty("Error")){
+                          sendData(ws, ["err","An error occured, please contact support"])
+                          console.log("Unknown error on query");
+                          console.log(result.code);
+                          console.log(result)
+                          return;
+                      }
+                      else {
+                        sendFunction(data);
+                      }                    
                     })
                   } else{
                     var q = "UPDATE users SET phone_number = $1, provider = $2, email = $3 WHERE user_id = $4";
@@ -254,7 +262,14 @@ module.exports = function(wss){
                     }
                     console.log("inserting user");
                     sendQuery(q, [phnNbr,provider,email,user_id], function(result){
-                      sendFunction(data);
+                      if(result.hasOwnProperty("Error")){
+                          sendData(ws, ["err","An error occured, please contact support"])
+                          console.log("Unknown error on query");
+                          return;
+                      }
+                      else {
+                        sendFunction(data);
+                      }
                       //console.log(result)
                     })
                   }
