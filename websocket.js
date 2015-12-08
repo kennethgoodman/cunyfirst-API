@@ -114,7 +114,7 @@ module.exports = function(wss){
           })
         }
         else if(data[0] == "getCurrentClasses"){
-          var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=$1;"
+          var q = "SELECT inst, session, dept, class, section, texted from clients_and_their_info where user_id=$1;"
           sendQuery2(q,[data[1]], function(row){
             if(row["session"] == "1162") {
                 row["session"] = "Spring 2016";

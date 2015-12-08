@@ -90,6 +90,7 @@ ws.onmessage = function (event) {
         t.draw()
       }
       else if(data[0] == "sendNotification"){
+        alert(data[1]);
         showNotification(data[1],"http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/account");
       }
       else if(data[0] == "addClassToDT"){
