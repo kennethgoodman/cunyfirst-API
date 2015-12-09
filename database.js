@@ -56,9 +56,6 @@ sendQuery2 = function(q,params, callback){
 		client.end();
 	})
 }
-sendQuery2("SELECT * from users where user_id ='ken';;; SELECT * from clients_and_their_info where dept = 'ARAB';", [], function(result){
-	//console.log(result)
-}); 
 var counter = 0;
 var queue = [];
 var queueParams = [];

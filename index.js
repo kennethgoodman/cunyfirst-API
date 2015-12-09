@@ -1,11 +1,11 @@
-//var dotenv = require('dotenv')
-//dotenv.load();
+/*var dotenv = require('dotenv')
+dotenv.load();*/
 const WEBSITE_DOWN = false;
 //var morgan = require('morgan')
 var pg = require('pg');
 require('./carrier'),require('./worker'), require('./cronJobs');
 //require('./bot')
-require('./mainLoop')
+//require('./mainLoop')
 var assert = require('assert')
 var WebSocketServer = require("ws").Server
 var http = require('http');
@@ -88,13 +88,7 @@ try{
   //console.log(err)
 }
 app.get('/', function(request, response) {
-  	//sendQuery2("SELECT inst, session, dept, class, section from clients_and_their_info where user_id=\'"+request.user.username+"\';",function(result){
-    //
     response.render('pages/index');
-    /*request.user.getCustomData(function(err,data){
-      
-      }  
-    });*/
 });
 app.use("/favicon.ico", express.static(__dirname+'/public/images/favicon.ico'));
 app.get('/account', stormpath.loginRequired, function(request,response){
@@ -118,8 +112,12 @@ app.get('/faq', function(request,response){
 })
 app.get('/account_info', stormpath.loginRequired, function(request,response){
   var q = "Select phone_number from users where user_id = $1";
-  sendQuery2(q, [request.user.username], function(row){
-    response.render('pages/account_info',{userInfo: request.user, phone_number: row.phone_number})
+  sendQuery(q, [request.user.username], function(row){
+    var phone_number = "N/A";
+    if(row.rowCount != 0){
+      phone_number = row.phone_number
+    }
+    response.render('pages/account_info',{userInfo: request.user, phone_number: phone_number})
   })
 })
 app.get('/donate', function(request,response){

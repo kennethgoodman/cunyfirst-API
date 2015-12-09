@@ -137,18 +137,36 @@ module.exports = function(wss){
         }
         else if(data[0] == "changePhoneNumber"){
           checkForEmptyData(data, ws,function(data){
-            var q = "UPDATE users set phone_number = $1 where user_id = $2";
-            sendQuery(q, [data[2], data[1]], function(result){
-              if(result.hasOwnProperty("Error")){
-                    //TODO: test to find all possible errors
-                if(result.code == '23505'){
-                  sendData(ws, ["err", "You\'ve signed up for one of these classes already, if this is a mistake, please contact support"])
-                  console.log("PK problem error on query");
-                }
-                else{
-                  sendData(ws, ["err","An error occured, please contact support"])
-                  console.log("Unknown error on query");
-                }
+            sendQuery(q, [data[1][7]], function(result){
+              var user_id = data[1][0];
+              var name = data[1][1]
+              var phnNbr = data[1][2];
+              var provider = data[1][3];
+              var email = data[1][4];
+              if(result.rowCount == 0){
+                var q = "INSERT INTO users VALUES($1,$2,$3,$4,$5);";
+                sendQuery(q, [user_id,name,phnNbr,provider,email],function(result){                    
+                  if(result.hasOwnProperty("Error")){
+                      sendData(ws, ["err","An error occured, please contact support"])
+                      console.log("Unknown error on query");
+                      console.log(result.code);
+                      console.log(result)
+                      return;
+                  }
+                  else {
+
+                  }
+                })
+              }
+              else{
+                var q = "UPDATE users set phone_number = $1 where user_id = $2";
+                sendQuery(q, [phnNbr, user_id], function(result){
+                  if(result.hasOwnProperty("Error")){
+                    sendData(ws, ["err","An error occured, please contact support"])
+                    console.log(result);
+                    console.log("ERROR: " + result.code)
+                  }
+                })
               }
             })
           })

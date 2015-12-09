@@ -19,7 +19,7 @@
     "email-templates": "^2.0.1",
     "express": "^4.13.3",
     "express-session": "^1.12.1",
-    "express-stormpath": "^2.3.0",
+    "express-stormpath": "^2.3.2",
     "form-data": "^0.2.0",
     "heroku-client": "^2.4.0",
     "heroku.node": "^0.2.1",

@@ -37,7 +37,7 @@ $(document).ready(function(){
         td.toggleClass("editable");
         if($(this).text() == 'edit data'){ //just clicked submit
             $.get("/userData",function(data){
-                ws.send(JSON.stringify(["changePhoneNumber",data.username,td.text()]))
+                ws.send(JSON.stringify(["changePhoneNumber",[data.username,userData["fullName"].trim(),td.text(),"N/A",userData["email"]]]))
             })
         }
     });
