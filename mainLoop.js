@@ -45,18 +45,18 @@ queueRead2 = function lambda(){
 				                var params = [item.dept, row["class"],row["section"], data["user_id"]]
 				                //console.log(query)
 				                //console.log(params)/
-				                /*
+				               
 				                sendQuery(query, params, function(result){ //change texted to TRUE in DB
 				                	try{
 				                		console.log(result.command + " " + data["user_id"] + " "  + item.dept + " " + row["class"] + " " +row["section"]);
 				                	} catch(err){
 				                		console.log(result);
 				                	}
-				                	var q = "select * from texted WHERE dept = $1 AND class = $2 AND section = $3 AND user_id=$4";
+				                	/*var q = "select * from texted WHERE dept = $1 AND class = $2 AND section = $3 AND user_id=$4";
 				                	sendQuery(q, params, function(result){
 
-				                	})
-				                })*/
+				                	})*/
+				                })
 				            }
 						})
 						
