@@ -26,7 +26,7 @@ getSections = function(inst, session, dept, callback){
         }
         var parsed = cheerio.load(body);
         if(body == '') {
-        	if(Math.random() > .85) console.log("CUNYFIRST may be down.")
+        	if(Math.random() > .99) console.log("CUNYFIRST may be down.")
         	return false;
         }
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
