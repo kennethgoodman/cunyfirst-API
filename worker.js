@@ -17,6 +17,7 @@ Array.prototype.remove = function(from, to) {
   return this.push.apply(this, rest);
 };
 var classesArray = [];
+
 getSections = function(inst, session, dept, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
@@ -24,6 +25,10 @@ getSections = function(inst, session, dept, callback){
             return;
         }
         var parsed = cheerio.load(body);
+        if(body == '') {
+        	if(Math.random() > .85) console.log("CUNYFIRST may be down.")
+        	return false;
+        }
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
             url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL',
@@ -163,6 +168,7 @@ getSections = function(inst, session, dept, callback){
         })
     })
 }
+//getSections('1','2','3','4')
 //getSections("QNS01","1162","ACCT",function(){});
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
