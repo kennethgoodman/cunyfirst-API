@@ -3,7 +3,7 @@ dotenv.load();*/
 var pg = require('pg');
 pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
-	if(query == undefined or query == null){
+	if(query == undefined || query == null){
 		callback({error:"bad query"})
 		return;
 	}
@@ -22,7 +22,7 @@ queryDatabasePerRow = function(query,callback){
 	});
 }
 sendQuery = function(query, params, callback){
-	if(query == undefined or query == null){
+	if(query == undefined || query == null){
 		callback({error:"bad query"})
 		return;
 	}
@@ -53,7 +53,7 @@ sendQuery = function(query, params, callback){
 }
 
 sendQuery2 = function(q,params, callback){
-	if(query == undefined or query == null){
+	if(query == undefined || query == null){
 		callback({error:"bad query"})
 		return;
 	}
