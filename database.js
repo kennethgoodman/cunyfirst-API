@@ -3,6 +3,10 @@ dotenv.load();*/
 var pg = require('pg');
 pg.defaults.poolIdleTimeout = 2000;
 queryDatabasePerRow = function(query,callback){
+	if(query == undefined or query == null){
+		callback({error:"bad query"})
+		return;
+	}
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  if (err) console.log("err");
 	  //console.log('Connected to postgres! Getting schemas...');
@@ -18,6 +22,10 @@ queryDatabasePerRow = function(query,callback){
 	});
 }
 sendQuery = function(query, params, callback){
+	if(query == undefined or query == null){
+		callback({error:"bad query"})
+		return;
+	}
 	//console.log(query)
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
@@ -45,6 +53,10 @@ sendQuery = function(query, params, callback){
 }
 
 sendQuery2 = function(q,params, callback){
+	if(query == undefined or query == null){
+		callback({error:"bad query"})
+		return;
+	}
 	//console.log(q);
 	var client = new pg.Client(process.env.DATABASE_URL);
 	client.connect();

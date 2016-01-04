@@ -25,7 +25,7 @@ queueRead2 = function lambda(){
 						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
 						//console.log(new Date() + ": " + text)
 					} catch(err){
-						console.log(err)
+						//console.log(err)
 					}
 					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] == "Open"){
 						//var q = "SELECT phone_number, provider,texted from clients_and_their_info where inst = $1 and session=$2 and dept=$3 and class=$4 and section=$5 and texted=false";
@@ -50,7 +50,7 @@ queueRead2 = function lambda(){
 				                	try{
 				                		console.log(result.command + " " + data["user_id"] + " "  + item.dept + " " + row["class"] + " " +row["section"]);
 				                	} catch(err){
-				                		console.log(result);
+				                		//console.log(result);
 				                	}
 				                	/*var q = "select * from texted WHERE dept = $1 AND class = $2 AND section = $3 AND user_id=$4";
 				                	sendQuery(q, params, function(result){
