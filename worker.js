@@ -226,7 +226,7 @@ getSession = function lambda(inst, callback){
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
             url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL',
-            form: qs.stringify(formTemplate.getTemplate(key,inst,'','ACCTE','E','102')),
+            form: qs.stringify(formTemplate.getTemplate(key,inst,'','','','')),
             headers: options.headers,
             jar: options.jar
         };
@@ -367,5 +367,8 @@ var job = new CronJob({
 	timeZone: 'America/Los_Angeles'
 });*/
 
+getSections('HTR01', '1169', 'MATH', function(q){
+	console.log(q)
+})
 
 
