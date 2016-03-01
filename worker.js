@@ -1,3 +1,9 @@
+try{
+    var dotenv = require('dotenv')
+    dotenv.load();
+}catch(err){
+    //do nothing if this fails, we are in dev
+}
 var qs = require('querystring');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -7,7 +13,7 @@ var Xray = require('x-ray');
 var x = Xray();
 var db = require('./database');
 var options = {
-    url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?PortalActualURL=https%3a%2f%2fhrsa.cunyfirst.cuny.edu%2fpsc%2fcnyhcprd%2fGUEST%2fHRMS%2fc%2fCOMMUNITY_ACCESS.CLASS_SEARCH.GBL&amp;PortalContentURL=https%3a%2f%2fhrsa.cunyfirst.cuny.edu%2fpsc%2fcnyhcprd%2fGUEST%2fHRMS%2fc%2fCOMMUNITY_ACCESS.CLASS_SEARCH.GBL&amp;PortalContentProvider=HRMS&amp;PortalCRefLabel=Class%20Search&amp;PortalRegistryName=GUEST&amp;PortalServletURI=https%3a%2f%2fhome.cunyfirst.cuny.edu%2fpsp%2fcnyepprd%2f&amp;PortalURI=https%3a%2f%2fhome.cunyfirst.cuny.edu%2fpsc%2fcnyepprd%2f&amp;PortalHostNode=ENTP&amp;NoCrumbs=yes',
+    url: process.env.cunyfirst_search_url,
     headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
     jar: request.jar()
 };
@@ -31,7 +37,7 @@ getSections = function(inst, session, dept, callback){
         }
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
-            url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL',
+            url: process.env.cunyfirst_search_url,
             form: qs.stringify(formTemplate.getTemplate(key,inst,session,dept,'G','0')),
             headers: options.headers,
             jar: options.jar
@@ -131,45 +137,10 @@ getSections = function(inst, session, dept, callback){
 						//callback(inst, session, dept, nbr, section)
 					}
 				}
-				/*
-				var k = 0;
-				var j = 0;
-				var nbrKeys;
-				var sectionKeys;
-				try{ 
-					var nbrKeys = Object.keys(struct);
-					var sectionKeys = Object.keys(struct[nbrKeys[k]])
-				} catch(err){
-					return;
-				}
-				setInterval( function(){
-					if (returnAlways) {return;};
-					if(j == sectionKeys.length){
-						j=0
-						k += 1;
-						if(k == nbrKeys.length){
-							returnAlways = true;
-							return;
-						}
-						else{
-							try{
-								sectionKeys = Object.keys(struct[nbrKeys[k]])	
-							} catch(err){
-								console.log(err)
-							}
-						}
-					}
-					else{
-						callback(inst, session, dept, nbrKeys[k], sectionKeys[j])
-						j += 1
-					}
-				}, 10);*/
         	})
         })
     })
-}
-//getSections('1','2','3','4')
-//getSections("QNS01","1162","ACCT",function(){});
+};
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
@@ -179,7 +150,7 @@ getDept = function(inst, session, callback){
         var parsed = cheerio.load(body);
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
-            url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL',
+            url: process.env.cunyfirst_search_url,
             form: qs.stringify(formTemplate.getTemplate(key,inst,session,'','E','')),
             headers: options.headers,
             jar: options.jar
@@ -200,23 +171,11 @@ getDept = function(inst, session, callback){
         		})
         		callback(dept);
         		return;
-        		var k = 0;
-        		//console.log(dept)
-        		var keys = Object.keys(dept)
-        		if(keys.length == 0){
-        			return;
-        		}
-        		setInterval( function(){
-        			if(k == keys.length) return;
-        			//console.log(inst + ": " + session + " " + dept[keys[k]])
-        			callback(inst, session, dept[keys[k]])
-        			k += 1;
-        		}, 8000)
         	})
         })
     })
 }
-getSession = function lambda(inst, callback){
+getSession = function (inst, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
             console.error(err);
@@ -225,8 +184,8 @@ getSession = function lambda(inst, callback){
         var parsed = cheerio.load(body);
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
-            url: 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL',
-            form: qs.stringify(formTemplate.getTemplate(key,inst,'','ACCTE','E','102')),
+            url: process.env.cunyfirst_search_url,
+            form: qs.stringify(formTemplate.getTemplate(key,inst,'','','','')),
             headers: options.headers,
             jar: options.jar
         };
@@ -249,11 +208,12 @@ getSession = function lambda(inst, callback){
         });
     })
 }
-getInst = function(callback,interval){
+getInst = function(callback){
     request.post(options, function(err, res, body) {
     	try{
     		if(body.length == 0) return;
     	} catch(err){
+    		console.log(err)
     		return false;
     	}
         if(err) {
@@ -292,18 +252,6 @@ getInst = function(callback,interval){
             }
             schoolStruct[schools[schools.length-1]] = schoolNames[schoolNames.length-1].substring(1)
             callback(schoolStruct);
-            return;
-            var k = 0;
-      		//callback("QNS01")
-    		var keys = Object.keys(schoolStruct)
-    		setInterval( function(){
-    			if(k == schoolStruct.length) return;
-    			//console.log(keys[k])
-    			var temp = {};
-    			temp[schoolNames[k]] = keys[k]
-    			callback(temp)
-    			k += 1;
-    		}, interval)
         })
     })
 }
@@ -335,37 +283,6 @@ addDataToTable = function(callback){
 		});
 	})
 }
-/*
-addDataToTable();
-setTimeout( function(){ 
-		var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES ";
-		for(var i in classesArray){
-			q += "(\'" + classesArray[i]['inst'] + "\', \'" + classesArray[i]['session'] +"\', \'"+ classesArray[i]['dept'] + "\', \'" + classesArray[i]['nbr']  + "\', \'" + classesArray[i]['section'] + "\')," 
-			if(i == classesArray.length - 1){
-				q[q.length-1]=';';
-				console.log(q);
-				sendQuery(String(q), function(result){
-					console.log(result);
-				});
-			}
-		}
-	}, 60000*4*30);
-*/
-/*
-var CronJob = require('cron').CronJob;
-var worker = ('./worker');
-var deleteTableContent = new CronJob({
-	cronTime: "00 00 01 * * 1-5",
-	onTick: deleteTable,
-	start: true,
-	timeZone: 'America/Los_Angeles'
-});
-var job = new CronJob({
-	cronTime: "00 00 02 * * 1-5",
-	onTick: addDataToTable,
-	start: true,
-	timeZone: 'America/Los_Angeles'
-});*/
 
 
 

@@ -38,3 +38,19 @@ var job2 = new CronJob('00 00 * * * *', function() {
   }, null, 
   false, 'America/New_York');
 job2.start();
+var job3 = new CronJob('00 00 04 * * *', function(){
+	var updateDatabase = function(){
+		var pg = require('pg')
+		//
+		var query = ""
+		//Get inst
+		//	For each inst
+		//		for each session
+		//			for each dept
+		//				for each class
+		//					for each section
+		//						addClassToQuery
+		//send query
+	}
+})
+job3.start()

@@ -81,28 +81,3 @@ send_alert2 = function(row, body){
 		console.log("Error: sendwith was not a correct value -" + sendwith + "- " + row.user_id)
 	}
 }
-//send_email("5164046348","Verizon","test");
-//var postmark = require("postmark");
-
-
-// Example request
-/*var client = new postmark.Client(process.env.POSTMARK_API_KEY);
-send_email = function(recepient, provider, body){
-	var to = recepient;
-	var carrier = returnCarriers();
-	if(provider != "@")
-		to +=  carrier[provider];
-	console.log(to)
-	client.sendEmail({
-	    "From": "kenneth@noclosedclass.com",
-	    "To": to,
-	    "Subject": "Class Opened!", 
-	    "TextBody": body
-	}, function(error, success) {
-	    if(error) {
-	        console.error("Unable to send via postmark: " + error.message);
-	        return;
-	    }
-	    console.info("Sent to postmark for delivery")
-	});
-}*/

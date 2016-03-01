@@ -10,45 +10,9 @@ function ValidateEmail(inputText)
         return false;  
     }  
 }  
-
-userData = [];
-loggedIn = false;
-$.get("/userData",function(data){
-    userData = data;
-    if(userData == ""){
-        loggedIn = false;
-        $(document).ready(function(){
-            })
-        //$("#submitData").disabled = true;
-        /*$("#submitData").attr('disabled', true);
-        $("#buttonToDeleteClasses").attr('disabled', true);*/
-    }
-    else{
-        loggedIn = true;
-    }
-}).fail(function(e) {
-    console.log( "error" + e );
-  });
 $(document).ready(function(){
-    $('.editbtn').click(function(){
-        $(this).html($(this).html() == '<span class="glyphicon glyphicon-pencil" style="margin-right:5px"></span>edit data' ? '<span class="glyphicon glyphicon-ok" style="margin-right:5px"></span>Submit changes' : '<span class="glyphicon glyphicon-pencil" style="margin-right:5px"></span>edit data');
-        var td = $("." + this.id);
-        td.attr("contenteditable", ! $.parseJSON($("." + this.id).attr("contenteditable")));
-        td.toggleClass("editable");
-        if($(this).text() == 'edit data'){ //just clicked submit
-            $.get("/userData",function(data){
-                ws.send(JSON.stringify(["changePhoneNumber",[data.username,userData["fullName"].trim(),td.text(),"N/A",userData["email"]]]))
-            })
-        }
-    });
     $("#submitData").unbind('click').click( function (e) {
-        console
-        $.get("/userData",function(data){
-            if(data != "") clicked();
-        }).fail(function(err) {
-            console.log( "error" + err );
-          });;
-        
+        clicked();
     });
     $('#inst').unbind('change').change(function(){
         $("#ajax-loader").show();
@@ -108,41 +72,25 @@ parsePhoneNumber = function(nbr){
     }
     return nbr;
 }
-clicked = function(){
-    var contactHow = $(".example input[type='radio']:checked").val();
-    console.log(contactHow)
-    var fullName = userData["fullName"].trim();
-    var userName = userData["username"].trim();
-    var inst = $('#inst').val();
-    var session = $('#session').val();
-    var dept = $('#dept').val();
-    var phoneNbr = $('#you_phone_nbr').val();
-    phoneNbr = parsePhoneNumber(phoneNbr);
-    var carrier = $('#carrier').val();
-    var nbr;
-    var section;
-    var email = $('#emailInput').val();
+validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
     if(email == "" && phoneNbr == ""){
-        alert("Enter your phone number please")
-        return;
+        alert("Enter your phone number or email please")
+        return false;
     }
     if(contactHow == "text" || contactHow == "both"){
         if(phoneNbr.length != 10){
             alert("That phone number was not a 10 digit phone number, 9171234567 is the correct way to enter it.");
-            return;
+            return false;
         }
         else if(carrier == "defualt"){
             alert("please enter a carrier")
-            return;
+            return false;
         }
     }
     if(contactHow == "email" || contactHow == "both"){
-        if(!ValidateEmail(email)){
-            return;
-        }
-        if(email == ""){
+        if(!ValidateEmail(email) || email == ""){
             alert("please enter a valid email address")
-            return;
+            return false;
         }
     }
     if(email == "" || contactHow == "text")
@@ -150,6 +98,38 @@ clicked = function(){
     if(phoneNbr == "" || contactHow == "email"){
         phoneNbr = "N/A";
     }
+    return [phoneNbr,email]
+}
+clicked = function(){
+    var contactHow = $(".example input[type='radio']:checked").val();
+    var fullName
+    var userName
+    var phoneNbr = $('#you_phone_nbr').val();
+    phoneNbr = parsePhoneNumber(phoneNbr);
+    var email = $('#emailInput').val();
+    var valid = validEmailAndPhoneNbr(phoneNbr,email,contactHow);
+    if(valid){
+        phoneNbr = valid[0]
+        email = valid[1]
+    } else{ return //not a valid email or/and phone number
+    }
+    
+    var contactInfo
+    if(contactHow == "text" || contactHow == "both"){
+        contactInfo = phoneNbr
+    }
+    else if(contactHow == "email"){
+        contactInfo == email
+    }
+    
+    fullName = contactInfo
+    userName = contactInfo
+    var inst = $('#inst').val();
+    var session = $('#session').val();
+    var dept = $('#dept').val();
+    var carrier = $('#carrier').val();
+    
+    
 
     if(inst == "defualt"){
         alert("Please enter an institution")
@@ -164,7 +144,8 @@ clicked = function(){
     var shouldDeleted = $("#deltedWhenTexted").prop('checked');
     var queryArray = ["submit"];
     var count = 0;
-    
+    var nbr;
+    var section;
     $( ".row-selected" ).each(function(){
         count++;
         var temp = $(this)[0] //get tr
