@@ -114,16 +114,15 @@ getSections = function(inst, session, dept, callback){
 
 
 
-getSections('HTR01', '1169', 'MATH', function(q){
+getSections('QNS01', '1169', 'PHYS', function(q){
 	// q is a chunk of html, with the nasty cunyfirst chart of class info
 	tempHTMLChunks=q.split('COLLAPSE_1.GIF') //this will split sections of html by course section ie: ARAB 101, ARAB 203...
 	var classes = []
-	var classTitles= []; //eventually get rid of this and put item directly in
 	for(var i =1; i<tempHTMLChunks.length; i++){ //the first chunk of html has no good info
 		var item = tempHTMLChunks[i].split('&nbsp;')[1]; //this will separate out and place only the course section inside of an array 
-		tempHTMLChunks2 = tempHTMLChunks[i].split('Class Nbr')
+		tempHTMLChunks2 = tempHTMLChunks[i].split('Class Nbr') //separate every class number (ie 25588) into its own section
 		for (var j=1; j<tempHTMLChunks2.length; j++){
-			var temp=tempHTMLChunks2[j].split('>')
+			var temp= tempHTMLChunks2[j].split('>')
 			classes.push({
 				classTitle: item,
 				classNum: temp[2].split('<')[0],
@@ -132,10 +131,31 @@ getSections('HTR01', '1169', 'MATH', function(q){
 				instructor: temp[30].split('<')[0],
 				meetingDates: temp[36].split('<')[0],
 			})
-		}
+			var semp= tempHTMLChunks2[j].split('</span>')
+			//console.log("i, j =" +i+", "+j)
+			if (i===6 && j===2){
+				/*for (var k=0; k<semp.length; k++){
+					console.log(semp[k])
+					console.log('______-----____________' + k)
+				}*/
+				semp[0]= semp[0].split("<")
+				semp[0] = semp[0][semp[0].length-2].split(">")
+				semp[0] = semp[0][semp[0].length-1]
+				console.log( "class num = " + semp[0]);
+				semp[1]= semp[1].split("<")
+				semp[1] = semp[1][semp[1].length-3].split(">").pop()
+				console.log ("info = "+  semp[1])
+				semp[2] = semp[2].split(">")
+				console.log (semp[2])
+				/*for (var k =0; k<semp[1].length; k++){
+					console.log (semp[2][k])
+					console.log(" ________" + k)
+				}*/
 
+			}
+		}
+		//console.log(classes)
 
 	}
-	console.log(classes)
 	
 })
