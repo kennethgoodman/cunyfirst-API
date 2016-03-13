@@ -131,30 +131,28 @@ getSections('QNS01', '1169', 'PHYS', function(q){
 				instructor: temp[30].split('<')[0],
 				meetingDates: temp[36].split('<')[0],
 			})
-			var semp= tempHTMLChunks2[j].split('</span>')
+			/*var semp= tempHTMLChunks2[j].split('</span>')
 			//console.log("i, j =" +i+", "+j)
 			if (i===6 && j===2){
-				/*for (var k=0; k<semp.length; k++){
+				for (var k=0; k<semp.length; k++){
 					console.log(semp[k])
 					console.log('______-----____________' + k)
-				}*/
+				}
 				semp[0]= semp[0].split("<")
 				semp[0] = semp[0][semp[0].length-2].split(">")
 				semp[0] = semp[0][semp[0].length-1]
-				console.log( "class num = " + semp[0]);
+				//console.log( "class num = " + semp[0]);
 				semp[1]= semp[1].split("<")
 				semp[1] = semp[1][semp[1].length-3].split(">").pop()
-				console.log ("info = "+  semp[1])
+				//console.log ("info = "+  semp[1])
 				semp[2] = semp[2].split(">")
-				console.log (semp[2])
+				//console.log (semp[2])
 				/*for (var k =0; k<semp[1].length; k++){
 					console.log (semp[2][k])
 					console.log(" ________" + k)
-				}*/
-
-			}
+			}*/
 		}
-		//console.log(classes)
+		console.log(classes)
 
 	}
 	
