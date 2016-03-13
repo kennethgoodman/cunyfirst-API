@@ -23,7 +23,6 @@ var worker = require('./worker');
 
 })*/
 
-
 allClasses = function (){
 	getInst(function(inst){
 		var institutionsArray= []
@@ -34,6 +33,7 @@ allClasses = function (){
 		allSessions(institutionsArray, function (array){
 			allSubjects (array, function(array1){
 				console.log(array1)
+				console.log("there are "+array1.length + " stuffs ")
 			})
 		})
 	});
@@ -65,7 +65,6 @@ allSubjects = function (array, callback){
    				getDept(array[--i].inst, array [i].session, function (m){
 					for (j in m){
 						var item = {inst: array[i].inst, session: array[i].session, subject: m[j]}
-						console.log(item)
 						classArray.push(item)
 					}
 				})   
@@ -82,5 +81,8 @@ allSubjects = function (array, callback){
 
 allClasses()
 
+//getSections('QNS01', '1169', 'PHYS', function (m){
+//	console.log(m)
+//})
 
 
