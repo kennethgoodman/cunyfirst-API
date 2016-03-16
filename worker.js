@@ -283,4 +283,11 @@ addDataToTable = function(callback){
 		});
 	})
 }
+/*
+isItOpen=function(inst, session, dept, course, section){
+    getSections(inst, session, dept, function(m){
+        console.log(m[course][section]["Status"])
+    })
+}
+isItOpen('QNS01', 1162, "PHYS", '234', '76027') */
 

@@ -34,6 +34,9 @@ allClasses = function (){
 			allSubjects (array, function(array1){
 				console.log(array1)
 				console.log("there are "+array1.length + " stuffs ")
+				allSections(array1, function(array2){
+					console.log(array2)
+				})
 			})
 		})
 	});
@@ -77,6 +80,36 @@ allSubjects = function (array, callback){
    		}, 1000*3)
 	}; 
 	s(array.length)
+}
+
+allSections = function(array, callback){
+        //console.log("-----")
+        //console.log(array)
+        var sectionsArray = []
+        var s = function sectionLoop(i){
+                setTimeout(function(){
+                        getSections(array[--i].inst, array[i].session, array[i].subject, function(classData){
+                                for(classNbr in classData){
+                                        //console.log( classData[classNbr] )
+                                        for (c in classData[classNbr]){
+                                        	var data = classData[classNbr][c]
+                                        	var tmp={session: array[i].session, inst: array[i].inst, subject: array[i].subject}
+                                        	for (d in data){
+                                        		tmp[d]= data[d]
+                                        	}
+                                        	console.log(tmp)
+                                        }
+                                }
+                        })
+                        setTimeout( function(){
+                                if (i>0) sectionLoop(i);      //it's i>-1 because this way it'll try to iterate an extra time before the callback, buying us an extra 3 seconds
+                                else {
+                                        callback(sectionsArray)
+                                }
+                        },1000*5)
+                });
+        }
+        s(array.length)
 }
 
 allClasses()
