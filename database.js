@@ -130,4 +130,32 @@ getClasses = function(params, callback){
 	}
 	temp()
 }
+getTeacherInfo = function(params,callback){
+	var tries = 0
+	sql = "select distinct schools.name as schoolName from schools, session where schools.id = session.school and schools.id = $1"
+	sendQuery2(sql, [params[0]], function(data){
+			console.log(data)
+			temp = function(){
+			sendQuery( "select distinct * from ratemyprofessor where inst like \'%"+ data["schoolname"]  +"%\' and name = $1" ,[params[1]],function(result){
+				try{
+					if(result["rows"].length > 0)
+						callback(result["rows"])
+					else
+						return ["No Data"]
+				}
+				catch(err){
+					if(tries < 3){
+						tries += 1
+						temp()
+					}
+					else{
+						callback([])
+					}
+				}
+			})
+		}
+		temp()
+	})
+
+}
 //testAddDataToTable(function(result){console.log(result)})

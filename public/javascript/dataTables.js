@@ -1,9 +1,34 @@
-function format ( status ) {
+function format ( data ) {
+    console.log(data)
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td> Status: </td>'+
-            '<td>'+status+'</td>'+
+            '<td>'+data[0]+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td> Average Grade: </td>'+
+            '<td>'+data[1]["avggrade"] +'</td>'+
+        '</tr>'+       
+        '<tr>'+
+            '<td> Chili: </td>'+
+            '<td>'+data[1]["chili"] +'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td> Easyness: </td>'+
+            '<td>'+data[1]["easyness"] +'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td> Helpfulness: </td>'+
+            '<td>'+data[1]["helpfulness"] +'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td> Quality: </td>'+
+            '<td>'+data[1]["quality"] +'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td> Url: </td>'+
+            '<td><a href='+ data[1]["url"] + '>go and see reviews here</a></td>'+
         '</tr>'+
     '</table>';
 }
@@ -42,7 +67,7 @@ $(document).ready(function() {
         var inst = values["schoolCode"]
         var session = values["sessionCode"]  
         var dataToSend = ["getTheClassInfo",inst, session, rowData["Class nbr"].substring(0,rowData["Class nbr"].indexOf("-") - 1),
-                          rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index()]
+                          rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]
         console.log(dataToSend)
         
         if ( row.child.isShown() ) {
@@ -52,9 +77,16 @@ $(document).ready(function() {
             }
         else {
             // Open this row
-            $("#ajax-loader").show();
-            ws.send(JSON.stringify(dataToSend))
-            tr.addClass('shown');
+            if(tr.hasClass('OnceHadData')){
+                row.child().show()
+                tr.addClass('shown');
+            }
+            else{
+                $("#ajax-loader").show();
+                tr.addClass('OnceHadData')
+                ws.send(JSON.stringify(dataToSend))
+                tr.addClass('shown');
+            }
         }
     } ); 
 });

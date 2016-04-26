@@ -111,13 +111,18 @@ module.exports = function(wss){
 						var num = data[4]
 						var sectionNum = data[5]
 						var index = data[6]
+						var teacher = data[7]
 						console.log(data)
 						getSectionsWithNum(institution,session,dept,'E', num,function(result){
 							console.log(result[Object.keys(result)[0]])
     						try{
     							a.push(result[Object.keys(result)[0]][sectionNum]["Status"])
     							a.push(index)
-    							sendData(ws,a)
+    							getTeacherInfo([institution,teacher], function(data){
+    								a.push(data)
+    								sendData(ws,a)
+    							})
+    					
     						}
     						catch(err){
     							console.log(err)

@@ -65,9 +65,9 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
 						                if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
 						                    //var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
                                             //console.log(newData[0])
-						                    //var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
-                                            var name = newData[0].substring(0, newData[0].indexOf("-")-1);
-						                    var name = name.trim()                                 
+						                    var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
+                                            //var name = newData[0].substring(0, newData[0].indexOf("-")-1);
+						                    var name = name.trim()                            
                                             classOrder.push(name);
 
 						                    //console.log(newData)
@@ -101,7 +101,7 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
 						            
 						                        }
 						                    } catch(err){
-						                        //console.log(err)
+						                        console.log(err)
 						                    }
 						                    struct[name] = d
 						                    //console.log(struct[name])
@@ -135,13 +135,7 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
 				}
 				//console.log(struct)
 				//console.log(inst + ": " + session + " " + dept + " got class_nbr")
-				callback(struct);
-				var returnAlways = false;
-				for(var nbr in struct){
-					for(var section in struct[nbr]){
-						//callback(inst, session, dept, nbr, section)
-					}
-				}
+                callback(struct);
         	})
         })
     })

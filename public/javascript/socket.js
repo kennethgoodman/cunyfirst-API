@@ -90,9 +90,10 @@ ws.onmessage = function (event) {
           t.draw();
       }
       else if(commandFromServer == "classInfo"){
+        console.log(data)
         var table = $('#dataTables').dataTable().api();
         var row = table.row( data[2] )
-        row.child( format(data[1])).show();
+        row.child( format([data[1],data[3][0]])).show();
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "classesBeingTaken"){

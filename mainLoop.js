@@ -24,7 +24,7 @@ queueRead2 = function lambda(){
 						return;
 					}
 					if(row.error){
-						if(Math.random() > .95)
+						//if(Math.random() > .95)
 							console.log(row.error)
 						return
 					}
@@ -32,6 +32,10 @@ queueRead2 = function lambda(){
 						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
 						console.log(new Date() + ": " + text)
 					} catch(err){
+						console.log("Error when trying to create text")
+						console.log("row[\"class\"] = " + row["class"])
+						console.log("row[\"section\"] = " + row["section"])
+						console.log("struct[row[\"class\"]] = " + struct[row["class"]])
 						console.log(err)
 					}
 					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] == "Open"){
