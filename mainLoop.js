@@ -85,4 +85,4 @@ setInterval(function(){
 		counter++;
 		queueRead2() 
 	}
-}, 10000);
+}, 15000);

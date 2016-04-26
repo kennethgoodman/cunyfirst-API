@@ -21,10 +21,9 @@ module.exports = function(wss){
 					a.push(b)
 					sendData(ws, a)
 					break
-			switch(commandRecieved){
 				case "get_inst":
 					var a = ["inst"]
-					getInst( function(data){
+					getInstitutions( function(data){
 						a.push(data)
 						sendData(ws,a)
 					})
@@ -64,16 +63,12 @@ module.exports = function(wss){
 							sendData(ws,a)
 						})
 					})
-					break;
-				case "get_dept":
-					checkForEmptyData(data, ws, function(data){
-						var a = ["dept"]
-						var institution = data[1]
-						var session = data[2]
-						getDept(institution,session,function(data){
-							a.push(data)
-							sendData(ws,a)
-						})
+					break
+				case "get_classes":
+					var a = ["classes"]
+					getClasses([data[1],data[2]],function(data){
+						a.push(data)
+						sendData(ws,a)
 					})
 					break
 				case "get_class":
@@ -131,7 +126,7 @@ module.exports = function(wss){
 		        	})
 		        	break
 				case "submit": 
-		        			        	checkForEmptyData(data, ws,function(data){
+		        	checkForEmptyData(data, ws,function(data){
 		                var sendFunction = function(data){
 		                  var texted = "false";
 		                  var query = "INSERT INTO clients_and_their_info VALUES (";
@@ -280,3 +275,4 @@ module.exports = function(wss){
 	  	callback(data)
 	}
 }
+

@@ -31,7 +31,6 @@ $(document).ready(function() {
     	fixedHeader: true,
     	"deferRender": true
     });
-<<<<<<< HEAD
     $("#dataTables .dataTables_empty").text("Please choose your institution andsession");   
     $('#dataTables tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
@@ -59,8 +58,3 @@ $(document).ready(function() {
         }
     } ); 
 });
-
-=======
-    $("#dataTables .dataTables_empty").text("Please choose your institution, session and department");    
-});
->>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93

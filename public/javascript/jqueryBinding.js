@@ -113,13 +113,9 @@ clicked = function(){
     if(valid){
         phoneNbr = valid[0]
         email = valid[1]
-<<<<<<< HEAD
     } else{ 
         alert("Not a valid email or phoneNumber") //not a valid email or/and phone number
-=======
-    } else{ return //not a valid email or/and phone number
->>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93
-    }
+    } 
     
     var contactInfo
     if(contactHow == "text" || contactHow == "both"){
@@ -131,19 +127,11 @@ clicked = function(){
     
     fullName = contactInfo
     userName = contactInfo
-<<<<<<< HEAD
     var e = document.getElementById("inst");
     values = JSON.parse(e.options[e.selectedIndex].value)
     var carrier = $('#carrier').val();
     var inst = values["schoolCode"]
     var session = values["sessionCode"]
-=======
-    var inst = $('#inst').val();
-    var session = $('#session').val();
-    var dept = $('#dept').val();
-    var carrier = $('#carrier').val();
-    
->>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93
     
 
     if(inst == "defualt"){
@@ -158,10 +146,7 @@ clicked = function(){
     var count = 0;
     var nbr;
     var section;
-<<<<<<< HEAD
     var dept;
-=======
->>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93
     $( ".row-selected" ).each(function(){
         count++;
         var temp = $(this)[0] //get tr
