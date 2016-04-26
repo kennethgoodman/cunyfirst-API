@@ -131,7 +131,7 @@ module.exports = function(wss){
 		        	})
 		        	break
 				case "submit": 
-		        	checkForEmptyData(data, ws,function(data){
+		        			        	checkForEmptyData(data, ws,function(data){
 		                var sendFunction = function(data){
 		                  var texted = "false";
 		                  var query = "INSERT INTO clients_and_their_info VALUES (";
