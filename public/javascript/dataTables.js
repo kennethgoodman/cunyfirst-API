@@ -31,7 +31,7 @@ $(document).ready(function() {
     	fixedHeader: true,
     	"deferRender": true
     });
-    $("#dataTables .dataTables_empty").text("Please choose your institution andsession");   
+    $("#dataTables .dataTables_empty").text("Please choose your institution and session");   
     $('#dataTables tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
