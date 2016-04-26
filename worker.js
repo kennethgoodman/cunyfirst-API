@@ -136,6 +136,12 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
 				//console.log(struct)
 				//console.log(inst + ": " + session + " " + dept + " got class_nbr")
 				callback(struct);
+				var returnAlways = false;
+				for(var nbr in struct){
+					for(var section in struct[nbr]){
+						//callback(inst, session, dept, nbr, section)
+					}
+				}
         	})
         })
     })

@@ -11,7 +11,6 @@ module.exports = function(wss){
 			console.log("message received : " + data)
 			data = JSON.parse(data)
 			commandRecieved = data[0];
-			console.log(commandRecieved)
 			switch(commandRecieved){
 				case "test":
 					var a = ["test"]
@@ -22,20 +21,11 @@ module.exports = function(wss){
 					a.push(b)
 					sendData(ws, a)
 					break
+			switch(commandRecieved){
 				case "get_inst":
 					var a = ["inst"]
-					getInstitutions( function(data){
+					getInst( function(data){
 						a.push(data)
-						sendData(ws,a)
-					})
-					break;
-				case "get_classes":
-					console.log("here")
-					var a = ["classes"]
-					getClasses([data[1],data[2]],function(data){
-						a.push(data)
-						console.log(data.length)
-						console.log("sendingData")
 						sendData(ws,a)
 					})
 					break;
@@ -118,7 +108,6 @@ module.exports = function(wss){
 		          	})
 		          	break;
 		        case "getTheClassInfo":
-
 		        	checkForEmptyData(data,ws,function(data){
 		        		var a = ["classInfo"]
 		        		var institution = data[1]
@@ -141,7 +130,7 @@ module.exports = function(wss){
 						})
 		        	})
 		        	break
-		        case "submit": 
+				case "submit": 
 		        	checkForEmptyData(data, ws,function(data){
 		                var sendFunction = function(data){
 		                  var texted = "false";

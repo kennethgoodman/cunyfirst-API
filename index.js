@@ -6,7 +6,7 @@ try{
 	//do nothing if this fails, we are in dev
 }
 /*********************** other js files in this directory ******************************/
-//require('./mainLoop');
+require('./mainLoop');
 require('./carrier');
 require('./worker');
 require('./cronJobs');

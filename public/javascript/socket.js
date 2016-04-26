@@ -5,6 +5,7 @@ ws.onmessage = function (event) {
   try{
       var commandFromServer = data[0]
       if(commandFromServer == "keep open") return; //dont print, this is just a message to keep the websocket open
+<<<<<<< HEAD
       console.log(commandFromServer)
       if(commandFromServer == "inst"){
         removeDropdowns(["inst"])
@@ -27,6 +28,21 @@ ws.onmessage = function (event) {
             console.log(keys[i]["id"])
           }
             
+=======
+
+      if(commandFromServer == "inst"){
+        removeDropdowns(["inst","session","dept"])
+        $("#ajax-loader").hide();
+        var keys = Object.keys(data[1]);
+        var dropdown = document.getElementById('inst');
+        for(var i = 0; i < keys.length; i++){
+          var option = document.createElement("option");
+          var instName = keys[i]
+          option.value = instName;
+          option.text = data[1][instName];
+          if(instName != undefined && data[1][instName] != undefined)
+            dropdown.add(option);
+>>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93
         }
       }
       else if(commandFromServer == "session"){
@@ -70,6 +86,7 @@ ws.onmessage = function (event) {
           }
           t.draw()
       }
+<<<<<<< HEAD
       else if(commandFromServer == "classes"){ 
           //var table = document.getElementById("tableBody");
           //$("#tableBody").empty();
@@ -102,6 +119,8 @@ ws.onmessage = function (event) {
         row.child( format(data[1])).show();
         $("#ajax-loader").hide();
       }
+=======
+>>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93
       else if(commandFromServer == "classesBeingTaken"){
         data = data[1];
         var t = $('#tableForAlreadySignedUp').DataTable();
@@ -172,7 +191,12 @@ ws.onopen = function(err){
   if(err) console.log(err);
 
   $("#ajax-loader").show();
+<<<<<<< HEAD
   ws.send(JSON.stringify(["get_inst"]))
   //ws.send(JSON.stringify(["get_inst"]));
+=======
+  
+  ws.send(JSON.stringify(["get_inst"]));
+>>>>>>> 49911803f4eda8b5cbb1a256c33feccceba57c93
   ws.send(JSON.stringify(["getCarriers"]));
 }
