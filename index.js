@@ -23,6 +23,7 @@ var express = require('express'); // for creating the application, classic lib f
 var session = require('express-session');
 var app = express();
 var raygun = require('raygun'); //for error handling 
+var pgSession = require('connect-pg-simple')(session);
 /***************************************************************************************/
 
 
@@ -34,7 +35,10 @@ app.use(express.static(__dirname + '/public'));
 app.use("/favicon.ico", express.static(__dirname+'/public/images/favicon.ico'));
 
 app.use(session({ 
-  store: new (require('connect-pg-simple')(session))(),
+  store: new pgSession({
+    pg: pg,
+    tableName: 'user_session_table'
+  }),
   secret: 'My super secret password for sessions !#@$^53',
   cookie: { 
     maxAge: 30 * 24 * 60 * 60 * 1000,
