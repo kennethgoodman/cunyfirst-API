@@ -7,37 +7,17 @@
 </head>
 <body>
     <% include ../partials/nav.ejs %>
-        
             <br>
     <div class="wrap" style="margin:auto;">
-        <div style="margin:auto; margin-left:20px; margin-top:140px;">
-            <p>You need to be logged in to submit a class, but feel free to look around. <br> These dropdowns take time to load. Thank you for your patience.</p>
-            <br>
-            <p id="testing">To add a new class, wait for the institution dropdown to load and pick your institution. </p><br>
+        <div style="margin:auto; margin-left:20px; margin-top:80px;">
+            <p id="testing">To add a new class, pick your institution and session. </p><br>
             <div style="margin: auto;">
-                <select id="inst" default="pick an institution">
+                <select id="inst" default="pick an institution and session">
                     <option value="defualt" selected="selected">
                         Pick an institution
                     </option>
                 </select>
-               <p>Next, pick your session</p><br>
-                <select id="session" default="pick a session">
-                    <option value="defualt" selected="selected">
-                        Pick a session
-                    </option>
-                </select>
-                <p>Pick your department.</p><br>
-                <select id="dept" default="pick a department">
-                    <option value="defualt" selected="selected">
-                        Pick a department
-                    </option>
-                </select>
-                <div class="checkbox checkbox-primary example">
-                    <div>
-                        <input id="deltedWhenTexted" type="checkbox" name="checkbox" value="1" checked="checked"><label for="checkbox1"><span></span>Delete my class when I've been texted/e-mailed.</label>
-                        <a href="/FAQ#DeleteMyClassCheckbox">(What does this mean?)</a>
-                    </div>
-                </div>
+                
                 <p>Last, fill out your phone number and provider.</p><br>
                 
                 <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr">
@@ -64,28 +44,29 @@
                 </div>
             </div>
             <p>When you finished filling out the forms, select the classes with your mouse, and click "Get Class!"</p><br>
+            <p>Beware that some of the data in this table may be a couple hours old, we try and keep it as updated as possible and will fix the lag in the future.</p><br>
         </div>
     </div>
     <div>
     </div>
-            <div class="tableHolder">
-                <table id="dataTables" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Class nbr </th><th>Class Section</th><th>Teacher</th><th>Status</th>
-                            <th>Days and Time</th><th>Room</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Status</th><th>Days and Time</th><th>Room</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+        <div class="tableHolder">
+            <table id="dataTables" class="display" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Class nbr </th><th>Class Section</th><th>Teacher</th>
+                        <th>Days and Time</th><th>Room</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                         <th>Class nbr </th><th>Class section</th><th>Teacher</th><th>Days and Time</th><th>Room</th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
+    </div>
     <div style="margin: auto;text-align: center">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!-- leaderboard ad -->

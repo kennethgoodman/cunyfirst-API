@@ -1,50 +1,21 @@
 <!--<nav class="navbar navbar-default navbar-static-top navbar-inverse" id="navbar">-->
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '430642067125422',
-      xfbml      : true,
-      version    : 'v2.5'
-    });
-  };
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
 <nav class="navbar navbar-default navbar-static-top navbar-inverse navbar-fixed-top" id="navbar">
-    <div class="logo">
-        <a href="/" style="color:yellow;">No Closed Class</a>
-    </div>
   <div class="container-fluid">
       <div navbar-header>
          <a class="navbar-brand"></a>
       </div>
       <div>
         <ul class="nav navbar-nav">
-          <li class="active">
+            <li class="active">
               <button type="button" class="btn btn-default navbar-btn" id="Home" style="margin-top:9px">
                 <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a>
               </button>
-          </li>
-          <li>
-              <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px; margin-left:2px">
-                <a href="/account"><span class="glyphicon glyphicon-user" style="margin-right:5px"></span>Account</a>
-              </button>
-          </li>
+            </li>
             <li>
-              <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px; margin-left:2px">
-                <a href="/account_info"><span class="glyphicon glyphicon-info-sign" style="margin-right:5px"></span>Account Info</a>
-              </button>
-          </li>
-            <li>
-              <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px; margin-left:2px">
+              <button type="button" class="btn btn-default navbar-btn" id="donate" style="margin-top:9px; margin-left:2px">
                 <a href="/donate"><span class="glyphicon glyphicon-heart-empty" style="margin-right:5px"></span>Donate</a>
               </button>
-          </li>
+            </li>
         </ul>
           
         </ul>
@@ -64,36 +35,6 @@
                     <span class="glyphicon glyphicon-envelope"></span>
                         Support
                     </a>    
-                </button>
-            </li>
-            <li>
-                <button type="button" class="btn btn-default navbar-btn" id="Logout" style="margin-top:9px">
-                    <a href="/logout" id="logStatus"><span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out</a>
-            <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
-                    <script>
-                        $(document).ready(function(){
-                            var item = document.getElementById("logStatus");
-                            $.get("/userData",function(data){
-                                userData = data;
-                                if(userData !== ""){
-                                    item.innerHTML = '<span class="glyphicon glyphicon-log-out" style="margin-right:5px"></span>Log out';
-                                    item.href = "/logout"
-                                }
-                                else{
-                                    item.innerHTML = '<span class="glyphicon glyphicon-log-in" style="margin-right:5px"></span>Log in';
-                                    item.href = "/login" 
-                                    var submitDataButton = document.getElementById("submitData");
-                                    submitDataButton.disabled = true;
-                                    var divHoldingButton = $(".SubmitButton");
-                                    divHoldingButton.css("cursor", "help");
-                                    divHoldingButton.attr("tooltip", "You need to log in to use this feature.");
-                                    divHoldingButton.prop('tooltip-persistent', true);
-                                }
-                            }).fail(function(e) {
-                                console.log( "error" + e );
-                              })
-                        })
-                    </script>
                 </button>
             </li>
         </ul>

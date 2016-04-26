@@ -3,22 +3,33 @@ var ws = new WebSocket(host);
 ws.onmessage = function (event) {
   var data = JSON.parse(event.data);
   try{
-      if(data[0] == "keep open") return; //dont print
-      //console.log(data);
-      if(data[0] == "inst"){
-          removeDropdowns(["inst","session","dept"])
-          $("#ajax-loader").hide();
-          var keys = Object.keys(data[1]);
-          var dropdown = document.getElementById('inst');
-          for(var i = 0; i < keys.length; i++){
-              var option = document.createElement("option");
-              var instName = keys[i]
-              option.value = instName;
-              option.text = data[1][instName];
-              if(instName != undefined && data[1][instName] != undefined) dropdown.add(option);
+      var commandFromServer = data[0]
+      if(commandFromServer == "keep open") return; //dont print, this is just a message to keep the websocket open
+      console.log(commandFromServer)
+      if(commandFromServer == "inst"){
+        removeDropdowns(["inst"])
+        $("#ajax-loader").hide();
+        var keys = data[1];
+        var dropdown = document.getElementById('inst');
+        for(var i = 0; i < keys.length; i++){
+          var option = document.createElement("option");
+          var instName = JSON.stringify({ "schoolCode" : keys[i]["school"], "sessionCode": keys[i]["id"] });
+          option.value = instName;
+          option.text = keys[i]["schoolname"] + " - " + keys[i]["name"];
+          if(keys[i]["schoolname"] != undefined && keys[i]["name"] != undefined && 
+             keys[i]["school"]     != undefined && keys[i]["id"]   != undefined)
+            dropdown.add(option);
+          else{
+            console.log(keys[i])
+            console.log(keys[i]["schoolname"])
+            console.log(keys[i]["name"])
+            console.log(keys[i]["school"])
+            console.log(keys[i]["id"])
           }
+            
+        }
       }
-      else if(data[0] == "session"){
+      else if(commandFromServer == "session"){
           removeDropdowns(["session","dept"])
           $("#ajax-loader").hide();
           var dropdown = document.getElementById('session');
@@ -30,7 +41,7 @@ ws.onmessage = function (event) {
               if(sessionName != undefined && data[i][sessionName] != undefined) dropdown.add(option);
           }
       }
-      else if(data[0] == "dept"){
+      else if(commandFromServer == "dept"){
           removeDropdowns(["dept"])
           $("#ajax-loader").hide();
           var dropdown = document.getElementById('dept');
@@ -43,7 +54,7 @@ ws.onmessage = function (event) {
               if(deptName != undefined && data[1][deptName] != undefined) dropdown.add(option);
           }
       }
-      else if(data[0] == "class_nbr"){ 
+      else if(commandFromServer == "class_nbr"){ 
           //var table = document.getElementById("tableBody");
           //$("#tableBody").empty();
           $("#ajax-loader").hide();
@@ -54,24 +65,44 @@ ws.onmessage = function (event) {
           t.clear();
           for(var nbr in data){
               for(var section in data[nbr]){
-                  //console.log(data[nbr][section])
-                  /*if(data[nbr][section]['Status'] != "Closed"){
-                      continue;
-                  }*/
                   t.row.add([dept + ": " + nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status'],data[nbr][section]['Days & Times'],data[nbr][section]['Room']])
               }
           }
           t.draw()
-          /*$('#dataTables tbody').on('click', 'tr', function (){
-              if ( $(this).hasClass('selected') ) {
-                 $(this).removeClass('selected');
-              }
-              else{
-                  $(this).addClass('selected');
-              }     
-            });*/
       }
-      else if(data[0] == "classesBeingTaken"){
+      else if(commandFromServer == "classes"){ 
+          //var table = document.getElementById("tableBody");
+          //$("#tableBody").empty();
+          data = data[1]
+          $("#ajax-loader").hide();
+          //var nbrs = Object.keys(data);
+          var t = $('#dataTables').DataTable();
+          t.clear();
+          for(var theClass in data){
+            var theData = data[theClass]
+            if(theData["open"] == true || theData["open"] == "true"){
+              theData["open"] = "open"
+            }
+            else{
+              theData["open"] = "closed"
+            }
+            t.row.add({
+                      "Class nbr": theData["subject_code"].trim() + " - " + theData["class_id"], 
+                      "Class Section": theData["class_num"], 
+                      "Teacher": theData["teacher"], 
+                      "Days And Time":theData["days_and_times"],
+                      "Room": theData["room"]
+                    })
+          }
+          t.draw()
+      }
+      else if(commandFromServer == "classInfo"){
+        var table = $('#dataTables').dataTable().api();
+        var row = table.row( data[2] )
+        row.child( format(data[1])).show();
+        $("#ajax-loader").hide();
+      }
+      else if(commandFromServer == "classesBeingTaken"){
         data = data[1];
         var t = $('#tableForAlreadySignedUp').DataTable();
         t.clear();
@@ -89,11 +120,11 @@ ws.onmessage = function (event) {
         
         t.draw()
       }
-      else if(data[0] == "sendNotification"){
+      else if(commandFromServer == "sendNotification"){
         alert(data[1]);
         showNotification(data[1],"http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/account");
       }
-      else if(data[0] == "addClassToDT"){
+      else if(commandFromServer == "addClassToDT"){
         data = data[1];
         var textedString = "";
         try{
@@ -107,7 +138,7 @@ ws.onmessage = function (event) {
         }
         t.draw();
       }
-      else if(data[0] == "carriers"){
+      else if(commandFromServer == "carriers"){
           var dropdown = document.getElementById('carrier');
           for(var i = 0; i < data[1].length; i++){
               var option = document.createElement("option");
@@ -117,34 +148,31 @@ ws.onmessage = function (event) {
               if(carrier != undefined) dropdown.add(option);
           }
       }
-      else if(data[0] == "err" || data[0] == "Success"){
+      else if(commandFromServer == "err" || commandFromServer == "Success"){
         alert(data[1]);
+      }
+      else if(commandFromServer == "test"){
+        console.log("in test")
+        try{
+          var start = new Date();
+          var t = $('#dataTables').DataTable();
+          t.rows.add(data[1]);
+        } catch(err){
+          console.log(err);
+        }
+        t.draw();
+        var end = new Date();
+        console.log( end.getTime() - start.getTime())
       }
   } catch(err){
       console.log(err)
   }
 };
-ws.onopen = function(e){
-  if(e) console.log(e);
-  //console.log("Conn established")
-  ws.send(JSON.stringify(["get_inst"]));
+ws.onopen = function(err){
+  if(err) console.log(err);
+
   $("#ajax-loader").show();
+  ws.send(JSON.stringify(["get_inst"]))
+  //ws.send(JSON.stringify(["get_inst"]));
   ws.send(JSON.stringify(["getCarriers"]));
-  $.get("/userData",function(data){
-    if(data != ""){
-      ws.send(JSON.stringify(["getCurrentClasses",data["username"]]))
-    }
-  }).fail(function(err) {
-    console.log( "error" + err );
-  });
-  //ws.send(JSON.stringify(["test"]))
-  var test = function(){
-      ws.send(JSON.stringify(["get_session", "QNS01"]));
-      ws.send(JSON.stringify(["get_dept","QNS01","1162"]));
-      ws.send(JSON.stringify(["get_class","QNS01","1162","ACCT"]));
-  }
-  //test();
 }
-$(document).ready(function(){
-  
-});

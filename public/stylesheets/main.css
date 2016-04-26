@@ -211,6 +211,13 @@ input[type=radio]:not(old):checked +  label > span > span{
 [tooltip]:not([tooltip-persistent]):before {
     pointer-events: none;
 }
+td.details-control {
+    background: url('../images/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('../images/details_close.png') no-repeat center center;
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;
