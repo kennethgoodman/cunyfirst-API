@@ -24,6 +24,7 @@ Array.prototype.remove = function(from, to) {
 };
 var classesArray = [];
 
+
 getSections = function(inst, session, dept, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
@@ -141,6 +142,7 @@ getSections = function(inst, session, dept, callback){
         })
     })
 };
+
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
@@ -175,6 +177,7 @@ getDept = function(inst, session, callback){
         })
     })
 }
+
 getSession = function (inst, callback){
 	request.post(options, function(err, res, body) {
         if(err) {

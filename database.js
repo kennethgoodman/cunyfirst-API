@@ -68,6 +68,6 @@ sendQuery2 = function(q,params, callback){
 }
 var counter = 0;
 viewTable = function(callback){
-	sendQuery('SELECT * FROM clients_and_their_info', callback)
+	sendQuery('SELECT * FROM clients_and_their_info','', callback)
 }
 //viewTable(function(result){console.log(result)})

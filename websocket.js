@@ -1,3 +1,4 @@
+var pg = require('pg');
 module.exports = function(wss){
 	wss.on("connection", function(ws){
 		var id = setInterval(function(){
@@ -14,9 +15,29 @@ module.exports = function(wss){
 			switch(commandRecieved){
 				case "get_inst":
 					var a = ["inst"]
-					getInst( function(data){
+					/*getInst( function(data){
 						a.push(data)
 						sendData(ws,a)
+					})*/
+					pg.connect('postgres://:@localhost/cuny_first_db', function(err, client, done) {
+						if (err) {
+						  console.log(err);
+						  pg.end();
+						  return;
+						}
+						console.log('Connected to postgres! Getting schemas...');
+						client.query('SELECT * from schools', function(err, result) {
+						    if(err) {
+								   err["Error"] = true;
+								   console.error('error running query', err)
+								   client.end();
+							}
+						    else{
+								 console.log(result)
+								 sendData(ws, result)
+								 done()
+						    }
+						})
 					})
 					break;
 				case "get_session":

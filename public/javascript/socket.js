@@ -7,6 +7,7 @@ ws.onmessage = function (event) {
       if(commandFromServer == "keep open") return; //dont print, this is just a message to keep the websocket open
 
       if(commandFromServer == "inst"){
+        console.log(data[1])
         removeDropdowns(["inst","session","dept"])
         $("#ajax-loader").hide();
         var keys = Object.keys(data[1]);

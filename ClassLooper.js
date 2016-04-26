@@ -1,5 +1,9 @@
 
 var worker = require('./worker');
+var pg = require('pg');
+require('./database2')
+var database_URL = "postgres://postgres@localhost/cuny_first_db";
+pg.defaults.poolIdleTimeout = 2000;
 
 
 /*(function myLoop (i) {          
@@ -23,16 +27,22 @@ var worker = require('./worker');
 
 })*/
 
-allClasses = function (){
+allClasses = function (callback){
 	getInst(function(inst){
 		var institutionsArray= []
+    var institutionsArray2= []
 		for (i in inst){
+      institutionsArray2.push({id: i, name: inst[i]})
 			institutionsArray.push(i)
 		}
+    
 
 		allSessions(institutionsArray, function (array){
+      callback (institutionsArray2, array)
+      console.log("all sessions returns")
+      console.log(array)
+
 			allSubjects (array, function(array1){
-				console.log(array1)
 				console.log("there are "+array1.length + " stuffs ")
 				allSections(array1, function(array2){
 					console.log(array2)
@@ -48,7 +58,7 @@ allSessions = function (institutions, callback){
    		setTimeout(function () {   
       		getSession(institutions[--i], function (r, m){
 				for (j in m){
-					var item = {inst: institutions[i], session: m[j]}
+					var item = {inst: institutions[i], session: m[j], name:j}
 					sessionArray.push(item)
 				}
 			})              
@@ -66,10 +76,10 @@ allSubjects = function (array, callback){
    		setTimeout(function () {   
    			if (i>0){
    				getDept(array[--i].inst, array [i].session, function (m){
-					for (j in m){
-						var item = {inst: array[i].inst, session: array[i].session, subject: m[j]}
-						classArray.push(item)
-					}
+					 for (j in m){
+					 	  var item = {inst: array[i].inst, session: array[i].session, subject: m[j], subject_name: j}
+					   	classArray.push(item)
+					 }
 				})   
    			} 
    			else{
@@ -83,36 +93,56 @@ allSubjects = function (array, callback){
 }
 
 allSections = function(array, callback){
-        //console.log("-----")
+        console.log("-----")
         //console.log(array)
-        var sectionsArray = []
-        var s = function sectionLoop(i){
+        pg.connect(database_URL, function(err, client, done) {
+          var sectionsArray = []
+          var s = function sectionLoop(i){
                 setTimeout(function(){
                         getSections(array[--i].inst, array[i].session, array[i].subject, function(classData){
                                 for(classNbr in classData){
                                         //console.log( classData[classNbr] )
-                                        for (c in classData[classNbr]){
+                                      for (c in classData[classNbr]){
                                         	var data = classData[classNbr][c]
-                                        	var tmp={session: array[i].session, inst: array[i].inst, subject: array[i].subject}
+                                        	var tmp= array[i]
                                         	for (d in data){
                                         		tmp[d]= data[d]
                                         	}
-                                        	console.log(tmp)
-                                        }
+                                          var classInfo = tmp
+                                          params = [classInfo.subject_name, classInfo.subject, classInfo['Days & Times'], classInfo.Room, classInfo.Class, classInfo.session, classInfo.inst, classInfo.Status==('Open'), classInfo['Meeting Dates'], classInfo.Instructor, classNbr]
+                                          //putInDatabase(client, params, i, array.length)
+                                          console.log(params)
+                                     }
                                 }
                         })
                         setTimeout( function(){
                                 if (i>0) sectionLoop(i);      //it's i>-1 because this way it'll try to iterate an extra time before the callback, buying us an extra 3 seconds
                                 else {
+                                        console.log("we're up to here")
+                                        done()
                                         callback(sectionsArray)
                                 }
                         },1000*5)
                 });
         }
         s(array.length)
+      })
 }
 
-allClasses()
+var putInDatabase = function (client, params, a, outOf){
+  paramas= params.slice()
+  var classNum = [ paramas[4] ]
+  console.log('class num is ')
+  console.log(classNum)
+  console.log('we dealing with '+a+' out of '+outOf )
+  client.query("INSERT INTO classes VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", paramas, function(err, result) {
+    if(err) {
+       err["Error"] = true;
+       console.error('error running query2', err);
+    }
+  })
+}
+
 
 //getSections('QNS01', '1169', 'PHYS', function (m){
 //	console.log(m)
