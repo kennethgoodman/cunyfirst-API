@@ -24,13 +24,13 @@ queueRead2 = function lambda(){
 						return;
 					}
 					if(row.error){
-						//if(Math.random() > .95)
+						if(Math.random() > .95)
 							console.log(row.error)
 						return
 					}
 					try{
 						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
-						console.log(new Date() + ": " + text)
+						//console.log(new Date() + ": " + text)
 					} catch(err){
 						console.log("Error when trying to create text")
 						console.log("row[\"classnbr\"] = " + row["classnbr"])

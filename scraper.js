@@ -33,7 +33,7 @@ BC.get("Irene Soto Marin", callback)
 */
 sendQuery("select distinct schools.name, classes.teacher from classes, schools where classes.school = schools.id and schools.name = $1", ["Baruch College"], function(data){
   data = data["rows"]
-  var i = 1200;
+  var i = 1245;
   var a = setInterval(function(){
     if(i%25 == 0)
       console.log(i)

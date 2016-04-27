@@ -23,6 +23,7 @@
     "express-session": "^1.12.1",
     "form-data": "^0.2.0",
     "fs": "0.0.2",
+    "genev": "^0.1.8",
     "heroku-client": "^2.4.0",
     "heroku.node": "^0.2.1",
     "http": "0.0.0",
