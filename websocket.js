@@ -93,8 +93,7 @@ module.exports = function(wss){
 				case "getClassesForUser": 
 					break
 		        case "getTheClassInfo":
-		        	checkForEmptyData(data,ws,function(data){
-		        		var a = ["classInfo"]
+		        	checkForEmptyData(data,ws,function(data){		
 		        		var institution = data[1]
 						var session = data[2]
 						var dept = data[3]
@@ -102,17 +101,19 @@ module.exports = function(wss){
 						var sectionNum = data[5]
 						var index = data[6]
 						var teacher = data[7]
-						console.log(data)
+						var a = ["teacherInfo"]
+						var b = ["statusInfo"]
+						getTeacherInfo([institution,teacher], function(data){
+							a.push(data[0])
+							b.push(data[0])
+							a.push(index)
+							b.push(index)
+							sendData(ws,a)
+						})
 						getSectionsWithNum(institution,session,dept,'E', num,function(result){
-							console.log(result[Object.keys(result)[0]])
     						try{
-    							a.push(result[Object.keys(result)[0]][sectionNum]["Status"])
-    							a.push(index)
-    							getTeacherInfo([institution,teacher], function(data){
-    								a.push(data)
-    								sendData(ws,a)
-    							})
-    					
+    							b.push(result[Object.keys(result)[0]][sectionNum]["Status"])
+    							sendData(ws,b)
     						}
     						catch(err){
     							console.log(err)

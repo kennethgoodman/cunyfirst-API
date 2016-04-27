@@ -139,7 +139,7 @@ getTeacherInfo = function(params,callback){
 					if(result["rows"].length > 0)
 						callback(result["rows"])
 					else
-						return ["No Data"]
+						callback(["No Data"])
 				}
 				catch(err){
 					if(tries < 3){
@@ -147,7 +147,7 @@ getTeacherInfo = function(params,callback){
 						temp()
 					}
 					else{
-						callback([])
+						callback(["No Data"])
 					}
 				}
 			})

@@ -1,5 +1,16 @@
+rowsLookedAt = {}
 function format ( data ) {
-    console.log(data)
+    if(data[1] == "No Data" || data[1] == undefined)
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+            '<td> Status: </td>'+
+            '<td>'+data[0]+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td> No Teacher Information </td>'+
+            '<td> If This is a mistake please help <br>others and let support know</td>'+
+        '</tr>'+       
+    '</table>';
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
@@ -67,26 +78,21 @@ $(document).ready(function() {
         var inst = values["schoolCode"]
         var session = values["sessionCode"]  
         var dataToSend = ["getTheClassInfo",inst, session, rowData["Class nbr"].substring(0,rowData["Class nbr"].indexOf("-") - 1),
-                          rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]
-        console.log(dataToSend)
-        
+                          rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]        
         if ( row.child.isShown() ) {
                 // This row is already open - close it
-                row.child.hide();
-                tr.removeClass('shown');
-            }
-        else {
-            // Open this row
-            if(tr.hasClass('OnceHadData')){
-                row.child().show()
-                tr.addClass('shown');
-            }
-            else{
-                $("#ajax-loader").show();
-                tr.addClass('OnceHadData')
-                ws.send(JSON.stringify(dataToSend))
-                tr.addClass('shown');
-            }
+            row.child.hide();
+            tr.removeClass('shown');
         }
-    } ); 
+        else if(hiddenRowData[row.index()] != undefined){
+            row.child( format(hiddenRowData[row.index()]) ).show()
+            tr.addClass('shown');
+        }
+        else{
+            $("#ajax-loader").show();
+            tr.addClass('shown');
+            ws.send(JSON.stringify(dataToSend))
+            rowsLookedAt[row.index()] = true   
+        }
+    }); 
 });

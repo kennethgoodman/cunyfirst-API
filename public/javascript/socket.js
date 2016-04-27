@@ -1,3 +1,4 @@
+hiddenRowData = {}
 var host = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(host);
 ws.onmessage = function (event) {
@@ -89,11 +90,18 @@ ws.onmessage = function (event) {
           }
           t.draw();
       }
-      else if(commandFromServer == "classInfo"){
-        console.log(data)
+      else if(commandFromServer == "teacherInfo"){
         var table = $('#dataTables').dataTable().api();
         var row = table.row( data[2] )
-        row.child( format([data[1],data[3][0]])).show();
+        hiddenRowData[data[2]] = ["Loading...",data[1]]
+        row.child( format(["Loading...",data[1]])).show();
+        $("#ajax-loader").hide();
+      }
+      else if(commandFromServer == "statusInfo"){
+        var table = $('#dataTables').dataTable().api();
+        var row = table.row( data[2] )
+        hiddenRowData[data[2]] = [data[3],data[1]]
+        row.child( format([data[3],data[1]])).show();
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "classesBeingTaken"){
