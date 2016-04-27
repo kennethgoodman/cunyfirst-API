@@ -95,6 +95,10 @@ validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
             return false;
         }
     }
+    if(email.length > 50){
+        alert("That email is too long, only emails less than 50 characters")
+        return false
+    }
     if(email == "" || contactHow == "text")
         email = "N/A";
     if(phoneNbr == "" || contactHow == "email"){
@@ -114,7 +118,7 @@ clicked = function(){
         phoneNbr = valid[0]
         email = valid[1]
     } else{ 
-        alert("Not a valid email or phoneNumber") //not a valid email or/and phone number
+        return //not a valid email or/and phone number
     } 
     
     var contactInfo
@@ -150,16 +154,18 @@ clicked = function(){
     $( ".row-selected" ).each(function(){
         count++;
         var temp = $(this)[0] //get tr
-        nbr = temp.childNodes[0].textContent.trim();
+        nbr = temp.childNodes[1].textContent.trim();
         classnbr = nbr.substr(nbr.indexOf("-")+2);
         dept = nbr.substring(0,nbr.indexOf("-") - 1);
-        section = temp.childNodes[1].textContent.trim();
+        section = temp.childNodes[2].textContent.trim();
         try{
-            queryArray.push([fullName,inst,dept,classnbr,section,phoneNbr,session,userName,carrier,shouldDeleted]);
+            queryArray.push([inst,dept,classnbr,section,session]);
         } catch(err){
             console.log(err)
         }
     })
+    queryArray.push(phoneNbr)
+    queryArray.push(carrier)
     queryArray.push(email)
     queryArray.push(contactHow)
     console.log(queryArray)

@@ -16,7 +16,7 @@ queueRead2 = function lambda(){
 	if(item != undefined){ 
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
-				var q = "SELECT DISTINCT class, section FROM clients_and_their_info where texted = false and inst = $1 and session=$2 and dept= $3 order by class, section;";  
+				var q = "SELECT DISTINCT classnbr, section FROM customer_info where alerted = false and inst = $1 and session=$2 and dept= $3 order by classnbr, section;";  
 				var params = [item.inst,item.session,item.dept]
 				sendQuery2(q, params, function(row){
 					if(row == undefined || row == null) {
@@ -29,27 +29,27 @@ queueRead2 = function lambda(){
 						return
 					}
 					try{
-						var text = item.dept + ": "+ row["class"] +', ' + row["section"] + ' is ' + struct[row["class"]][row["section"]]["Status"] + ". Teacher: " + struct[row["class"]][row["section"]]['Instructor'];
+						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
 						console.log(new Date() + ": " + text)
 					} catch(err){
 						console.log("Error when trying to create text")
-						console.log("row[\"class\"] = " + row["class"])
+						console.log("row[\"classnbr\"] = " + row["classnbr"])
 						console.log("row[\"section\"] = " + row["section"])
-						console.log("struct[row[\"class\"]] = " + struct[row["class"]])
+						console.log("struct[row[\"classnbr\"]] = " + struct[row["classnbr"]])
 						console.log(err)
 					}
-					if(struct.hasOwnProperty(row["class"]) && struct[row["class"]].hasOwnProperty(row["section"]) && struct[row["class"]][row["section"]]["Status"] == "Open"){
-						var q = 'select user_id, phone_number, provider, sendwith, texted from clients_and_their_info where inst=$1 and session=$2 and dept=$3 and class=$4 and section=$5 and texted=false';
-						var params = [item.inst,item.session,item.dept,row["class"],row["section"]]
+					if(struct.hasOwnProperty(row["classnbr"]) && struct[row["classnbr"]].hasOwnProperty(row["section"]) && struct[row["classnbr"]][row["section"]]["Status"] == "Open"){
+						var q = 'select phone_number, provider, email, sendwith, alerted from customer_info where inst=$1 and session=$2 and dept=$3 and classnbr=$4 and section=$5 and alerted=false';
+						var params = [item.inst,item.session,item.dept,row["classnbr"],row["section"]]
 						sendQuery2(q, params, function(data){
-							if(!data['texted']){
+							if(!data['alerted']){
 								send_alert2(data, text)
-								var query = "UPDATE clients_and_their_info SET texted = TRUE Where dept = $1 AND class = $2 AND section = $3 AND user_id=$4";  
-				                var params = [item.dept, row["class"],row["section"], data["user_id"]]
+								var query = "UPDATE customer_info SET alerted = TRUE Where dept = $1 AND classnbr = $2 AND section = $3 AND phone_number=$4 AND email=$5";  
+				                var params = [item.dept, row["classnbr"],row["section"], data["phone_number"], data["email"]]
 
-				                sendQuery(query, params, function(result){ //change texted to TRUE in DB
+				                sendQuery(query, params, function(result){ //change alerted to TRUE in DB
 				                	try{
-				                		console.log(result.command + " " + data["user_id"] + " "  + item.dept + " " + row["class"] + " " +row["section"]);
+				                		console.log(result.command + + " "  + item.dept + " " + row["classnbr"] + " " +row["section"]);
 				                	} catch(err){
 				                		console.log(result);
 				                	}
@@ -66,7 +66,7 @@ queueRead2 = function lambda(){
 	counter--;	
 }
 
-var queryCount = 'Select count(*) from clients_and_their_info;'
+var queryCount = 'Select count(*) from customer_info;'
 var amount_of_rows = 1000000; 
 setInterval( function(){
 	sendQuery(queryCount,[], function(result){
@@ -74,7 +74,7 @@ setInterval( function(){
 	})
 }, 1000*60*10) //every 10 min, TEST IF THIS IS OK!
 
-var q = 'SELECT DISTINCT inst, dept, session FROM clients_and_their_info where texted = false order by inst, session, dept;'
+var q = 'SELECT DISTINCT inst, dept, session FROM customer_info where alerted = false order by inst, session, dept;'
 setInterval( function(){
 	if(queue.length > parseInt(amount_of_rows*1.2)){ //still testing good number
 		queue = [];

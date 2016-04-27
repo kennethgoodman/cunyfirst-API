@@ -24,8 +24,6 @@ queryDatabasePerRow = function(query,callback){
 	});
 }
 sendQuery = function(query, params, callback){
-	console.log(query)
-	console.log(params)
 	if(query == undefined || query == null){
 		callback({error:"bad query"})
 		console.log("bad query\n" + query)

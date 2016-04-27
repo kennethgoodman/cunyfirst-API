@@ -69,14 +69,14 @@ send_alert2 = function(row, body){
 	var sendwith = row.sendwith
 	if(sendwith == 'text'){
 		send_email(row.phone_number, row.provider, body)
-		console.log("SENT: " + row.user_id +": " + row.phone_number + " "+ body + " " + sendwith)
+		console.log("SENT: " + row.phone_number + " "+ body + " " + sendwith)
 	} else if(sendwith == 'email'){
 		send_email(row.email, '@', body)
-		console.log("SENT: " + row.user_id +": " + row.email + " " + body + " " + sendwith)
+		console.log("SENT: " + row.email + " " + body + " " + sendwith)
 	} else if(sendwith == 'both'){
 		send_email(row.phone_number, row.provider, body)
 		send_email(row.email, '@', body)
-		console.log("SENT: " + row.user_id +": " +  row.phone_number + " "+ row.email + " "+body + " " + sendwith)
+		console.log("SENT: " +  row.phone_number + " "+ row.email + " "+body + " " + sendwith)
 	} else{
 		console.log("Error: sendwith was not a correct value -" + sendwith + "- " + row.user_id)
 	}

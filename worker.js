@@ -101,7 +101,7 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
 						            
 						                        }
 						                    } catch(err){
-						                        console.log(err)
+						                        //console.log(err)
 						                    }
 						                    struct[name] = d
 						                    //console.log(struct[name])

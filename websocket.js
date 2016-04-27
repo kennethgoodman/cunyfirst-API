@@ -92,16 +92,6 @@ module.exports = function(wss){
 					break;
 				case "getClassesForUser": 
 					break
-				case "getCurrentClasses":
-					var q = "SELECT inst, session, dept, class, section, texted from clients_and_their_info where user_id=$1;"
-		          	var user_id = data[1]
-		          	sendQuery2(q,[user_id], function(row){
-		            	if(row["session"] == "1162") {
-		                	row["session"] = "Spring 2016";
-		              	}
-		            	sendData(ws, ["addClassToDT", row])
-		          	})
-		          	break;
 		        case "getTheClassInfo":
 		        	checkForEmptyData(data,ws,function(data){
 		        		var a = ["classInfo"]
@@ -134,17 +124,25 @@ module.exports = function(wss){
 		        	checkForEmptyData(data, ws,function(data){
 		                var sendFunction = function(data){
 		                  var texted = "false";
-		                  var query = "INSERT INTO clients_and_their_info VALUES (";
+		                  var query = "INSERT INTO customer_info VALUES (";
 		                  var params = [];
-		                	for(var i = 1; i < data.length-2; i++){ //minus two becuase, last options are contactHow, email
-			                    query += "$"+((i-1)*11 + 1)+",$"+((i-1)*11 + 2)+",$"+((i-1)*11 + 3)+",$"+((i-1)*11 + 4)+",$"+((i-1)*11 + 5)+",\'"+texted+"\',$"+((i-1)*11 + 6)+",$"+((i-1)*11 + 7)+",$"+((i-1)*11 + 8)+",$"+((i-1)*11 + 9)+",$"+((i-1)*11 + 10)+",$"+((i-1)*11 + 11)+")";
-			                    if(i+1 == data.length-2) query += ";"
+		                	for(var i = 1; i < data.length-4; i++){ //minus two becuase, last options are contactHow, email
+			                    query += "$"+((i-1)*9 + 1)
+			                    for(var j=2; j <= 9; j++){
+			                    	query += ",$"+((i-1)*9 + j)
+			                    }
+			                    query += ",false)"
+			                    if(i+1 == data.length-4) query += ";"
 			                    else query += ", ("
 			                    for(var k in data[i]){
 			                    	if(typeof data[i][k] != typeof function(){})
 			                    		params.push(data[i][k])
 		                    	}
-		                		params.push(data[data.length-1]);
+
+		                		params.push(data[data.length-4]); //phone nbr
+		                		params.push(data[data.length-3]); //carrier
+		                		params.push(data[data.length-2]); //email
+		                		params.push(data[data.length-1]); //sendWith
 		                  	}
 		                  //console.log(query)
 		                  console.log("inserting into table");
@@ -164,25 +162,28 @@ module.exports = function(wss){
 			                    }
 			                    else{
 			                    	var temp = [];
-			                    	var q = "SELECT inst, session, dept, class, section,texted from clients_and_their_info where user_id=$1;"
-			                      //console.log(q)
-			                      	sendQuery(q,[data[1][7]],function(result){
+			                    	var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and email=$2;"
+			                      	//console.log(q)
+			                      	sendQuery(q,[data[1][5],data[1][7]],function(result){
 			                        	var temp = [];
 			                        	result = result.rows
 			                        	for(var row in result){
 			                          		if(result[row]["session"] == "1162") {
 			                            		result[row]["session"] = "Spring 2016";
 			                          		}
+			                          		else if(result[row]["session"] == "1169") {
+			                            		result[row]["session"] = "Fall 2016";
+			                          		}
 			                          		temp.push(result[row])
 			                        	}
 			                        	sendData(ws,["classesBeingTaken",temp]);
-			                        		if(data.length == 4){
-			                            		sendData(ws,["sendNotification", "Your have succesfully added "+data[1][2] +": "+ data[1][3]])
+			                        		if(data.length == 6){
+			                            		sendData(ws,["sendNotification", "Your have succesfully added " + data[1][1] +" - "+ data[1][2] +": "+ data[1][3]])
 			                        		}
 			                        		else{
 			                          			var temp = ""
 			                          			for(var i = 1; i < data.length-2; i++){
-			                            			temp += data[i][2] +": "+ data[i][3] + ", ";
+			                            			temp += data[1][1] +" - "+ data[1][2] +": "+ data[1][3]+ ",\n";
 			                          			}
 			                          			temp[temp.length-1] = "";
 			                              		sendData(ws,["sendNotification", "Your have succesfully added "+temp])
@@ -194,6 +195,8 @@ module.exports = function(wss){
 			                    }
 		                	})
 						};
+						sendFunction(data);
+						/*
 		                var q = "SELECT * FROM users WHERE user_id = $1";
 		                //console.log(q)
 		                sendQuery(q, [data[1][7]], function(result){
@@ -202,22 +205,23 @@ module.exports = function(wss){
 		                  	var email = data[data.length-2];
 		                  	var sendWith = data[data.length-1];
 		                  	var user_id = data[1][7];
+		                  	sendFunction(data);
 		                  	if(result.rowCount == 0){
 		                    	var q = "INSERT INTO users VALUES($1,$2,$3,$4,$5);";
 		                    	sendQuery(q, [user_id,data[1][0],phnNbr,provider,email],function(result){                    
-		                      	if(result.hasOwnProperty("Error")){
-		                        	sendData(ws, ["err","An error occured, please contact support"])
-		                          	console.log("Unknown error on query");
-		                          	console.log(result.code);
-		                          	console.log(result)
-		                          	return;
-		                      	}
-		                      	else {
-		                        	sendFunction(data);
-		                      	}                    
+			                      	if(result.hasOwnProperty("Error")){
+			                        	sendData(ws, ["err","An error occured, please contact support"])
+			                          	console.log("Unknown error on query");
+			                          	console.log(result.code);
+			                          	console.log(result)
+			                          	return;
+			                      	}
+			                      	else {
+			                        	sendFunction(data);
+			                      	}                    
 		                    	})
 		                  	} else{
-			                    var q = "UPDATE users SET phone_number = $1, provider = $2, email = $3 WHERE user_id = $4";
+			                    var q = "UPDATE users SET phone_number = $1, provider = $2, email = $3 WHERE phone_number = $1 and email = $3";
 			                    //console.log(result)
 			                    if(phnNbr == "N/A"){
 			                      phnNbr = result.rows[0]["phone_number"];
@@ -241,7 +245,7 @@ module.exports = function(wss){
 			                      //console.log(result)
 			                    })
 			                }
-			            });
+			            });*/
 					})
 					break;
 			}
