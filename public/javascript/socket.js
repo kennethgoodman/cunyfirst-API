@@ -81,11 +81,12 @@ ws.onmessage = function (event) {
           for(var theClass in data){
             var theData = data[theClass]
             t.row.add({
+                      "Dept"         : theData["subject_name"].trim(),
                       "Class nbr": theData["subject_code"].trim() + " - " + theData["class_id"], 
                       "Class Section": theData["class_num"], 
-                      "Teacher": theData["teacher"], 
+                      "Teacher":     theData["teacher"], 
                       "Days And Time":theData["days_and_times"],
-                      "Room": theData["room"]
+                      "Room":    theData["room"]
                     })
           }
           t.draw();
