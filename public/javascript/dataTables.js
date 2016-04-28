@@ -66,7 +66,8 @@ $(document).ready(function() {
         "order": [[1, 'asc']],
     	responsive: true,
     	fixedHeader: true,
-    	"deferRender": true
+    	"deferRender": true, 
+        searching: true
     });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session");   
     $('#dataTables tbody').on('click', 'td.details-control', function () {
