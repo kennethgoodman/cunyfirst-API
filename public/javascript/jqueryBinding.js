@@ -12,23 +12,7 @@ function ValidateEmail(inputText)
 }  
 $(document).ready(function(){
     $("#submitData").unbind('click').click( function (e) {
-        clicked(function(d, n, i){
-            $("#confirmDialog").modal("show")
-            var whatWillHappen= "you will get a text as soon as "
-            for (var j=0; j<i.length-1; j++){
-                whatWillHappen += "<p>"
-                whatWillHappen +=i[j]
-                whatWillHappen +="</p>"
-
-            }
-            whatWillHappen+= "<p> opens </p>"
-            whatWillHappen+= "to "+JSON.stringify(i[i.length-1])
-            $("#confirmInfo").html( whatWillHappen )
-            $("#confirm").unbind('click').click(function (){
-                if(n>0) ws.send(JSON.stringify(d))
-                $("#confirmDialog").modal("toggle")
-            })
-        });
+        clicked();
     });
     $('#inst').unbind('change').change(function(){
         $("#ajax-loader").show();
@@ -122,7 +106,7 @@ validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
     }
     return [phoneNbr,email]
 }
-clicked = function(callback){
+clicked = function(){
     var contactHow = $(".example input[type='radio']:checked").val();
     var fullName
     var userName
@@ -162,7 +146,6 @@ clicked = function(callback){
         return;
     }
     var shouldDeleted = true
-    var infoArray = []
     var queryArray = ["submit"];
     var count = 0;
     var nbr;
@@ -171,17 +154,12 @@ clicked = function(callback){
     $( ".row-selected" ).each(function(){
         count++;
         var temp = $(this)[0] //get tr
-        console.log(temp)
-        nbr = temp.childNodes[2].textContent.trim();
+        nbr = temp.childNodes[1].textContent.trim();
         classnbr = nbr.substr(nbr.indexOf("-")+2);
         dept = nbr.substring(0,nbr.indexOf("-") - 1);
-        section = temp.childNodes[3].textContent.trim();
-        daysTimes = temp.childNodes[5].textContent
-        teacher = temp.childNodes[4].textContent
+        section = temp.childNodes[2].textContent.trim();
         try{
             queryArray.push([inst,dept,classnbr,section,session]);
-            infoArray.push([inst,dept,classnbr,section,session,daysTimes,teacher])
-
         } catch(err){
             console.log(err)
         }
@@ -190,8 +168,7 @@ clicked = function(callback){
     queryArray.push(carrier)
     queryArray.push(email)
     queryArray.push(contactHow)
-    infoArray.push([phoneNbr, email])
-    //if(count > 0) ws.send(JSON.stringify(queryArray)); //now implemented later
-    if(count<1){alert("Please select a class"); return;}   
-    callback(queryArray, count, infoArray)       
+    console.log(queryArray)
+    if(count > 0) ws.send(JSON.stringify(queryArray));
+    else          alert("Please select a class");
 }
