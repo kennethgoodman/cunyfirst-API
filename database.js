@@ -108,7 +108,6 @@ getInstitutions = function(callback){
 	temp()
 }
 getClasses = function(params, callback){
-	console.log("here")
 	var tries = 0
 	temp = function(){
 		sendQuery( "select distinct * from classes where school = $1 and session = $2" ,params,function(result){

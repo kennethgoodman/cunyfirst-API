@@ -39,7 +39,7 @@ function format ( data ) {
         '</tr>'+
         '<tr>'+
             '<td> Url: </td>'+
-            '<td><a href='+ data[1]["url"] + '>go and see reviews here</a></td>'+
+            '<td><a href='+ data[1]["url"] + ' target=\"_blank\">go and see reviews here</a></td>'+
         '</tr>'+
     '</table>';
 }
@@ -63,7 +63,7 @@ $(document).ready(function() {
             { "data" : "Days And Time" },
             { "data" : "Room" }
         ],
-        "order": [[1, 'asc']],
+        "order": [[2, 'asc']],
     	responsive: true,
     	fixedHeader: true,
     	"deferRender": true
