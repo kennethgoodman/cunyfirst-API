@@ -24,7 +24,7 @@ queueRead2 = function lambda(){
 						return;
 					}
 					if(row.error){
-						if(Math.random() > .95)
+						if(Math.random() > .95) //cuny first may be down, so lets do this infrequently
 							console.log(row.error)
 						return
 					}

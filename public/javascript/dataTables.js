@@ -56,6 +56,7 @@ $(document).ready(function() {
                 "data":           null,
                 "defaultContent": ''
             },
+            { "data" : "Dept"},
             { "data" : "Class nbr" },
             { "data" : "Class Section" },
             { "data" : "Teacher" },
