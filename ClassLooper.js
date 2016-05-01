@@ -39,7 +39,7 @@ allClasses = function (){
 }
 console.log(Date())
 console.log(escape('insert (%L),', "\'QNS01\'"))
-allClasses()
+//allClasses()
 allSessions = function (institutions, callback){
 	var sessionArray= []
 	//console.log(institutions)
