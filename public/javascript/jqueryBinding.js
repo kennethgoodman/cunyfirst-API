@@ -168,16 +168,18 @@ clicked = function(callback){
     var nbr;
     var section;
     var dept;
-    $( ".row-selected" ).each(function(){
+    var table = $('#dataTables').DataTable();
+    table.rows('.selected').data().each(function(){
         count++;
         var temp = $(this)[0] //get tr
         console.log(temp)
-        nbr = temp.childNodes[2].textContent.trim();
+        //QNS01,ACCT,372,41664,1169,Su 9:15AM - 12:00PM,Dianand Balkaran
+        nbr = temp["Class nbr"]
         classnbr = nbr.substr(nbr.indexOf("-")+2);
         dept = nbr.substring(0,nbr.indexOf("-") - 1);
-        section = temp.childNodes[3].textContent.trim();
-        daysTimes = temp.childNodes[5].textContent
-        teacher = temp.childNodes[4].textContent
+        section = temp["Class Section"]
+        daysTimes = temp['Days And Time']
+        teacher = temp['Teacher']
         try{
             queryArray.push([inst,dept,classnbr,section,session]);
             infoArray.push([inst,dept,classnbr,section,session,daysTimes,teacher])
@@ -193,5 +195,5 @@ clicked = function(callback){
     infoArray.push([phoneNbr, email])
     //if(count > 0) ws.send(JSON.stringify(queryArray)); //now implemented later
     if(count<1){alert("Please select a class"); return;}   
-    callback(queryArray, count, infoArray)       
+    callback(queryArray, count, infoArray)      
 }

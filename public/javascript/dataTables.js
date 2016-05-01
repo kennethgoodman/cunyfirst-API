@@ -1,4 +1,16 @@
 rowsLookedAt = {}
+var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+            '<td> Status: </td>'+
+            '<td>'+'waiting'+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<tr>'+
+            '<td> Waiting </td>'+
+            '<td> If it stays like this, then refresh the page </td>'+
+        '</tr>'+ 
+        '</tr>'+       
+    '</table>';
 function format ( data ) {
     if(data[1] == "No Data" || data[1] == undefined)
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
@@ -70,7 +82,7 @@ $(document).ready(function() {
         searching: true
     });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session");   
-    $('#dataTables tbody').on('click', 'td.details-control', function () {
+    $('#dataTables tbody').on('click', 'tr', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
@@ -85,12 +97,14 @@ $(document).ready(function() {
                 // This row is already open - close it
             row.child.hide();
             tr.removeClass('shown');
+            return
         }
         else if(hiddenRowData[row.index()] != undefined){
             row.child( format(hiddenRowData[row.index()]) ).show()
             tr.addClass('shown');
         }
         else{
+            row.child(blank).show()
             $("#ajax-loader").show();
             tr.addClass('shown');
             ws.send(JSON.stringify(dataToSend))

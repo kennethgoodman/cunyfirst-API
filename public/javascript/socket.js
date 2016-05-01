@@ -95,14 +95,14 @@ ws.onmessage = function (event) {
         var table = $('#dataTables').dataTable().api();
         var row = table.row( data[2] )
         hiddenRowData[data[2]] = ["Loading...",data[1]]
-        row.child( format(["Loading...",data[1]])).show();
+        row.child( format(["Loading...",data[1]]) );
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "statusInfo"){
         var table = $('#dataTables').dataTable().api();
         var row = table.row( data[2] )
         hiddenRowData[data[2]] = [data[3],data[1]]
-        row.child( format([data[3],data[1]])).show();
+        row.child( format([data[3],data[1]]) );
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "classesBeingTaken"){
