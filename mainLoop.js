@@ -14,6 +14,7 @@ var counter = 0; //count how many threads in the function, only want one at the 
 queueRead2 = function lambda(){
 	var item = queue.shift();
 	if(item != undefined){ 
+		console.log(item)
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
 				var q = "SELECT DISTINCT classnbr, section FROM customer_info where alerted = false and inst = $1 and session=$2 and dept= $3 order by classnbr, section;";  
