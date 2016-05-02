@@ -12,6 +12,8 @@ var texts = require('./texting');
 var queue = []   //queue for the classes, pop one off when we look at it
 var counter = 0; //count how many threads in the function, only want one at the max
 queueRead2 = function lambda(){
+	console.log("this is where we show queue")
+	console.log( JSON.stringify(queue) )
 	var item = queue.shift();
 	if(item != undefined){ 
 		console.log(item)
