@@ -12,7 +12,23 @@ function ValidateEmail(inputText)
 }  
 $(document).ready(function(){
     $("#submitData").unbind('click').click( function (e) {
-        clicked();
+        clicked(function(d, n, i){
+            $("#confirmDialog").modal("show")
+            var whatWillHappen= "you will get a text as soon as "
+            for (var j=0; j<i.length-1; j++){
+                whatWillHappen += "<p>"
+                whatWillHappen +=i[j]
+                whatWillHappen +="</p>"
+
+            }
+            whatWillHappen+= "<p> opens </p>"
+            whatWillHappen+= "to "+JSON.stringify(i[i.length-1])
+            $("#confirmInfo").html( whatWillHappen )
+            $("#confirm").unbind('click').click(function (){
+                if(n>0) ws.send(JSON.stringify(d))
+                $("#confirmDialog").modal("toggle")
+            })
+        });
     });
     $('#inst').unbind('change').change(function(){
         $("#ajax-loader").show();
@@ -106,7 +122,7 @@ validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
     }
     return [phoneNbr,email]
 }
-clicked = function(){
+clicked = function(callback){
     var contactHow = $(".example input[type='radio']:checked").val();
     var fullName
     var userName
@@ -146,20 +162,28 @@ clicked = function(){
         return;
     }
     var shouldDeleted = true
+    var infoArray = []
     var queryArray = ["submit"];
     var count = 0;
     var nbr;
     var section;
     var dept;
-    $( ".row-selected" ).each(function(){
+    var table = $('#dataTables').DataTable();
+    table.rows('.selected').data().each(function(){
         count++;
         var temp = $(this)[0] //get tr
-        nbr = temp.childNodes[1].textContent.trim();
+        console.log(temp)
+        //QNS01,ACCT,372,41664,1169,Su 9:15AM - 12:00PM,Dianand Balkaran
+        nbr = temp["Class nbr"]
         classnbr = nbr.substr(nbr.indexOf("-")+2);
         dept = nbr.substring(0,nbr.indexOf("-") - 1);
-        section = temp.childNodes[2].textContent.trim();
+        section = temp["Class Section"]
+        daysTimes = temp['Days And Time']
+        teacher = temp['Teacher']
         try{
             queryArray.push([inst,dept,classnbr,section,session]);
+            infoArray.push([inst,dept,classnbr,section,session,daysTimes,teacher])
+
         } catch(err){
             console.log(err)
         }
@@ -168,7 +192,8 @@ clicked = function(){
     queryArray.push(carrier)
     queryArray.push(email)
     queryArray.push(contactHow)
-    console.log(queryArray)
-    if(count > 0) ws.send(JSON.stringify(queryArray));
-    else          alert("Please select a class");
+    infoArray.push([phoneNbr, email])
+    //if(count > 0) ws.send(JSON.stringify(queryArray)); //now implemented later
+    if(count<1){alert("Please select a class"); return;}   
+    callback(queryArray, count, infoArray)      
 }
