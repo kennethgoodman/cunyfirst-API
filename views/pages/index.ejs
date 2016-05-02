@@ -19,9 +19,9 @@
                 </select>
                 
                 <p>Last, fill out your phone number and provider.</p><br>
-                
+                <!--
                 <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr">
-                <select id="carrier" default="pick a carrier">
+                <select class="carrier" default="pick a carrier">
                     <option value="defualt" selected="selected">
                         Pick A Carrier
                     </option>
@@ -33,11 +33,12 @@
                 <p>Contact you through: </p><br>
                 <div class="example">
                    <form>
-                        <input id="radio1" type="radio" name="radio" value="text" checked="checked"><label for="radio1"><span><span></span></span>Text</label>
+                        <input id="radio1" type="radio" name="radio" value="text" checked="checked">
+                            <label for="radio1"><span><span></span></span>Text</label>
                         <input id="radio2" type="radio" name="radio" value="email"><label for="radio2"><span><span></span></span>Email</label>
                         <input id="radio3" type="radio" name="radio" value="both"><label for="radio3"><span><span></span></span>Both</label>
                   </form>
-                </div>
+                </div>-->
                 </div>
                 <div class="SubmitButton">
                     <button type="button" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
@@ -83,26 +84,56 @@
 
 <div class="container">
   <!-- Modal -->
-  <div class="modal fade" id="confirmDialog" role="dialog">
-    <div class="modal-dialog">
+  <div class="modal" id="confirmDialog" role="dialog">
     
       <!-- Modal content-->
-      <div class="modal-content">
+      <div class="modal-content" ng-app="userInfoApp">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
+          <h4 class="modal-title">Confirmation</h4>
         </div>
         <div class="modal-body" id="confirmInfo">
         </div>
+        <form name="inputForm" ng-controller="userInputControl" novalidate>
+            <div>
+                <span ng-show="!infoValid()">
+                    Either enter a valid number or e-mail. <br>If you enter a phone number, <br>you must enter a carrier.
+                </span>
+                <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr" name="phoneNbrModel" ng-model="phoneNbrModel" phone-number-validation> and select carrier  
+                <select id="carrier" default="pick a carrier" ng-model="carrierModel" name="carrierModel" carrierValidation>
+                    <option value="default"> Pick A Carrier </option>
+                </select>
+                <span ng-show="$scope.inputForm.phoneNbrModel.$invalid">Phone numbers must be 10 digits</span><br><br>
+                <br>
+                <p style="text-align: center"> and/or your email </p>
+                <br>
+                <input type="email" id="emailInput" name="email" ng-model="email" placeholder="youremail@domain.com">
+                <span ng-show="$scope.inputForm.email.$invalid">Please enter a valid email</span><br><br>
+            </div>
+            
+            <button type="button" id="submitData" style="margin-bottom: 12px;" 
+                    ng-disabled="!infoValid()">Submit!</button>
+          </form>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-default" id="confirm">Submit</button>
         </div>
       </div>
-      
     </div>
   </div>
-  
+<style type="text/css">
+.modal{
+    background-color: transparent;
+    width: 75%;
+   top:31%;
+   left:32%;
+   /*position: absolute;
+   left: 50%;
+   top: 75%; 
+   margin-left: -150px;
+   margin-top: -150px;*/
+}
+</style>
 </div>
 </html>
 <script>

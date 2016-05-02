@@ -143,6 +143,7 @@ ws.onmessage = function (event) {
       }
       else if(commandFromServer == "carriers"){
           var dropdown = document.getElementById('carrier');
+          console.log(dropdown)
           for(var i = 0; i < data[1].length; i++){
               var option = document.createElement("option");
               var carrier = data[1][i]
