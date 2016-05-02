@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+  <% include ../partials/headerCS.ejs %>
+<!-- Setting the right viewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+</head>
+<body>
+    <% include ../partials/nav.ejs %>
+<br>
+ <div class="wrap" style="margin:auto;">
+        <div style="margin:auto; margin-left:20px; margin-top:80px;">
+            <p id="testing">To add a new class, pick your institution and session. </p><br>
+            <div style="margin: auto;">
+                <select id="inst" default="pick an institution and session">
+                    <option value="defualt" selected="selected">
+                        Pick an institution
+                    </option>
+                </select>
+            </div>
+            <p>When you finished filling out the forms, select the classes with your mouse, and click "Get Class!"</p><br>
+        </div>
+    </div>
+    <div>
+    </div>
+        <div class="tableHolder">
+            <table id="dataTables" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th> </th><th>Dept</th>
+                        <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                        <th>Days and Time</th><th>Room</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th> </th><th>Dept</th>
+                        <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                        <th>Days and Time</th><th>Room</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div style="margin: auto;text-align: center">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- leaderboard ad -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px;"
+             data-ad-client="ca-pub-6625985610418162"
+             data-ad-slot="9430096730"></ins>
+        <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+</body>
+</html>
+<script>
+</script>
