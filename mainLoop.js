@@ -13,6 +13,8 @@ var queue = []   //queue for the classes, pop one off when we look at it
 var counter = 0; //count how many threads in the function, only want one at the max
 queueRead2 = function lambda(){
 	var item = queue.shift();
+	console.log("doing this")
+	console.log(item)
 	if(item != undefined){ 
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
