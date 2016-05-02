@@ -16,6 +16,7 @@ $(document).ready(function(){
             $("#confirmDialog").modal("show")
             var whatWillHappen= "you will get a text as soon as "
             for (var j=0; j<i.length-1; j++){
+                console.log(i[j])
                 whatWillHappen += "<p>"
                 whatWillHappen +=i[j]
                 whatWillHappen +="</p>"
@@ -170,8 +171,8 @@ clicked = function(callback){
     var dept;
     var table = $('#dataTables').DataTable();
     table.rows('.selected').data().each(function(){
-        count++;
-        var temp = $(this)[0] //get tr
+        var temp = $(this)[count++] //get tr
+        console.log("temp")
         console.log(temp)
         //QNS01,ACCT,372,41664,1169,Su 9:15AM - 12:00PM,Dianand Balkaran
         nbr = temp["Class nbr"]
@@ -187,6 +188,8 @@ clicked = function(callback){
         } catch(err){
             console.log(err)
         }
+        //console.log("info arrayy")
+        //console.log(infoArray)
     })
     queryArray.push(phoneNbr)
     queryArray.push(carrier)
