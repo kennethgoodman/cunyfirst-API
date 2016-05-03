@@ -1,5 +1,7 @@
 var car = require('./carrier')
 var client = require('twilio')('AC5b14e195c9b22df44f8a4e61a520f03d','fc26c5d165ac9ee2d373485bdb83ff7e')
+var TMClient = require('textmagic-rest-client');
+
 send_message = function(recepient,body) {
 	client.sendMessage({
 	    to: recepient, // Any number Twilio can deliver to
@@ -29,21 +31,29 @@ var db = require('./database');
 //var sendgrid = require("sendgrid")("app43697655@heroku.com", "qq3pw5fk3558");
 var sendgrid = require("sendgrid")(process.env.SENDGRID_API_KEY);
 send_email = function(recepient, provider, body){
-	var to = recepient;
-	if(provider != "@"){
-		var carrier = returnCarriers();
-		to +=  carrier[provider];
+	if(provider != 'other'){
+		var to = recepient;
+		if(provider != "@"){
+			var carrier = returnCarriers();
+			to +=  carrier[provider];
+		}
+			var payload   = {
+		  to      : to,
+		  from    : 'kenneth@noclosedclass.com',
+		  subject : 'Class Opened!',
+		  text    : body
+		}
+		sendgrid.send(payload, function(err, json) {
+		  if (err) { console.error(err); }
+		  console.log(JSON.stringify(json) + " : " + to + ": " + body);
+		});
 	}
-		var payload   = {
-	  to      : to,
-	  from    : 'kenneth@noclosedclass.com',
-	  subject : 'Class Opened!',
-	  text    : body
+	else{
+		var c = new TMClient('yigalsaperstein', 'vL88ayn2N3OdRGWYy3yytqrrn0Znh9');
+		c.Messages.send({text: body, phones:recepient}, function(err, res){
+    		console.log('Messages.send()', err, res);
+		});
 	}
-	sendgrid.send(payload, function(err, json) {
-	  if (err) { console.error(err); }
-	  console.log(JSON.stringify(json) + " : " + to + ": " + body);
-	});
 }
 //send_email('5164046348','Verizon', 'Test');
 send_alert = function(user_id,body){

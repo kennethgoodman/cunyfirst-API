@@ -12,12 +12,12 @@ var texts = require('./texting');
 var queue = []   //queue for the classes, pop one off when we look at it
 var counter = 0; //count how many threads in the function, only want one at the max
 queueRead2 = function lambda(){
-	console.log("this is where we show queue")
-	console.log( JSON.stringify(queue) )
+	//console.log("this is where we show queue")
+	//console.log( JSON.stringify(queue) )
 	var item = queue.shift();
-	console.log(item)
+	//console.log(item)
 	if(item != undefined){ 
-		console.log(item)
+		//console.log(item)
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
 				var q = "SELECT DISTINCT classnbr, section FROM customer_info where alerted = false and inst = $1 and session=$2 and dept= $3 order by classnbr, section;";  
