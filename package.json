@@ -41,6 +41,7 @@
     "sendgrid": "^2.0.0",
     "socket.io": "^1.3.7",
     "sql-injection": "0.0.5",
+    "textmagic-rest-client": "0.0.5",
     "twilio": "^2.5.2",
     "websocket.io": "^0.2.1",
     "ws": "0.4.x",
