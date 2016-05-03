@@ -50,7 +50,7 @@ send_email = function(recepient, provider, body){
 	}
 	else{
 		var c = new TMClient('yigalsaperstein', 'vL88ayn2N3OdRGWYy3yytqrrn0Znh9');
-		c.Messages.send({text: body, phones:recepient}, function(err, res){
+		c.Messages.send({text: body, phones:"+1"+recepient}, function(err, res){
     		console.log('Messages.send()', err, res);
 		});
 	}
