@@ -15,6 +15,7 @@ queueRead2 = function lambda(){
 	console.log("this is where we show queue")
 	console.log( JSON.stringify(queue) )
 	var item = queue.shift();
+	console.log(item)
 	if(item != undefined){ 
 		console.log(item)
 		try{
@@ -79,13 +80,16 @@ setInterval( function(){
 
 var q = 'SELECT DISTINCT inst, dept, session FROM customer_info where alerted = false order by inst, session, dept;'
 setInterval( function(){
-	if(queue.length > parseInt(amount_of_rows*1.2)){ //still testing good number
+	/*if(queue.length == 0 parseInt(amount_of_rows*1.2)){ //still testing good number
 		queue = [];
+	}*/
+	if(queue.length == 0){
+		sendQuery2(q, [], function(row){
+			queue.push(row) //still testing good number
+		
+		})//TODO put in a test to check if row returned an error
 	}
-	sendQuery2(q, [], function(row){
-		if(queue.length < parseInt(amount_of_rows*1.5)) queue.push(row) //still testing good number
-		//TODO put in a test to check if row returned an error
-	})
+
 },15000)
 setInterval(function(){ 
 	if(queue.length && counter < 1){ 
