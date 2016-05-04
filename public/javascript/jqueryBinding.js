@@ -101,10 +101,10 @@ validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
             alert("That phone number was not a 10 digit phone number, 9171234567 is the correct way to enter it.");
             return false;
         }
-        else if(carrier == "defualt"){
+        /*else if(carrier == "defualt"){
             alert("please enter a carrier")
             return false;
-        }
+        }*/
     }
     if(contactHow == "email" || contactHow == "both"){
         if(!ValidateEmail(email) || email == ""){
@@ -150,7 +150,7 @@ clicked = function(callback){
     userName = contactInfo
     var e = document.getElementById("inst");
     values = JSON.parse(e.options[e.selectedIndex].value)
-    var carrier = $('#carrier').val();
+    //var carrier = $('#carrier').val();
     var inst = values["schoolCode"]
     var session = values["sessionCode"]
     
@@ -192,7 +192,7 @@ clicked = function(callback){
         //console.log(infoArray)
     })
     queryArray.push(phoneNbr)
-    queryArray.push(carrier)
+    queryArray.push('carrier')
     queryArray.push(email)
     queryArray.push(contactHow)
     infoArray.push([phoneNbr, email])

@@ -1,6 +1,7 @@
 var car = require('./carrier')
 var client = require('twilio')('AC5b14e195c9b22df44f8a4e61a520f03d','fc26c5d165ac9ee2d373485bdb83ff7e')
 var TMClient = require('textmagic-rest-client');
+var UniversalText = require ('textbelt')
 
 send_message = function(recepient,body) {
 	client.sendMessage({
@@ -55,19 +56,25 @@ send_email = function(recepient, provider, body){
 		});
 	}
 }
+var send_text= function(number, s, body){
+	text.send(number, body, 'us', function(err){
+		console.log('error in texting')
+		console.log(err)
+	})
+}
 //send_email('5164046348','Verizon', 'Test');
 send_alert = function(user_id,body){
 	var q = "Select * from users where user_id = $1";
 	sendQuery2(q, [user_id],function(row){
 		var sendwith = row.sendwith
 		if(sendwith == 'text'){
-			send_email(row.phone_number, row.provider, body)
+			send_text(row.phone_number, row.provider, body)
 			console.log("SENT: " + row.user_id +": " + row.phone_number + " "+ body + " " + sendwith)
 		} else if(sendwith == 'email'){
 			send_email(row.email, '@', body)
 			console.log("SENT: " + row.user_id +": " + row.email + " " + body + " " + sendwith)
 		} else if(sendwith == 'both'){
-			send_email(row.phone_number, row.provider, body)
+			send_text(row.phone_number, row.provider, body)
 			send_email(row.email, '@', body)
 			console.log("SENT: " + row.user_id +": " +  row.phone_number + " "+ row.email + " "+body + " " + sendwith)
 		} else{
