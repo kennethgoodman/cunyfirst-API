@@ -211,12 +211,18 @@ input[type=radio]:not(old):checked +  label > span > span{
 [tooltip]:not([tooltip-persistent]):before {
     pointer-events: none;
 }
+/*
 td.details-control {
-    background: url('../images/details_open.png') no-repeat center center;
+    background: '<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info</button>'; 
     cursor: pointer;
+    /*url('../images/details_open.png') no-repeat center center;
 }
 tr.shown td.details-control {
     background: url('../images/details_close.png') no-repeat center center;
+}*/
+.modal-content{
+  width: 850px;
+  left: -25%;
 }
 .modal{
     background-color: transparent;

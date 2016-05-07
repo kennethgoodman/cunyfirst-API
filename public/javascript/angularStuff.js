@@ -1,5 +1,5 @@
-var app = angular.module('userInfoApp', []);
-app.directive('phoneNumberValidation', function() {
+var userInfoApp = angular.module('userInfoApp', ['ngMessages']);
+userInfoApp.directive('phoneNumberValidation', function() {
   return {
     require: 'ngModel',
     link: function(scope, element, attr, mCtrl) {
@@ -15,25 +15,32 @@ app.directive('phoneNumberValidation', function() {
     }
   };
 });
-app.controller('userInputControl', function($scope){
-  $scope.numberIsValid= function(){
-    if($scope.inputForm.phoneNbrModel && $scope.inputForm.phoneNbrModel.$viewValue && $scope.inputForm.phoneNbrModel.$viewValue != undefined 
-              && $scope.inputForm.email.$viewValue.length > 0 && $scope.inputForm.phoneNbrModel.$viewValue.length == 10 )
+userInfoApp.controller('userInputControl', function($scope){
+  $scope.validityOfVariable = function(variable){
+    if(variable && variable.$viewValue != undefined && variable.$viewValue != null)
       return true
     else
       return false
   }
-  $scope.carrierAndNumAreValid = function(){
-    if($scope.numberIsValid() && $scope.inputForm.carrierModel && $scope.inputForm.carrierModel.$viewValue != undefined 
-              && $scope.inputForm.carrierModel.$viewValue.trim() != '' && $scope.inputForm.carrierModel.$viewValue.trim() != 'default')
-        return true
-      
+  $scope.numberIsValid = function(){
+    var num = $scope.inputForm.phoneNbrModel 
+    if($scope.validityOfVariable(num) && num.$viewValue != "" && num.$viewValue.length == 10 ){
+      return true
+    }
     else
       return false
   }
+  $scope.carrierAndNumAreValid = function(){
+    var carrier = $scope.inputForm.carrierModel
+    if($scope.numberIsValid() && $scope.validityOfVariable(carrier) && carrier.$viewValue.trim() != '' && carrier.$viewValue.trim() != 'default')
+        return true 
+    else
+      return false
+  }
+  /*
   $scope.emailIsValid = function(){
-    if($scope.inputForm.email && $scope.inputForm.email.$viewValue && $scope.inputForm.email.$viewValue != undefined 
-                && $scope.inputForm.email.$viewValue.length > 0 && $scope.inputForm.email.$valid){
+    var email = $scope.inputForm.email
+    if($scope.validityOfVariable(email) && email.$valid){
       return true
     }
     else{
@@ -46,7 +53,26 @@ app.controller('userInputControl', function($scope){
     else
       return false
   }
+  $scope.emailNotEmpty = function(){
+    var email = $scope.inputForm.email
+    if($scope.validityOfVariable(email) && email.$viewValue != "")
+      return true
+    return false
+  }*/
 });
+
+/*
+var classInfo = angular.module('classInfo', ['ngMessages']);
+classInfo.controller('classInfoControl', function($scope){
+  $scope.enoughClasses = function(){
+    console.log(queryArray)
+    console.log(queryArray.length)
+    if(queryArray.length > 1) return true
+    else return false
+  }
+})*/
+
+
 //inputForm.phoneNbrModel.$touched && inputForm.phoneNbrModel.$invalid
 //!(!!inputForm.phoneNbrModel.$viewValue && inputForm.phoneNbrModel.$valid && inputForm.carrierModel.$valid) && !(!!inputForm.email.$viewValue && inputForm.email.$valid)
 //!(!!inputForm.phoneNbrModel.$viewValue && inputForm.phoneNbrModel.$valid) && !(!!inputForm.email.$viewValue && inputForm.email.$valid)

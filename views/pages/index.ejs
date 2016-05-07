@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>var queryArray = [] //holds data for query to server, this is public and global</script>
   <% include ../partials/header.ejs %>
 <!-- Setting the right viewport -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -18,55 +19,30 @@
                         Pick an institution
                     </option>
                 </select>
-                
-                <p>Last, fill out your phone number and provider.</p><br>
-                
-                <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr">
-                <select id="carrier" default="pick a carrier">
-                    <option value="defualt" selected="selected">
-                        Pick A Carrier
-                    </option>
-                </select>
-                
-                <img src="/images/ajax-loader.gif" id="ajax-loader" style="display:none">
-                <p> and/or email</p>
-                <br><input type="text" id="emailInput" name="email" placeholder="youremail@domain.com"><br>
-                <p>Contact you through: </p><br>
-                <div class="example">
-                   <form>
-                        <input id="radio1" type="radio" name="radio" value="text" checked="checked"><label for="radio1"><span><span></span></span>Text</label>
-                        <input id="radio2" type="radio" name="radio" value="email"><label for="radio2"><span><span></span></span>Email</label>
-                        <input id="radio3" type="radio" name="radio" value="both"><label for="radio3"><span><span></span></span>Both</label>
-                  </form>
-                </div>
-                </div>
                 <div class="SubmitButton">
-                    <button type="button" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
+                    <button type="button" class="btn btn-primary" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
                 </div>
             </div>
             <p>When you finished filling out the forms, select the classes with your mouse, and click "Get Class!"</p><br>
         </div>
     </div>
-    <div>
-    </div>
-        <div class="tableHolder">
-            <table id="dataTables" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th> </th><th>Dept</th>
-                        <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                        <th>Days and Time</th><th>Room</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th> </th><th>Dept</th>
-                        <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                        <th>Days and Time</th><th>Room</th>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+    <div class="tableHolder">
+        <table id="dataTables" cellspacing="0">
+            <thead>
+                <tr>
+                    <th> </th><th>Dept</th>
+                    <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                    <th>Days and Time</th><th>Room</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th> </th><th>Dept</th>
+                    <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                    <th>Days and Time</th><th>Room</th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -101,16 +77,70 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
+          <h4 class="modal-title">Confirmation On Classes</h4>
         </div>
         <div class="modal-body" id="confirmInfo">
+            
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-default" id="confirm">Submit</button>
+          <button type="button" class="btn btn-default" id="next">Next</button>           
         </div>
       </div>
-      
+    </div>
+  </div>
+  
+</div>
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="infoDialog" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content" ng-app="userInfoApp" ng-controller="userInputControl">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Information</h4>
+        </div>
+        <div class="modal-body" id="confirmInfo">
+            <form name="inputForm" novalidate>
+                <!--
+                <span ng-show="carrierAndNumAreValid()">
+                     Either enter a valid number or e-mail. <br>If you enter a phone number, <br>you must enter a carrier.
+                </span>-->
+                <p>Fill out your phone number and provider.</p><br>      
+                <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr" name="phoneNbrModel" ng-model="phoneNbrModel" ng-pattern="/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/">
+                <div ng-messages="inputForm.phoneNbrModel.$error">
+                    <div ng-message="pattern">Must be a valid 10 digit phone number</div>
+                </div><br>
+                <select id="carrier" default="pick a carrier" ng-model="carrierModel" name="carrierModel">
+                    <option value="defualt" selected="selected">
+                        Pick A Carrier
+                    </option> 
+                </select>
+                <img src="/images/ajax-loader.gif" id="ajax-loader" style="display:none">
+                <!--
+                <p> and/or </p>
+                <->
+                <p><br>info = {{infoValid()}} <br> num valid = {{numberIsValid()}} <br> carAndNum = {{carrierAndNumAreValid()}} <br>
+                    email = {{emailIsValid()}} <br> emailNotEmpty = {{emailNotEmpty()}}<p>
+
+                <- --->
+                <!--
+                <br>
+                <input type="email" id="emailInput" name="email" ng-model="email" placeholder="youremail@domain.com">
+                <div ng-messages="exampleForm.userEmail.$error">
+                    <div ng-message="email">Your email address is invalid</div>
+                </div>
+                        <span ng-show="!emailIsValid()">Please enter a valid email</span>
+                <br>-->
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" id="confirm" ng-disabled="!carrierAndNumAreValid()">Confirm</button>
+        </div>
+      </div>
     </div>
   </div>
   

@@ -10,27 +10,89 @@ function ValidateEmail(inputText)
         return false;  
     }  
 }  
-$(document).ready(function(){
-    $("#submitData").unbind('click').click( function (e) {
-        clicked(function(d, n, i){
-            $("#confirmDialog").modal("show")
-            var whatWillHappen= "you will get a text as soon as "
-            for (var j=0; j<i.length-1; j++){
-                console.log(i[j])
-                whatWillHappen += "<p>"
-                whatWillHappen +=i[j]
-                whatWillHappen +="</p>"
+function makeTableHTML(myArray,queryArray) {
+    removeRow = function(e){
+        delete queryArray[parseInt(e.id)]
+        //removeFromArray(queryArray,parseInt(e.id)) //remove it from array and from UI
+        $(e).closest('tr').remove()
 
-            }
-            whatWillHappen+= "<p> opens </p>"
-            whatWillHappen+= "to "+JSON.stringify(i[i.length-1])
+        var count = 0
+        for(var i in queryArray){
+            if(queryArray[i] != null || queryArray != undefined)
+                count++
+        }
+        if(count == 1){
+            $("#next").prop("disabled",true)
+        }
+    }
+    removeFromArray = function(array,from, to) {
+        var rest = array.slice((to || from) + 1 || array.length);
+        array.length = from < 0 ? array.length + from : from;
+        return array.push.apply(array, rest);
+    };
+    var result = "<table border=1>";
+    result += "<thead><tr><th>Delete</th><th>Institution</th><th>Department</th><th>Class Number</th><th>Class Section</th><th>Session ID</th><th>Class Times</th><th>Teacher</th><tr><thead>";
+    for(var i=0; i<myArray.length; i++) {
+        result += "<tr><td><input type='button' class=\"btn btn-danger\" value='Delete Row' id="+ (parseInt(i)+1) +" onclick='removeRow(this)'></td>"
+        for(var j=0; j<myArray[i].length; j++){
+            result += "<td>"+myArray[i][j]+"</td>";
+        }
+        result += "</tr>";
+    }
+    result += "</table>";
+
+    return result;
+}
+$(document).ready(function(){
+    queryArray = queryArray
+    $('table').on('click', 'input[type="button"]', function(e){
+        $(this).closest('tr').remove()
+    })
+    $("#submitData").unbind('click').click( function (e) {
+        clicked(function(queryArray,infoArray){
+            $("#confirmDialog").modal("show")
+            var whatWillHappen= "you have chosen to be alerted as soon as these classes open: <br><br>"
+            whatWillHappen += makeTableHTML(infoArray,queryArray)//.slice(0, -1))
             $("#confirmInfo").html( whatWillHappen )
-            $("#confirm").unbind('click').click(function (){
-                if(n>0) ws.send(JSON.stringify(d))
+            if(queryArray.length == 1){
+                $("#next").prop("disabled",true)
+            }
+            $("#next").unbind('click').click(function (){
                 $("#confirmDialog").modal("toggle")
+                $("#infoDialog").modal("show")
+            })
+            $("#confirm").unbind('click').click(function(){
+                for(var e in queryArray){
+                    if(queryArray[e] == null || queryArray[e] == undefined)
+                        removeFromArray(queryArray,parseInt(e))
+                }
+                var contactHow = "text";
+                var carrier = $('#carrier').val();
+                var phoneNbr = $('#you_phone_nbr').val();
+                phoneNbr = parsePhoneNumber(phoneNbr);
+                /*var email = $('#emailInput').val();
+                if(phoneNbr.length > 0){
+                    if(email.length > 0){
+                        contactHow = "both"
+                    }
+                    else{
+                        contactHow = "text"
+                    }
+                }
+                else{
+                    contactHow = "email"
+                }*/
+                queryArray.push(phoneNbr)
+                queryArray.push(carrier)
+                queryArray.push("NA")
+                queryArray.push(contactHow)
+                //console.log(queryArray)
+                $("#infoDialog").modal("toggle")
+                if(queryArray.length > 4) ws.send(JSON.stringify(queryArray)) //there are four default information parameters
             })
         });
     });
+    $("#next")
     $('#inst').unbind('change').change(function(){
         $("#ajax-loader").show();
         var e = document.getElementById("inst");
@@ -91,20 +153,18 @@ parsePhoneNumber = function(nbr){
     }
     return nbr;
 }
-validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
+validEmailAndPhoneNbr = function(phoneNbr,email){
     if(email == "" && phoneNbr == ""){
         alert("Enter your phone number or email please")
         return false;
     }
-    if(contactHow == "text" || contactHow == "both"){
-        if(phoneNbr.length != 10){
-            alert("That phone number was not a 10 digit phone number, 9171234567 is the correct way to enter it.");
-            return false;
-        }
-        else if(carrier == "defualt"){
-            alert("please enter a carrier")
-            return false;
-        }
+    if(phoneNbr.length != 10){
+        alert("That phone number was not a 10 digit phone number, 9171234567 is the correct way to enter it.");
+        return false;
+    }
+    else if(carrier == "defualt"){
+        alert("please enter a carrier")
+        return false;
     }
     if(contactHow == "email" || contactHow == "both"){
         if(!ValidateEmail(email) || email == ""){
@@ -124,36 +184,16 @@ validEmailAndPhoneNbr = function(phoneNbr,email, contactHow){
     return [phoneNbr,email]
 }
 clicked = function(callback){
-    var contactHow = $(".example input[type='radio']:checked").val();
-    var fullName
-    var userName
-    var phoneNbr = $('#you_phone_nbr').val();
-    phoneNbr = parsePhoneNumber(phoneNbr);
-    var email = $('#emailInput').val();
-    var valid = validEmailAndPhoneNbr(phoneNbr,email,contactHow);
-    if(valid){
-        phoneNbr = valid[0]
-        email = valid[1]
-    } else{ 
-        return //not a valid email or/and phone number
-    } 
-    
-    var contactInfo
-    if(contactHow == "text" || contactHow == "both"){
-        contactInfo = phoneNbr
+    $("#next").prop("disabled",false)
+    var inst, session;
+    try{
+        var e = document.getElementById("inst");
+        values = JSON.parse(e.options[e.selectedIndex].value)
+        var inst = values["schoolCode"]
+        var session = values["sessionCode"]
+    } catch(ignored){
+
     }
-    else if(contactHow == "email"){
-        contactInfo == email
-    }
-    
-    fullName = contactInfo
-    userName = contactInfo
-    var e = document.getElementById("inst");
-    values = JSON.parse(e.options[e.selectedIndex].value)
-    var carrier = $('#carrier').val();
-    var inst = values["schoolCode"]
-    var session = values["sessionCode"]
-    
 
     if(inst == "defualt"){
         alert("Please enter an institution")
@@ -169,12 +209,12 @@ clicked = function(callback){
     var nbr;
     var section;
     var dept;
+
+    queryArray = ["submit"]
     var table = $('#dataTables').DataTable();
     table.rows('.selected').data().each(function(){
         var temp = $(this)[count++] //get tr
-        console.log("temp")
-        console.log(temp)
-        //QNS01,ACCT,372,41664,1169,Su 9:15AM - 12:00PM,Dianand Balkaran
+
         nbr = temp["Class nbr"]
         classnbr = nbr.substr(nbr.indexOf("-")+2);
         dept = nbr.substring(0,nbr.indexOf("-") - 1);
@@ -191,12 +231,9 @@ clicked = function(callback){
         //console.log("info arrayy")
         //console.log(infoArray)
     })
-    queryArray.push(phoneNbr)
-    queryArray.push(carrier)
-    queryArray.push(email)
-    queryArray.push(contactHow)
-    infoArray.push([phoneNbr, email])
+    //infoArray.push([phoneNbr, email])
     //if(count > 0) ws.send(JSON.stringify(queryArray)); //now implemented later
-    if(count<1){alert("Please select a class"); return;}   
-    callback(queryArray, count, infoArray)      
+    //if( count < 1 ){alert("Please select a class"); return;}   
+    console.log(queryArray)
+    callback(queryArray,infoArray)      
 }

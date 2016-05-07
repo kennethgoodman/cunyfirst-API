@@ -65,8 +65,8 @@ $(document).ready(function() {
             {
                 "className":      'details-control',
                 "orderable":      false,
-                "data":           null,
-                "defaultContent": ''
+                "data":           '',
+                "defaultContent": '<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info</button>'
             },
             { "data" : "Dept"},
             { "data" : "Class nbr" },
@@ -82,7 +82,7 @@ $(document).ready(function() {
         searching: true
     });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session");   
-    $('#dataTables tbody').on('click', 'tr', function () {
+    $('#dataTables tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
@@ -96,15 +96,19 @@ $(document).ready(function() {
         if ( row.child.isShown() ) {
                 // This row is already open - close it
             row.child.hide();
+            table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info </button>').draw()
             tr.removeClass('shown');
             return
         }
         else if(hiddenRowData[row.index()] != undefined){
+            table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
             row.child( format(hiddenRowData[row.index()]) ).show()
             tr.addClass('shown');
         }
         else{
             row.child(blank).show()
+            table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
+            //row.data('data')
             $("#ajax-loader").show();
             tr.addClass('shown');
             ws.send(JSON.stringify(dataToSend))
