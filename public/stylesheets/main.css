@@ -218,6 +218,17 @@ td.details-control {
 tr.shown td.details-control {
     background: url('../images/details_close.png') no-repeat center center;
 }
+.modal{
+    background-color: transparent;
+    width: 75%;
+   top:31%;
+   left:32%;
+   /*position: absolute;
+   left: 50%;
+   top: 75%; 
+   margin-left: -150px;
+   margin-top: -150px;*/
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;
