@@ -89,7 +89,8 @@ $(document).ready(function(){
                 //console.log(queryArray)
                 $("#infoDialog").modal("toggle")
                 if(queryArray.length > 4) ws.send(JSON.stringify(queryArray)) //there are four default information parameters
-                location.reload()
+                var table = $('#dataTables').DataTable()
+                table.$('tr.selected').removeClass('selected');
             })
         });
     });
