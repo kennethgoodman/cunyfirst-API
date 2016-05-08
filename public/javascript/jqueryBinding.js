@@ -78,6 +78,10 @@ $(document).ready(function(){
                 }
                 $("#infoDialog").modal("toggle")
                 $("#confirmDialog").modal("show")
+                $("#backButton").unbind('click').click(function(){
+                    $("#confirmDialog").modal("toggle")
+                    $("#infoDialog").modal("show")
+                })
 
             })
             $("#confirm").unbind('click').click(function (){
