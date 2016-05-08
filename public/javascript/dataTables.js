@@ -97,18 +97,18 @@ $(document).ready(function() {
         if ( row.child.isShown() ) {
                 // This row is already open - close it
             row.child.hide();
-            table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info </button>').draw()
+            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info </button>').draw()
             tr.removeClass('shown');
         }
         else if(hiddenRowData[row.index()] != undefined){
-            table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
+            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
             row.child( format(hiddenRowData[row.index()]) ).show()
             tr.addClass('shown');
             tr.toggleClass('selected'); //clicking info doesn't select row
         }
         else{
             row.child(blank).show()
-            table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
+            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
             //row.data('data')
             $("#ajax-loader").show();
             tr.addClass('shown');
