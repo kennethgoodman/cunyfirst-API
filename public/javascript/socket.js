@@ -126,6 +126,7 @@ ws.onmessage = function (event) {
       else if(commandFromServer == "sendNotification"){
         alert(data[1]);
         showNotification(data[1],"http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/");
+        location.reload()
       }
       else if(commandFromServer == "addClassToDT"){
         data = data[1];
