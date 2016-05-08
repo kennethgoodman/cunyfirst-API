@@ -83,6 +83,7 @@ $(document).ready(function() {
     });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session");   
     $('#dataTables tbody').on('click', 'td.details-control', function () {
+
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
@@ -98,12 +99,12 @@ $(document).ready(function() {
             row.child.hide();
             table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info </button>').draw()
             tr.removeClass('shown');
-            return
         }
         else if(hiddenRowData[row.index()] != undefined){
             table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
             row.child( format(hiddenRowData[row.index()]) ).show()
             tr.addClass('shown');
+            tr.toggleClass('selected'); //clicking info doesn't select row
         }
         else{
             row.child(blank).show()
@@ -112,7 +113,8 @@ $(document).ready(function() {
             $("#ajax-loader").show();
             tr.addClass('shown');
             ws.send(JSON.stringify(dataToSend))
-            rowsLookedAt[row.index()] = true   
+            rowsLookedAt[row.index()] = true
+            tr.toggleClass('selected'); //clicking info doesn't select row   
         }
     }); 
 });
