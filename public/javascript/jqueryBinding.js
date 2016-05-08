@@ -1,3 +1,6 @@
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
+}
 function ValidateEmail(inputText)  
 {  
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
@@ -15,14 +18,14 @@ function makeTableHTML(myArray,queryArray) {
         delete queryArray[parseInt(e.id)]
         //removeFromArray(queryArray,parseInt(e.id)) //remove it from array and from UI
         $(e).closest('tr').remove()
-
         var count = 0
         for(var i in queryArray){
             if(queryArray[i] != null || queryArray != undefined)
                 count++
         }
-        if(count == 1){
-            $("#next").prop("disabled",true)
+        if(count <= 5){
+            $("#confirm").prop("disabled",true)
+            $("#confirmInfo").append("<br>You must select a class before continuing")
         }
     }
     removeFromArray = function(array,from, to) {
@@ -49,19 +52,10 @@ $(document).ready(function(){
         $(this).closest('tr').remove()
     })
     $("#submitData").unbind('click').click( function (e) {
+        $("#confirm").prop("disabled",false);//just in case the button is disabled
         clicked(function(queryArray,infoArray){
-            $("#confirmDialog").modal("show")
-            var whatWillHappen= "you have chosen to be alerted as soon as these classes open: <br><br>"
-            whatWillHappen += makeTableHTML(infoArray,queryArray)//.slice(0, -1))
-            $("#confirmInfo").html( whatWillHappen )
-            if(queryArray.length == 1){
-                $("#next").prop("disabled",true)
-            }
-            $("#next").unbind('click').click(function (){
-                $("#confirmDialog").modal("toggle")
-                $("#infoDialog").modal("show")
-            })
-            $("#confirm").unbind('click').click(function(){
+            $("#infoDialog").modal("show")
+            $("#next").unbind('click').click(function(){
                 for(var e in queryArray){
                     if(queryArray[e] == null || queryArray[e] == undefined)
                         removeFromArray(queryArray,parseInt(e))
@@ -70,34 +64,34 @@ $(document).ready(function(){
                 var carrier = $('#carrier').val();
                 var phoneNbr = $('#you_phone_nbr').val();
                 phoneNbr = parsePhoneNumber(phoneNbr);
-                /*var email = $('#emailInput').val();
-                if(phoneNbr.length > 0){
-                    if(email.length > 0){
-                        contactHow = "both"
-                    }
-                    else{
-                        contactHow = "text"
-                    }
-                }
-                else{
-                    contactHow = "email"
-                }*/
                 queryArray.push(phoneNbr)
                 queryArray.push(carrier)
                 queryArray.push("NA")
                 queryArray.push(contactHow)
                 //console.log(queryArray)
+                var whatWillHappen= "you have chosen to be alerted as soon as these classes open: <br><br>"
+                whatWillHappen += makeTableHTML(infoArray,queryArray)//.slice(0, -1))
+                $("#confirmInfo").html( whatWillHappen )
+                if(queryArray.length <= 5){
+                    $("#confirm").prop("disabled",true)
+                    $("#confirmInfo").append("<br>You must select a class before continuing")
+                }
                 $("#infoDialog").modal("toggle")
-                if(queryArray.length > 4) ws.send(JSON.stringify(queryArray)) //there are four default information parameters
+                $("#confirmDialog").modal("show")
+
+            })
+            $("#confirm").unbind('click').click(function (){
+                $("#confirmDialog").modal("toggle")
+                queryArray = replaceAll(JSON.stringify(queryArray), "null,", "") //remove all the deleted items
+                if(queryArray.length > 5) ws.send(queryArray) //there are five default information parameters
             })
         });
     });
-    $("#next")
     $('#inst').unbind('change').change(function(){
         $("#ajax-loader").show();
         var e = document.getElementById("inst");
         values = JSON.parse(e.options[e.selectedIndex].value)
-        console.log(values)
+        //console.log(values)
         ws.send(JSON.stringify(["get_classes",values["schoolCode"], values["sessionCode"]]));
         //send message for get session
     })
@@ -184,7 +178,6 @@ validEmailAndPhoneNbr = function(phoneNbr,email){
     return [phoneNbr,email]
 }
 clicked = function(callback){
-    $("#next").prop("disabled",false)
     var inst, session;
     try{
         var e = document.getElementById("inst");
@@ -234,6 +227,6 @@ clicked = function(callback){
     //infoArray.push([phoneNbr, email])
     //if(count > 0) ws.send(JSON.stringify(queryArray)); //now implemented later
     //if( count < 1 ){alert("Please select a class"); return;}   
-    console.log(queryArray)
+    //console.log(queryArray)
     callback(queryArray,infoArray)      
 }

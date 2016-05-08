@@ -84,7 +84,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-default" id="next">Next</button>           
+          <button type="button" class="btn btn-success" id="confirm">Confirm</button>           
         </div>
       </div>
     </div>
@@ -119,26 +119,11 @@
                     </option> 
                 </select>
                 <img src="/images/ajax-loader.gif" id="ajax-loader" style="display:none">
-                <!--
-                <p> and/or </p>
-                <->
-                <p><br>info = {{infoValid()}} <br> num valid = {{numberIsValid()}} <br> carAndNum = {{carrierAndNumAreValid()}} <br>
-                    email = {{emailIsValid()}} <br> emailNotEmpty = {{emailNotEmpty()}}<p>
-
-                <- --->
-                <!--
-                <br>
-                <input type="email" id="emailInput" name="email" ng-model="email" placeholder="youremail@domain.com">
-                <div ng-messages="exampleForm.userEmail.$error">
-                    <div ng-message="email">Your email address is invalid</div>
-                </div>
-                        <span ng-show="!emailIsValid()">Please enter a valid email</span>
-                <br>-->
             </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success" id="confirm" ng-disabled="!carrierAndNumAreValid()">Confirm</button>
+          <button type="button" class="btn btn-default" id="next" ng-disabled="!carrierAndNumAreValid()">Next!</button>
         </div>
       </div>
     </div>
