@@ -7,7 +7,7 @@ var setAllChildrenWithDepartment = function (department){
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
     //console.log(matching)
     matching.every( function () {
-        table.cell(this, 7).data("reading from CUNYFirst")
+        table.cell(this, 7).data("checking CUNYFirst")
     } );  
 }
 var changeStatus = function (row, s){
