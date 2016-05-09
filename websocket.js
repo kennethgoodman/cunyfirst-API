@@ -92,35 +92,43 @@ module.exports = function(wss){
 					break;
 				case "getClassesForUser": 
 					break
-		        case "getTheClassInfo":
+		        case "getRMP":
 		        	checkForEmptyData(data,ws,function(data){		
 		        		var institution = data[1]
-						var session = data[2]
-						var dept = data[3]
-						var num = data[4]
-						var sectionNum = data[5]
-						var index = data[6]
-						var teacher = data[7]
-						var a = ["teacherInfo"]
-						var b = ["statusInfo"]
+						var teacher = data[2]
+						var index = data[3]
+						var b = ["teacherInfo"]
 						getTeacherInfo([institution,teacher], function(data){
-							a.push(data[0])
+							//console.log(data)
 							b.push(data[0])
-							a.push(index)
 							b.push(index)
-							sendData(ws,a)
+							sendData(ws,b)
+							//console.log(b)
 						})
-						getSectionsWithNum(institution,session,dept,'E', num,function(result){
-    						try{
-    							b.push(result[Object.keys(result)[0]][sectionNum]["Status"])
-    							sendData(ws,b)
-    						}
-    						catch(err){
-    							console.log(err)
-    						}
-						})
-		        	})
+					})
 		        	break
+		        case "updateStatus":
+		        	var b = ["statusInfo"]
+		        	var institution = data[1]
+					var session = data[2]
+					var dept = data[3]
+			        getSectionsWithNum(institution,session,dept,'g', '0',function(result){
+		    			//console.log(result)
+		    			try{
+		    				var sstruct= {}
+		    					for (i in result){
+		    						for (j in result[i]){
+		    							sstruct[j] = result[i][j]["Status"]
+		    						}
+		    					}
+		    					b.push(sstruct)
+		    					sendData(ws,b)
+		    			}
+		    			catch(err){
+		    				console.log(err)
+		    			}
+					})
+					break
 				case "submit": 
 		        	checkForEmptyData(data, ws,function(data){
 		                var sendFunction = function(data){

@@ -1,13 +1,25 @@
+detCounter = {}
+hiddenRowData = {}
 rowsLookedAt = {}
+
+var setAllChildrenWithDepartment = function (department){
+    var table = $('#dataTables').DataTable();
+    var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
+    //console.log(matching)
+    matching.every( function () {
+        table.cell(this, 7).data("reading from CUNYFirst")
+    } );  
+}
+var changeStatus = function (row, s){
+    //console.log("this came")
+    var table = $('#dataTables').DataTable();
+    table.cell(row, 7).data(s)
+}
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
-            '<td> Status: </td>'+
-            '<td>'+'waiting'+'</td>'+
-        '</tr>'+
-        '<tr>'+
             '<tr>'+
-            '<td> Waiting </td>'+
-            '<td> If it stays like this, then refresh the page </td>'+
+            '<td> WaitingRMP </td>'+
+            '<td> If it stays like this too long, then refresh the page </td>'+
         '</tr>'+ 
         '</tr>'+       
     '</table>';
@@ -15,20 +27,12 @@ function format ( data ) {
     if(data[1] == "No Data" || data[1] == undefined)
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
-            '<td> Status: </td>'+
-            '<td>'+data[0]+'</td>'+
-        '</tr>'+
-        '<tr>'+
             '<td> No Teacher Information </td>'+
             '<td> If This is a mistake please help <br>others and let support know</td>'+
         '</tr>'+       
     '</table>';
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-        '<tr>'+
-            '<td> Status: </td>'+
-            '<td>'+data[0]+'</td>'+
-        '</tr>'+
         '<tr>'+
             '<td> Average Grade: </td>'+
             '<td>'+data[1]["avggrade"] +'</td>'+
@@ -73,7 +77,12 @@ $(document).ready(function() {
             { "data" : "Class Section" },
             { "data" : "Teacher" },
             { "data" : "Days And Time" },
-            { "data" : "Room" }
+            { "data" : "Room" },
+            {
+                data: 'Status',
+                className: "details-contro",
+                defaultContent: '<button type=\"button\" class=\"btn\"> update </button>'
+            }
         ],
         "order": [[2, 'asc']],
     	responsive: true,
@@ -81,9 +90,29 @@ $(document).ready(function() {
     	"deferRender": true, 
         searching: true
     });
-    $("#dataTables .dataTables_empty").text("Please choose your institution and session");   
-    $('#dataTables tbody').on('click', 'td.details-control', function () {
+    $("#dataTables .dataTables_empty").text("Please choose your institution and session"); 
+    $('#dataTables tbody').on('click', 'td.details-contro', function () { //open/closed
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+        var department = row.data()['Dept']
+        if (detCounter[department] != undefined ) return
+        else{
+            detCounter[department]= "a string"
+            //console.log('detCounter[department] is now ' +detCounter[department])
+            setAllChildrenWithDepartment(department)
+            tr.toggleClass('selected'); //clicking info doesn't select row 
+            var rowData = row.data()
+            var e = document.getElementById("inst");
+            values = JSON.parse(e.options[e.selectedIndex].value)
+            var inst = values["schoolCode"]
+            var session = values["sessionCode"]  
+            var dataToSend = ["updateStatus",inst, session, rowData["Class nbr"].substring(0,rowData["Class nbr"].indexOf("-") - 1),
+                              rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]        
+            ws.send(JSON.stringify(dataToSend))
+        }
 
+    })  
+    $('#dataTables tbody').on('click', 'td.details-control', function () { 
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
@@ -92,8 +121,7 @@ $(document).ready(function() {
         values = JSON.parse(e.options[e.selectedIndex].value)
         var inst = values["schoolCode"]
         var session = values["sessionCode"]  
-        var dataToSend = ["getTheClassInfo",inst, session, rowData["Class nbr"].substring(0,rowData["Class nbr"].indexOf("-") - 1),
-                          rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]        
+        var dataToSend = ["getRMP",inst, rowData["Teacher"], row.index()]      
         if ( row.child.isShown() ) {
                 // This row is already open - close it
             row.child.hide();

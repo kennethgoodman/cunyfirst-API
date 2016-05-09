@@ -1,4 +1,4 @@
-hiddenRowData = {}
+//hiddenRowData = {}
 var host = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(host);
 ws.onmessage = function (event) {
@@ -95,14 +95,24 @@ ws.onmessage = function (event) {
         var table = $('#dataTables').dataTable().api();
         var row = table.row( data[2] )
         hiddenRowData[data[2]] = ["Loading...",data[1]]
-        row.child( format(["Loading...",data[1]]) );
+        row.child( format(["Loading...this may take a minute",data[1]]) );
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "statusInfo"){
-        var table = $('#dataTables').dataTable().api();
-        var row = table.row( data[2] )
-        hiddenRowData[data[2]] = [data[3],data[1]]
-        row.child( format([data[3],data[1]]) );
+        //console.log("got call statusInfo")
+        var table = $('#dataTables').DataTable();
+        //var row = table.row( data[2] )
+        var openClosed = data[1]
+        for (i in openClosed){
+          //console.log (i)
+          var matching = table.rows( function ( idx, data1, node ) { return data1["Class Section"] == i ? true : false;} );
+          //console.log(matching.data())
+          matching.every( function () {
+              changeStatus( this, openClosed[i] )
+          } );  
+        }
+        //row.child( format( [ data[3][row.data()["Class Section"]],data[1] ] ) );
+        
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "classesBeingTaken"){
