@@ -99,10 +99,10 @@ ws.onmessage = function (event) {
         $("#ajax-loader").hide();
       }
       else if(commandFromServer == "statusInfo"){
-        //console.log("got call statusInfo")
+        console.log("got call statusInfo")
         var table = $('#dataTables').DataTable();
-        //var row = table.row( data[2] )
         var openClosed = data[1]
+        console.log(openClosed)
         for (i in openClosed){
           //console.log (i)
           var matching = table.rows( function ( idx, data1, node ) { return data1["Class Section"] == i ? true : false;} );
