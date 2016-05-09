@@ -46,7 +46,7 @@ ws.onmessage = function (event) {
           $("#ajax-loader").hide();
           var dropdown = document.getElementById('dept');
           var keys = Object.keys(data[1]);
-          for(var i = 0; i < keys.length; i++){
+          for(var i = keys.length - 1; i >= 0; i--){
               var option = document.createElement("option");
               var deptName = keys[i]
               option.text = deptName;

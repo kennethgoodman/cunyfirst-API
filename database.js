@@ -73,7 +73,11 @@ sendQuery2 = function(q,params, callback){
 }
 var counter = 0;
 viewTable = function(callback){
-	sendQuery('select schools.name as schoolName, session.name, session.id, session.school  from schools, session where schools.id = session.school', [], callback)
+	sendQuery("SELECT schools.name AS schoolName, session.name, session.id, session.school  \
+			   FROM schools, session \
+			   WHERE schools.id = session.school \
+			   AND (select count(*) from classes where school = session.school and session = session.id) > 0" //eliminate all sessions with no classes
+			   , [], callback)
 }
 testAddDataToTable = function(callback){
 	console.log("here")
