@@ -113,7 +113,7 @@ module.exports = function(wss){
 					var session = data[2]
 					var dept = data[3]
 			        getSectionsWithNum(institution,session,dept,'g', '0',function(result){
-		    			//console.log(result)
+		    			console.log(result)
 		    			try{
 		    				var sstruct= {}
 		    					for (i in result){
