@@ -17,10 +17,6 @@ var changeStatus = function (row, s){
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
-            '<td> Status: </td>'+
-            '<td>' +'waiting...this may take a minute'+ '</td>'+
-        '</tr>'+
-        '<tr>'+
             '<td> WaitingRMP </td>'+
             '<td> If it stays like this too long, then refresh the page </td>'+
         '</tr>'+       
