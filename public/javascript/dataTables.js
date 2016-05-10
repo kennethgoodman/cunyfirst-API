@@ -17,7 +17,7 @@ var changeStatus = function (row, s){
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
-            '<td> WaitingRMP </td>'+
+            '<td> Waiting </td>'+
             '<td> If it stays like this too long, then refresh the page </td>'+
         '</tr>'+       
     '</table>';
@@ -136,7 +136,7 @@ $(document).ready(function() {
             row.child(blank).show()
             //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
             //row.data('data')
-            $("#ajax-loader").show();
+            //$("#ajax-loader").show();
             tr.addClass('shown');
             ws.send(JSON.stringify(dataToSend))
             rowsLookedAt[row.index()] = true
