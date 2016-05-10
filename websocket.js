@@ -91,6 +91,21 @@ module.exports = function(wss){
 	    			})
 					break;
 				case "getClassesForUser": 
+				    var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and email=$2;"
+	              	//console.log(q)
+	              	sendQuery(q,[data[1][5],data[1][7]],function(result){
+	                	var temp = [];
+	                	result = result.rows
+	                	for(var row in result){
+	                  		if(result[row]["session"] == "1162") {
+	                    		result[row]["session"] = "Spring 2016";
+	                  		}
+	                  		else if(result[row]["session"] == "1169") {
+	                    		result[row]["session"] = "Fall 2016";
+	                  		}
+	                  		temp.push(result[row])
+	                	}
+	                })
 					break
 		        case "getRMP":
 		        	checkForEmptyData(data,ws,function(data){		
@@ -135,6 +150,8 @@ module.exports = function(wss){
 		                  var texted = "false";
 		                  var query = "INSERT INTO customer_info VALUES (";
 		                  var params = [];
+		                  var phone_num = data[data.length-4]
+		                  var carrier = data[data.length-3]
 		                	for(var i = 1; i < data.length-4; i++){ //minus two becuase, last options are contactHow, email
 			                    query += "$"+((i-1)*9 + 1)
 			                    for(var j=2; j <= 9; j++){
@@ -148,8 +165,8 @@ module.exports = function(wss){
 			                    		params.push(data[i][k])
 		                    	}
 
-		                		params.push(data[data.length-4]); //phone nbr
-		                		params.push(data[data.length-3]); //carrier
+		                		params.push(phone_num); //phone nbr
+		                		params.push(carrier); //carrier
 		                		params.push(data[data.length-2]); //email
 		                		params.push(data[data.length-1]); //sendWith
 		                  	}
@@ -170,34 +187,18 @@ module.exports = function(wss){
 				                    }
 			                    }
 			                    else{
-			                    	var temp = [];
-			                    	var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and email=$2;"
-			                      	//console.log(q)
-			                      	sendQuery(q,[data[1][5],data[1][7]],function(result){
-			                        	var temp = [];
-			                        	result = result.rows
-			                        	for(var row in result){
-			                          		if(result[row]["session"] == "1162") {
-			                            		result[row]["session"] = "Spring 2016";
-			                          		}
-			                          		else if(result[row]["session"] == "1169") {
-			                            		result[row]["session"] = "Fall 2016";
-			                          		}
-			                          		temp.push(result[row])
-			                        	}
-			                        	sendData(ws,["classesBeingTaken",temp]);
-		                        		if(data.length == 6){
-		                            		sendData(ws,["sendNotification", "Your have succesfully added " + data[1][1] +" - "+ data[1][2] +": "+ data[1][3]])
-		                        		}
-		                        		else{
-		                          			var temp = ""
-		                          			for(var i = 1; i < data.length-4; i++){
-		                            			temp += data[i][1] + " - "+ data[i][2] + ": "+ data[i][3]+ ",\n";
-		                          			}
-		                              		sendData(ws,["sendNotification", "Your have succesfully added " + temp])
-		                        		}
-			                        
-			                      	});
+		                        	var temp = "Your have succesfully added "
+	                        		if(data.length == 6){
+	                        			temp += data[1][1] +" - "+ data[1][2] +": "+ data[1][3]
+	                        		}
+	                        		else{
+	                          			for(var i = 1; i < data.length-4; i++){
+	                            			temp += data[i][1] + " - "+ data[i][2] + ": "+ data[i][3]+ ",\n";
+	                          			}
+	                          			temp += temp.substring(0, temp.length - 3)
+	                        		}
+	                        		sendData(ws,["sendNotification", temp])
+		                        	send_confirmation(phone_num, carrier, temp)
 			                      	//sendData(ws, ["Success", "Your classes have succesfully been entered"])
 			                      	console.log("Success adding query");
 			                    }

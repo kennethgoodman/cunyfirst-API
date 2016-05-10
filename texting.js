@@ -38,10 +38,35 @@ send_email = function(recepient, provider, body){
 			var carrier = returnCarriers();
 			to +=  carrier[provider];
 		}
-			var payload   = {
+		var payload   = {
 		  to      : to,
 		  from    : 'kenneth@noclosedclass.com',
 		  subject : 'Class Opened!',
+		  text    : body
+		}
+		sendgrid.send(payload, function(err, json) {
+		  if (err) { console.error(err); }
+		  console.log(JSON.stringify(json) + " : " + to + ": " + body);
+		});
+	}
+	else{
+		var c = new TMClient('yigalsaperstein', 'vL88ayn2N3OdRGWYy3yytqrrn0Znh9');
+		c.Messages.send({text: body, phones:"+1"+recepient}, function(err, res){
+    		console.log('Messages.send()', err, res);
+		});
+	}
+}
+send_confirmation(recepient, provider, body){
+	if(provider != 'other'){
+		var to = recepient;
+		if(provider != "@"){
+			var carrier = returnCarriers();
+			to +=  carrier[provider];
+		}
+		var payload   = {
+		  to      : to,
+		  from    : 'kenneth@noclosedclass.com',
+		  subject : 'Confirmation',
 		  text    : body
 		}
 		sendgrid.send(payload, function(err, json) {
