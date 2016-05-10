@@ -56,7 +56,7 @@ send_email = function(recepient, provider, body){
 		});
 	}
 }
-send_confirmation(recepient, provider, body){
+send_confirmation = function(recepient, provider, body){
 	if(provider != 'other'){
 		var to = recepient;
 		if(provider != "@"){
