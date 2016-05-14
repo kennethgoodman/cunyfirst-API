@@ -33,6 +33,10 @@ queueRead2 = function lambda(){
 						return
 					}
 					try{
+						if(struct == undefined){
+							setTimeout(function() {console.log("struct is undefined")}, 60*1000); //wait one minute
+							return
+						}
 						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
 						//console.log(new Date() + ": " + text)
 					} catch(err){
