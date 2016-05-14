@@ -9,7 +9,7 @@ ws.onmessage = function (event) {
       console.log(commandFromServer)
       if(commandFromServer == "inst"){
         removeDropdowns(["inst"])
-        $("#ajax-loader").hide();
+        //$("#ajax-loader").hide();
         var keys = data[1];
         var dropdown = document.getElementById('inst');
         for(var i = 0; i < keys.length; i++){
@@ -31,7 +31,7 @@ ws.onmessage = function (event) {
       }
       else if(commandFromServer == "session"){
           removeDropdowns(["session","dept"])
-          $("#ajax-loader").hide();
+          //$("#ajax-loader").hide();
           var dropdown = document.getElementById('session');
           for(var i = 1; i < data.length; i++){
               var option = document.createElement("option");
@@ -88,7 +88,7 @@ ws.onmessage = function (event) {
       }
       else if(commandFromServer == "dept"){
           removeDropdowns(["dept"])
-          $("#ajax-loader").hide();
+          //$("#ajax-loader").hide();
           var dropdown = document.getElementById('dept');
           var keys = Object.keys(data[1]);
           for(var i = keys.length - 1; i >= 0; i--){
@@ -102,7 +102,7 @@ ws.onmessage = function (event) {
       else if(commandFromServer == "class_nbr"){ 
           //var table = document.getElementById("tableBody");
           //$("#tableBody").empty();
-          $("#ajax-loader").hide();
+          //$("#ajax-loader").hide();
           var dept = $('#dept').val();
           data = data[1]
           //var nbrs = Object.keys(data);
@@ -119,7 +119,7 @@ ws.onmessage = function (event) {
           //var table = document.getElementById("tableBody");
           //$("#tableBody").empty();
           data = data[1]
-          $("#ajax-loader").hide();
+          //$("#ajax-loader").hide();
           //var nbrs = Object.keys(data);
           var t = $('#dataTables').DataTable();
           t.clear();
@@ -141,7 +141,7 @@ ws.onmessage = function (event) {
         var row = table.row( data[2] )
         hiddenRowData[data[2]] = ["Loading...",data[1]]
         row.child( format(["Loading...this may take a minute",data[1]]) );
-        $("#ajax-loader").hide();
+        //$("#ajax-loader").hide();
       }
       else if(commandFromServer == "statusInfo"){
         //console.log("got call statusInfo")
@@ -167,7 +167,7 @@ ws.onmessage = function (event) {
         }
         //row.child( format( [ data[3][row.data()["Class Section"]],data[1] ] ) );
         
-        $("#ajax-loader").hide();
+        //$("#ajax-loader").hide();
       }
       else if(commandFromServer == "classesBeingTaken"){
         data = data[1];
