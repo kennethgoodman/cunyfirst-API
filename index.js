@@ -1,4 +1,5 @@
 const WEBSITE_DOWN = false;
+global.CUNYFIRST_DOWN = false
 try{
 	var dotenv = require('dotenv')
 	dotenv.load();

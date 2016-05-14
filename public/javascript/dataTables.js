@@ -13,7 +13,7 @@ var setAllChildrenWithDepartment = function (department){
 var changeStatus = function (row, s){
     //console.log("this came")
     var table = $('#dataTables').DataTable();
-    table.cell(row, 7).data(s)
+    table.cell(row, 7).data(s) //7 for the 7th column
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+

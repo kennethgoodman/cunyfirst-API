@@ -137,7 +137,21 @@ module.exports = function(wss){
 		        	var institution = data[1]
 					var session = data[2]
 					var dept = data[3]
+					b.push(institution)
+					b.push(session)
+			        b.push(dept)
+			        if(global.CUNYFIRST_DOWN == false){
+			        	b.push("CUNYFIRST may be down")
+			        	sendData(ws,b)
+			        	return
+			        }
 			        getSectionsWithNum(institution,session,dept,'g', '0',function(result){
+			        	if(result === "CUNYFIRST may be down"){
+			        		global.CUNYFIRST_DOWN = true
+			        		b.push("CUNYFIRST may be down")
+			        		sendData(ws,b)
+			        		return // dont go forward since CF may be down
+			        	}
 		    			//console.log(result)
 		    			try{
 		    				var sstruct= {}

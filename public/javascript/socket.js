@@ -45,9 +45,9 @@ ws.onmessage = function (event) {
         console.log(data)
         var makeTableHTML_ForAlreadySignedUp = function(myArray){
             var result = "<table border=1>";
-            result += "<thead><tr><th>Delete</th><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th><th>Texted Yet</th><tr><thead>";
+            result += "<thead><tr><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th><th>Texted Yet</th><tr><thead>";
             for(var i=0; i<myArray.length; i++) {
-                result += "<tr><td><input type='button' class=\"btn btn-danger removeUserClass\" value='Remove'></td>"
+                //result += "<tr><td><input type='button' class=\"btn btn-danger removeUserClass\" value='Remove'></td>"
                 result += "<td>"+myArray[i]["inst"]+"</td>" + "<td>"+myArray[i]["session"]+"</td>" 
                           + "<td>"+myArray[i]["dept"]+"</td>" + "<td>"+myArray[i]["classnbr"]+"</td>" + "<td>"+myArray[i]["section"]+"</td>";
                 if(myArray[i]["alerted"] == false){
@@ -67,7 +67,7 @@ ws.onmessage = function (event) {
         }
         var tableHTML = makeTableHTML_ForAlreadySignedUp(data.slice(1,data.length-1))
         $("#alreadySignedUpClasses").html( tableHTML )
-        $(".removeUserClass").unbind('click').click(function(e){
+        /*$(".removeUserClass").unbind('click').click(function(e){
             var result = confirm("Want to delete?");
             if (result) {
             var dataInRow = $(this).closest('tr').find("td");
@@ -84,7 +84,7 @@ ws.onmessage = function (event) {
             //Logic to delete the item
             }
         })
-        console.log(data)
+        console.log(data)*/
       }
       else if(commandFromServer == "dept"){
           removeDropdowns(["dept"])
@@ -146,8 +146,17 @@ ws.onmessage = function (event) {
       else if(commandFromServer == "statusInfo"){
         //console.log("got call statusInfo")
         var table = $('#dataTables').DataTable();
-        var openClosed = data[1]
-        //console.log(openClosed)
+        var openClosed = data[4]
+        if(data[4] == "CUNYFIRST may be down"){
+          var matching = table.rows( function ( idx, data1, node ) { 
+            var nbr = data1["Class nbr"]
+            return nbr.substring(0,nbr.indexOf("-") - 1) == data[3] ? true : false;
+          });
+          //console.log(matching.data())
+          matching.every( function () {
+              changeStatus( this, "CUNYfirst may be down" )
+          });  
+        }
         for (i in openClosed){
           //console.log (i)
           var matching = table.rows( function ( idx, data1, node ) { return data1["Class Section"] == i ? true : false;} );
@@ -230,7 +239,7 @@ ws.onmessage = function (event) {
 ws.onopen = function(err){
   if(err) console.log(err);
 
-  $("#ajax-loader").show();
+  //$("#ajax-loader").show();
   ws.send(JSON.stringify(["get_inst"]));
   ws.send(JSON.stringify(["getCarriers"]));
 }

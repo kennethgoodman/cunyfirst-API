@@ -28,6 +28,11 @@ getSections = function(inst, session, dept, callback){
 }
 getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback){
 	request.post(options, function(err, res, body) {
+        if(res.caseless.dict.location == 'http://portaldown.cuny.edu/cunyfirst'){
+            global.CUNYFIRST_DOWN = true
+            callback("CUNYFIRST may be down")
+            return
+        }
         if(err) {
             console.error(err);
             return;

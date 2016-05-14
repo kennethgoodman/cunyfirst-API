@@ -11,15 +11,17 @@ var texts = require('./texting');
 
 var queue = []   //queue for the classes, pop one off when we look at it
 var counter = 0; //count how many threads in the function, only want one at the max
+global.CUNYFIRST_DOWN = false
 queueRead2 = function lambda(){
-	//console.log("this is where we show queue")
-	//console.log( JSON.stringify(queue) )
 	var item = queue.shift();
 	//console.log(item)
 	if(item != undefined){ 
-		//console.log(item)
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
+				if(struct === "CUNYFIRST may be down"){
+					global.CUNYFIRST_DOWN = true
+					return
+				}
 				var q = "SELECT DISTINCT classnbr, section FROM customer_info where alerted = false and inst = $1 and session=$2 and dept= $3 order by classnbr, section;";  
 				var params = [item.inst,item.session,item.dept]
 				sendQuery2(q, params, function(row){
@@ -33,11 +35,6 @@ queueRead2 = function lambda(){
 						return
 					}
 					try{
-						if(struct == undefined || struct == null){
-							if(Math.random() > .95) //cuny first may be down, so lets do this infrequently
-								console.log("struct is undefined")
-							return
-						}
 						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
 						//console.log(new Date() + ": " + text)
 					} catch(err){
@@ -85,20 +82,18 @@ setInterval( function(){
 
 var q = 'SELECT DISTINCT inst, dept, session FROM customer_info where alerted = false order by inst, session, dept;'
 setInterval( function(){
-	/*if(queue.length == 0 parseInt(amount_of_rows*1.2)){ //still testing good number
-		queue = [];
-	}*/
 	if(queue.length == 0){
 		sendQuery2(q, [], function(row){
-			queue.push(row) //still testing good number
+			queue.push(row)
 		
 		})//TODO put in a test to check if row returned an error
 	}
 
 },15000)
+setInterval( function(){ global.CUNYFIRST_DOWN = false }, 1000*60) //every minute change back, so we check if its still down 
 setInterval(function(){ 
-	if(queue.length && counter < 1){ 
+	if(queue.length && counter < 1 && !global.CUNYFIRST_DOWN){ //if cunyfirst is not down 
 		counter++;
 		queueRead2() 
 	}
-}, 15000);
+}, 12500);
