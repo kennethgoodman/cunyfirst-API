@@ -44,7 +44,7 @@ ws.onmessage = function (event) {
       else if(commandFromServer == "classesForUser"){
         console.log(data)
         var makeTableHTML_ForAlreadySignedUp = function(myArray){
-            var result = "<table border=1>";
+            var result = "You are already signed to be alerted for these classes: <br><br><table border=1>";
             result += "<thead><tr><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th><th>Texted Yet</th><tr><thead>";
             for(var i=0; i<myArray.length; i++) {
                 //result += "<tr><td><input type='button' class=\"btn btn-danger removeUserClass\" value='Remove'></td>"
