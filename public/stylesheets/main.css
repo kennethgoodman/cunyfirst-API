@@ -235,6 +235,13 @@ tr.shown td.details-control {
    margin-left: -150px;
    margin-top: -150px;*/
 }
+div.slider {
+    /*display: none;*/
+}
+ 
+table.dataTable tbody td.no-padding {
+    padding: 0;
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;

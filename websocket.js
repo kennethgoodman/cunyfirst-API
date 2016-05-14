@@ -71,6 +71,12 @@ module.exports = function(wss){
 						sendData(ws,a)
 					})
 					break
+				case "removeUserClass":
+					var query = "REMOVE FROM customer_info WHERE inst = $1 AND session = $2 AND dept = $3 and classnbr = $4 AND section = $5";
+					console.log(query)
+					console.log(data.slice(2, data.length - 1))
+					//sendQuery(query, data.slice(1, data.length - 1))
+					break
 				case "get_class":
 					checkForEmptyData(data, ws, function(data){
 						var a = ["class_nbr"]
@@ -91,20 +97,24 @@ module.exports = function(wss){
 	    			})
 					break;
 				case "getClassesForUser": 
-				    var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and email=$2;"
-	              	//console.log(q)
-	              	sendQuery(q,[data[1][5],data[1][7]],function(result){
-	                	var temp = [];
+				    var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and provider=$2"
+	              	sendQuery(q,[data[1],data[2]],function(result){
+	                	var temp = ["classesForUser"];
 	                	result = result.rows
 	                	for(var row in result){
-	                  		if(result[row]["session"] == "1162") {
-	                    		result[row]["session"] = "Spring 2016";
+	                		var session = result[row]["session"]
+	                  		if(session == "1162") {
+	                    		result[row]["session"] = result[row]["session"] + " - Spring 2016";
 	                  		}
-	                  		else if(result[row]["session"] == "1169") {
-	                    		result[row]["session"] = "Fall 2016";
+	                  		else if(session == "1169") {
+	                    		result[row]["session"] = result[row]["session"] + " - Fall 2016";
+	                  		}
+	                  		else if(session == "1166"){
+	                  			result[row]["session"] = result[row]["session"] + " - Summer 2016";
 	                  		}
 	                  		temp.push(result[row])
 	                	}
+	                	sendData(ws, temp)
 	                })
 					break
 		        case "getRMP":

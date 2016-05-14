@@ -33,7 +33,7 @@ queueRead2 = function lambda(){
 						return
 					}
 					try{
-						if(struct == undefined){
+						if(struct == undefined || struct == null){
 							if(Math.random() > .95) //cuny first may be down, so lets do this infrequently
 								console.log("struct is undefined")
 							return

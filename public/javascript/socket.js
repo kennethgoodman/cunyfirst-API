@@ -41,6 +41,51 @@ ws.onmessage = function (event) {
               if(sessionName != undefined && data[i][sessionName] != undefined) dropdown.add(option);
           }
       }
+      else if(commandFromServer == "classesForUser"){
+        console.log(data)
+        var makeTableHTML_ForAlreadySignedUp = function(myArray){
+            var result = "<table border=1>";
+            result += "<thead><tr><th>Delete</th><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th><th>Texted Yet</th><tr><thead>";
+            for(var i=0; i<myArray.length; i++) {
+                result += "<tr><td><input type='button' class=\"btn btn-danger removeUserClass\" value='Remove'></td>"
+                result += "<td>"+myArray[i]["inst"]+"</td>" + "<td>"+myArray[i]["session"]+"</td>" 
+                          + "<td>"+myArray[i]["dept"]+"</td>" + "<td>"+myArray[i]["classnbr"]+"</td>" + "<td>"+myArray[i]["section"]+"</td>";
+                if(myArray[i]["alerted"] == false){
+                  result += "<td>No</td>"
+                }
+                else if(myArray[i]["alerted"] == true){
+                  result += "<td>Yes</td>"
+                }
+                else{
+                  result += "<td>Don't Have This Data</td>"
+                }
+                result += "</tr>";
+            }
+            result += "</table>";
+
+            return result;
+        }
+        var tableHTML = makeTableHTML_ForAlreadySignedUp(data.slice(1,data.length-1))
+        $("#alreadySignedUpClasses").html( tableHTML )
+        $(".removeUserClass").unbind('click').click(function(e){
+            var result = confirm("Want to delete?");
+            if (result) {
+            var dataInRow = $(this).closest('tr').find("td");
+            var removeQuery = ["removeUserClass"]
+            var counter = 0
+            $.each(dataInRow, function(){
+                var theData = $(this).text()
+                if(counter == 2)
+                  theData = theData.substring(0, theData.indexOf(" -"))
+                removeQuery.push(theData)
+            })
+            ws.send(JSON.stringify(removeQuery))
+            $(this).closest('tr').remove()
+            //Logic to delete the item
+            }
+        })
+        console.log(data)
+      }
       else if(commandFromServer == "dept"){
           removeDropdowns(["dept"])
           $("#ajax-loader").hide();

@@ -20,7 +20,8 @@
                     </option>
                 </select>
                 <div class="SubmitButton">
-                    <button type="button" class="btn btn-primary" id="submitData" style="margin-bottom: 12px;">Get Classes!</button>
+                    <button class="btn btn-primary btn-block example1">Test Button</button>
+                    <!--<button type="button" class="btn btn-primary" id="submitData" style="margin-bottom: 12px;">Get Classes!</button> -->
                 </div>
             </div>
           <br>
@@ -79,6 +80,9 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Confirmation On Classes</h4>
         </div>
+        <div class="modal-body" id="alreadySignedUpClasses">
+          
+        </div>
         <div class="modal-body" id="confirmInfo">
             
         </div>
@@ -92,12 +96,46 @@
   </div>
   
 </div>
+    <div>
+    
+    </div>
+    <script>
+        var temp = '<div class=\"modal-body\" id=\"confirmInfo\" ng-app="userInfoApp" ng-controller="userInputControl"> \
+            <form name=\"inputForm\" novalidate> \
+                <span ng-show=\"carrierAndNumAreValid()\"> \
+                     Either enter a valid number or e-mail. <br>If you enter a phone number, <br>you must enter a carrier. \
+                </span> \
+                <p>Fill out your phone number and provider.</p><br>       \
+                <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr" name="phoneNbrModel" ng-model="phoneNbrModel" ng-pattern="/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/"> \
+                <div ng-messages="inputForm.phoneNbrModel.$error"> \
+                    <div ng-message="pattern">Must be a valid 10 digit phone number</div> \
+                </div><br> \
+                <select id="carrier" default="pick a carrier" ng-model="carrierModel" name="carrierModel"> \
+                    <option value="defualt" selected="selected"> \
+                        Pick A Carrier \
+                    </option>  \
+                </select> \
+                <img src="/images/ajax-loader.gif" id="ajax-loader" style="display:none"> \
+            </form> \
+        </div>' 
+    $('.example1').on('click', function () {
+        $.alert({
+            title: 'Alert!',
+            content: 'Simple alert!',
+            confirm: function(){
+                $.alert('Confirmed!'); // shorthand.
+            }
+        });
+    });
+    
+    </script>
+    <!--
 <div class="container">
-  <!-- Modal -->
+  <!-- Modal ->
   <div class="modal fade" id="infoDialog" role="dialog">
     <div class="modal-dialog">
     
-      <!-- Modal content-->
+      <!-- Modal content->
       <div class="modal-content" ng-app="userInfoApp" ng-controller="userInputControl">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -105,10 +143,9 @@
         </div>
         <div class="modal-body" id="confirmInfo">
             <form name="inputForm" novalidate>
-                <!--
                 <span ng-show="carrierAndNumAreValid()">
                      Either enter a valid number or e-mail. <br>If you enter a phone number, <br>you must enter a carrier.
-                </span>-->
+                </span>
                 <p>Fill out your phone number and provider.</p><br>      
                 <input type="text" placeholder="10 Digit phone number" id="you_phone_nbr" name="phoneNbrModel" ng-model="phoneNbrModel" ng-pattern="/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/">
                 <div ng-messages="inputForm.phoneNbrModel.$error">
@@ -129,7 +166,7 @@
       </div>
     </div>
   </div>
-  
+  -->
 </div>
 </html>
 <script>

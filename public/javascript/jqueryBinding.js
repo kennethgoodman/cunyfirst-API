@@ -56,14 +56,16 @@ $(document).ready(function(){
         clicked(function(queryArray,infoArray){
             $("#infoDialog").modal("show")
             $("#next").unbind('click').click(function(){
+                var carrier = $('#carrier').val();
+                var phoneNbr = $('#you_phone_nbr').val();
+                phoneNbr = parsePhoneNumber(phoneNbr);
+                ws.send(JSON.stringify(["getClassesForUser",phoneNbr, carrier]))
+
                 for(var e in queryArray){
                     if(queryArray[e] == null || queryArray[e] == undefined)
                         removeFromArray(queryArray,parseInt(e))
                 }
                 var contactHow = "text";
-                var carrier = $('#carrier').val();
-                var phoneNbr = $('#you_phone_nbr').val();
-                phoneNbr = parsePhoneNumber(phoneNbr);
                 queryArray.push(phoneNbr)
                 queryArray.push(carrier)
                 queryArray.push("NA")
@@ -82,7 +84,6 @@ $(document).ready(function(){
                     $("#confirmDialog").modal("toggle")
                     $("#infoDialog").modal("show")
                 })
-
             })
             $("#confirm").unbind('click').click(function (){
                 $("#confirmDialog").modal("toggle")
