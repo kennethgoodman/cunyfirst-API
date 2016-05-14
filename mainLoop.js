@@ -34,7 +34,8 @@ queueRead2 = function lambda(){
 					}
 					try{
 						if(struct == undefined){
-							setTimeout(function() {console.log("struct is undefined")}, 60*1000); //wait one minute
+							if(Math.random() > .95) //cuny first may be down, so lets do this infrequently
+								console.log("struct is undefined")
 							return
 						}
 						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
