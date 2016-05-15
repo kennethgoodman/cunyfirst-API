@@ -101,16 +101,14 @@ $(document).ready(function(){
                 times = [times[0],times[0]]
             }
             var teacherName = temp['Teacher']
-            console.log(teacherName)
-            var tempCunyClass = new CunyClass(dept=deptartment, number=classnbr, daysOfWeek=days, 
-                                              section = new Section(
-                                                            new Class_Time(
-                                                                    new Time(times[0][0],times[0][1]),
-                                                                    new Time(times[1][0],times[1][1])),
-                                                                sectionNbr,
-                                               ),
-                                              teacher = teacherName
-                                )
+            var theClassTime = new Class_Time( new Time(times[0][0],times[0][1]), new Time(times[1][0],times[1][1]) )
+            var classSection = new Section( theClassTime, sectionNbr );
+            var tempCunyClass = new CunyClass(dept       = deptartment, 
+                                              number     = classnbr, 
+                                              daysOfWeek = days, 
+                                              section    = classSection,
+                                              teacher    = teacherName
+                                             );
             arrayOfarrays[temp["group"]].push(tempCunyClass)
             t.row.add({
                   "Dept"         : deptartment.trim(),
