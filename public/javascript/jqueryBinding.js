@@ -48,6 +48,12 @@ function makeTableHTML(myArray,queryArray) {
     return result;
 }
 $(document).ready(function(){
+    $('#infoDialog').on('hide.bs.modal', function () {
+        $('body').css('overflow','scroll')
+    })
+    $('#confirmDialog').on('hide.bs.modal', function () {
+        $('body').css('overflow','scroll')
+    })
     if(queryArray != undefined)
         queryArray = queryArray
     $('table').on('click', 'input[type="button"]', function(e){
@@ -56,6 +62,7 @@ $(document).ready(function(){
     $("#submitData").unbind('click').click( function (e) {
         $("#confirm").prop("disabled",false);//just in case the button is disabled
         clicked(function(queryArray,infoArray){
+            $('body').css('overflow','hidden')
             $("#infoDialog").modal("show")
             $("#next").unbind('click').click(function(){
                 var carrier = $('#carrier').val();
@@ -72,7 +79,6 @@ $(document).ready(function(){
                 queryArray.push(carrier)
                 queryArray.push("NA")
                 queryArray.push(contactHow)
-                //console.log(queryArray)
                 var whatWillHappen = "you have chosen to be alerted as soon as these classes open: <br><br>"
                 whatWillHappen += makeTableHTML(infoArray,queryArray)//.slice(0, -1))
                 $("#confirmInfo").html( whatWillHappen )
@@ -82,13 +88,16 @@ $(document).ready(function(){
                 }
                 $("#infoDialog").modal("toggle")
                 $("#confirmDialog").modal("show")
+                $('body').css('overflow','hidden')
                 $("#backButton").unbind('click').click(function(){
                     $("#confirmDialog").modal("toggle")
                     $("#infoDialog").modal("show")
+                    $('body').css('overflow','hidden')
                 })
             })
             $("#confirm").unbind('click').click(function (){
                 $("#confirmDialog").modal("toggle")
+                $('body').css('overflow','scroll') //but back the scroll bar
                 queryArray = replaceAll(JSON.stringify(queryArray), "null,", "") //remove all the deleted items
                 if(queryArray.length > 5) ws.send(queryArray) //there are five default information parameters
             })
@@ -214,7 +223,6 @@ clicked = function(callback){
     var table = $('#dataTables').DataTable();
     table.rows('.selected').data().each(function(){
         var temp = $(this)[count++] //get tr
-
         nbr = temp["Class nbr"]
         classnbr = nbr.substr(nbr.indexOf("-")+2);
         dept = nbr.substring(0,nbr.indexOf("-") - 1);
@@ -224,7 +232,6 @@ clicked = function(callback){
         try{
             queryArray.push([inst,dept,classnbr,section,session]);
             infoArray.push([inst,dept,classnbr,section,session,daysTimes,teacher])
-
         } catch(err){
             console.log(err)
         }
