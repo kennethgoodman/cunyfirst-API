@@ -33,13 +33,15 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
         if(err) {
             global.CUNYFIRST_DOWN = true
             callback("CUNYFIRST may be down")
+            console.log("error in first request.post: err: ")
             console.error(err);
             return;
         }
         var parsed = cheerio.load(body);
         if(body == '') {
-            if(Math.random() > .99) console.log("CUNYFIRST may be down.")
-            return false;
+            global.CUNYFIRST_DOWN = true
+            callback("CUNYFIRST may be down")
+            return
         }
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
@@ -151,8 +153,6 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
 getSections = function(inst, session, dept, callback){
     getSectionsWithNum(inst, session, dept, 'G', '0', callback)
 }
-getSections("QNS01","1169","MATH", function(r){console.log(r)})
-
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {

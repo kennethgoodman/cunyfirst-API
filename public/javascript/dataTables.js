@@ -122,9 +122,8 @@ $(document).ready(function() {
         var session = values["sessionCode"]  
         var dataToSend = ["getRMP",inst, rowData["Teacher"], row.index()]      
         if ( row.child.isShown() ) {
-                // This row is already open - close it
+            // This row is already open - close it
             row.child.hide();
-            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info </button>').draw()
             tr.removeClass('shown');
         }
         else if(hiddenRowData[row.index()] != undefined){

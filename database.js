@@ -12,7 +12,7 @@ queryDatabasePerRow = function(query,callback){
 		return;
 	}
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  if (err) console.log("err");
+	  if (err) console.log(err);
 	  
 	  client
 	    .query(query)	//'SELECT * FROM clients_and_their_info')
