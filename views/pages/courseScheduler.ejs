@@ -5,15 +5,14 @@
                 //holds data for query to server, this is public and global
         </script> 
       <% include ../partials/headerCS.ejs %>
-    <!-- Setting the right viewport -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <% include ../partials/nav.ejs %>
         <br>
         <div class="wrap" style="margin:auto;">
             <div style="margin:auto; margin-left:20px; margin-top:80px;">
-                <p id="testing">To add a new class, pick your institution and session. </p><br>
+                <p id="testing">To add a new class, pick your institution and session.</p><br>
                 <div style="margin: auto;">
                     <select id="inst" default="pick an institution and session">
                         <option value="defualt" selected="selected">
@@ -61,7 +60,6 @@
   <!-- Modal -->
   <div class="modal fade" id="confirmDialog" role="dialog">
     <div class="modal-dialog">
-    
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -103,5 +101,52 @@
       </div>
     </div>
   </div>
-  
+</div>
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="userPreferencesDialog" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">User Preferences</h4>
+        </div>
+        <div class="modal-body" id="modelForm">
+          <form>
+              <div>
+                <p>
+                  <label for="DaysInSchool">Days In School Range:</label>
+                   <span class="slider-time">10:00 AM</span> - <span class="slider-time2">4:00 PM</span>
+                  <!--input type="text" id="DaysInSchool" readonly style="border:0; color:#f6931f; font-weight:bold;"--><br>
+                  <div id="DaysInSchoolslider-range" style="width:50%"></div>
+                </p>
+              </div>
+              <br>
+            <p>
+              Which weekend days can you go to school on?
+            </p>
+            <form class="form-inline">
+            <label class="checkbox-inline"><input id="fridayMorning" type="checkbox" value="">Friday Morning/Afternoon (before 3pm)</label>
+            <label class="checkbox-inline"><input id="fridayNight" type="checkbox" value="">Friday Night</label>
+            <label class="checkbox-inline"><input id="saturday" type="checkbox" value="">Saturday</label>
+            <label class="checkbox-inline"><input id="sunday" type="checkbox" value="">Sunday</label>
+            </form>
+            <br>
+            <div id="time-range">
+                <p>Times you are willing to spend in school: <span class="slider-time">10:00 AM</span> - <span class="slider-time2">4:00 PM</span></p><br>
+                <div class="sliders_step1">
+                    <div id="slider-range"></div>
+                </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="backButton">Back</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" id="preferencesConfirm">Confirm</button>           
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

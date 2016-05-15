@@ -1,6 +1,6 @@
 class Section{
-	constructor(class_time, number){
-		this.class_time = class_time
+	constructor(class_times, number){
+		this.class_time = class_times
 		this.number = number
 	}
 	getClassTime(){
@@ -10,10 +10,20 @@ class Section{
 		return this.number
 	}
 	isMorning(){
-		return this.class_time.isMorning()
+		for(var i in this.class_time){
+			if(this.class_time[i].isMorning())
+				return true
+		}
+		return false
 	}
 	overlap(b){
-		return this.class_time.overlap(b.getClassTime())
+		for(var i in this.class_time){
+			for(var j in b.class_time){
+				if( this.class_time[i].overlap(b.class_time[j])){
+					return true
+				}
+			}
+		}
 	}
 	lessThen(b){
 		return this.class_time.lessThen(b.getClassTime())

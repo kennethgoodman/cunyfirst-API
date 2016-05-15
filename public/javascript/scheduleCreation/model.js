@@ -1,18 +1,21 @@
 weekends = ["FRI","SAT","SUN"]
 weekdays = ["MON","TUE","WED","THUR"]
 TimeElapsed = function(first,second){
-
+	first = first.section.class_time[0].startTime
+	second = second.section.class_time[0].endTime
+	return Time.subtraction(second, first)
 }
 TimeBetween = function(first, second){
 
 }
-findSoftScore = function(schedule, debug){
+findSoftScore = function(schedule, debug, creditsTaking){
 	model = { 
 			  "daysOfWeekScoreModifier" 		  	       : -1,
 			  "weekendsScoreModifier"   		  	       : -1,
 			  "morningClassesScoreModifier"     	       : -1,
-			  "teacherScoreModifier"					   : 1,
-			  "late_nights_follow_by_early_morningModifier": -1
+			  "teacherScoreModifier"					   :  1,
+			  "late_nights_follow_by_early_morningModifier": -1,
+			  "length_of_time_schoolModifier"			   : -1, 
 			}
 	schedule.sort()
 	schedule = new ClassesByDay(schedule.getListOfClasses())
@@ -36,8 +39,7 @@ findSoftScore = function(schedule, debug){
 		if(amountOfClassesOnDay > 0){
 			days_of_the_week_count[ day_of_the_week_count ] = amountOfClassesOnDay
 			day_of_the_week_count += 1
-
-			length_of_time_school += TimeElapsed(theClassesOnDay[0], theClassesOnDay[amountOfClassesOnDay - 1])
+			length_of_time_school = Time.addition(length_of_time_school, TimeElapsed(theClassesOnDay.listOfCunyClasses[0], theClassesOnDay.listOfCunyClasses[amountOfClassesOnDay - 1]))
 
 			//if(lastClass)
 
@@ -68,11 +70,12 @@ findSoftScore = function(schedule, debug){
 	}
 
 	//late_nights_follow_by_early_mornings_score = late_nights_follow_by_early_mornings * model['late_nights_follow_by_early_morningModifier']
-	teacherScore *= 									model['teacherScoreModifier']
-	var daysOfWeekScore = (how_many_days - 4) *             model['daysOfWeekScoreModifier']
-	var weekendsScore = how_many_on_weekends     		  * model['weekendsScoreModifier']
-	var morningClassesScore = morningClasses     	      * model['morningClassesScoreModifier']
-	softScore = daysOfWeekScore + weekendsScore + morningClassesScore + morningClassesScore //+ late_nights_follow_by_early_mornings_score
+	var totalTimeInSchoolScore = Time.subtraction(new Time(creditsTaking,0), length_of_time_school)  * model['length_of_time_schoolModifier']
+	teacherScore = 		teacherScore													  *	model['teacherScoreModifier']
+	var daysOfWeekScore = (how_many_days - 4)              								  * model['daysOfWeekScoreModifier']
+	var weekendsScore = how_many_on_weekends     		  								  * model['weekendsScoreModifier']
+	var morningClassesScore = morningClasses     	      								  * model['morningClassesScoreModifier']
+	softScore = daysOfWeekScore + weekendsScore + morningClassesScore + morningClassesScore + totalTimeInSchoolScore//+ late_nights_follow_by_early_mornings_score
 	if(debug){
 		console.log(how_many_days)
 		console.log(daysOfWeekScore)
@@ -97,8 +100,6 @@ hardScoreBreak = function(schedule){
 			}
 			if(thisClass.dept == otherClass.dept && thisClass.number == otherClass.number){
 				console.log("hardScoreBreak, dept == dept and number == number")
-				console.log(thisClass.number)
-				console.log(otherClass.number)
 				return true
 			}
 		}

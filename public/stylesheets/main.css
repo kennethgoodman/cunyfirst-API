@@ -106,7 +106,6 @@ th, td {
 .example{
   margin-bottom : 1.5em;
 }
-input[type=checkbox]:not(old),
 input[type=radio   ]:not(old){
   width     : 2em;
   margin    : 0;

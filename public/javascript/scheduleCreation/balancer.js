@@ -24,7 +24,7 @@ balancer = function(possibleClasses,numberOfElements){
 		if(hardScoreBreak(schedule)){
 			continue
 		}
-		softScore = findSoftScore(schedule,false)
+		softScore = findSoftScore(schedule,false,numberOfElements*3)
 		schedule.softScore = softScore
 		if(topNSchedules.length < 3){
 			topNSchedules.push(schedule)

@@ -5,15 +5,17 @@ class ClassesByDay{
 	constructor(cunyclasses){
 		this.listOfClasses = [ [], [], [], [], [], [], [] ]
 		for(var c in cunyclasses){
-			daysOfWeek = cunyclasses[c].daysOfWeek
-			for(var d in daysOfWeek){
-				var o = JSON.parse(JSON.stringify(cunyclasses[c]))
-				var copied = new CunyClass(o["dept"],o["number"],o["daysOfWeek"],new Section(
-										new Class_Time( new Time(o["section"]["class_time"]["startTime"]["hour"], o["section"]["class_time"]["startTime"]["minute"]), 
-														new Time(o["section"]["class_time"]["endTime"]["hour"]  , o["section"]["class_time"]["endTime"]["minute"])),
-										   o["section"]["number"]),o["teacher"],o["teacherScore"])
-				copied.daysOfWeek = [daysOfWeek[d]]
-				this.listOfClasses[days[daysOfWeek[d]]].push(copied)
+			var o = JSON.parse(JSON.stringify(cunyclasses[c]))
+			for(var i in o["section"]["class_time"]){
+				var dayOfWeek = o["section"]["class_time"][i]["day"]
+				var class_times = []
+				var startTime = new Time(o["section"]["class_time"][i]["startTime"]["hour"], o["section"]["class_time"][i]["startTime"]["minute"])
+				var endTime   = new Time(o["section"]["class_time"][i]["endTime"]["hour"]  , o["section"]["class_time"][i]["endTime"]["minute"])
+				var day       = o["section"]["class_time"][i]["day"]
+				class_times.push(new Class_Time(startTime, endTime, day))
+				var newSection = new Section(class_times, o["section"]["number"])
+				var copied = new CunyClass(o["dept"],o["number"],dayOfWeek,newSection,o["teacher"],o["teacherScore"])
+				this.listOfClasses[days[dayOfWeek]].push(copied)
 			}
 		}
 		for(var c in this.listOfClasses){

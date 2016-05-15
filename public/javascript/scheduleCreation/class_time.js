@@ -1,7 +1,8 @@
 class Class_Time{
-	constructor(startTime, endTime){
+	constructor(startTime, endTime, day){
 		this.startTime = startTime
 		this.endTime = endTime
+		this.day = day
 	}
 	getStartTime(){
 		return this.startTime
@@ -13,7 +14,9 @@ class Class_Time{
 		return this.getStartTime().lessThenOrEqual(new Time(9,15))
 	}
 	overlap(b){
-		if(this.getStartTime().lessThenOrEqual(b.getStartTime()) && b.getStartTime().lessThenOrEqual(this.getEndTime()))
+		if(this.day != b.day)
+			return false
+		else if(this.getStartTime().lessThenOrEqual(b.getStartTime()) && b.getStartTime().lessThenOrEqual(this.getEndTime()))
 			return true
 		else if(b.getStartTime().lessThenOrEqual(this.getStartTime()) && this.getStartTime().lessThenOrEqual(b.getEndTime()))
 			return true
