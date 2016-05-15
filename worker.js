@@ -23,24 +23,23 @@ Array.prototype.remove = function(from, to) {
   return this.push.apply(this, rest);
 };
 var classesArray = [];
-getSections = function(inst, session, dept, callback){
-    getSectionsWithNum(inst, session, dept, 'G', '0', callback)
-}
 getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback){
-	request.post(options, function(err, res, body) {
-        if(res.caseless.dict.location == 'http://portaldown.cuny.edu/cunyfirst'){
+    request.post(options, function(err, res, body) {
+        if(res == undefined || res.caseless.dict.location == 'http://portaldown.cuny.edu/cunyfirst'){
             global.CUNYFIRST_DOWN = true
             callback("CUNYFIRST may be down")
             return
         }
         if(err) {
+            global.CUNYFIRST_DOWN = true
+            callback("CUNYFIRST may be down")
             console.error(err);
             return;
         }
         var parsed = cheerio.load(body);
         if(body == '') {
-        	if(Math.random() > .99) console.log("CUNYFIRST may be down.")
-        	return false;
+            if(Math.random() > .99) console.log("CUNYFIRST may be down.")
+            return false;
         }
         var key = parsed('form[name=\'win0\']>input[name=\'ICSID\']').val();
         var submit_options = {
@@ -50,101 +49,110 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
             jar: options.jar
         };
         request.post(submit_options, function(err,res,body){
-        	request.post(submit_options, function(err,res,body){
-        		var struct = {}
-        		var className = dept;
-        		try{
-        			var classOrder = [];
-	        		x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
-				        var count = 0
-				        	for(var i in td){
-					            var data = td[i].split(/\n/);
-					            var newData = []
-					            for(var t in data){
-					                if(data[t] != ""){
-					                    newData.push(data[t])
-					                }
-					            }
-					            try{
-						            if(newData[0].indexOf(className) != -1){
-						                if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
-						                    //var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
+            request.post(submit_options, function(err,res,body){
+                var struct = {}
+                var className = dept;
+                try{
+                    var classOrder = [];
+                    x(body, ['.PABACKGROUNDINVISIBLEWBO'])(function(err,td){ //table data
+                        var count = 0
+                            for(var i in td){
+                                var data = td[i].split(/\n/);
+                                var newData = []
+                                for(var t in data){
+                                    if(data[t] != ""){
+                                        newData.push(data[t])
+                                    }
+                                }
+                                try{
+                                    if(newData[0].indexOf(className) != -1){
+                                        if(count >= 2){ //so we dont get the first two results which have duplicate hard to parse data
+                                            //var name = newData[0].substring(7,newData[0].indexOf("-") - 1)
                                             //console.log(newData[0])
-						                    var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
+                                            var name = newData[0].substring(2 + className.length, newData[0].indexOf("-")-1);
                                             //var name = newData[0].substring(0, newData[0].indexOf("-")-1);
-						                    var name = name.trim()                            
+                                            var name = name.trim()                            
                                             classOrder.push(name);
 
-						                    //console.log(newData)
-						                    var nbr = newData[8]
-						                    var class_nbr = newData[0].substring(2 + className.length, 2+className.length + newData[0].indexOf("-"))
-						                    newData.remove(0)
-						                    var d = {}
-						                    d[nbr] = {}
-						                    d[nbr]["Status"] = "0"
-						                    try{
-						                        for(var t = 0; t < newData.length; t++){  
-						                            if(newData[t] == 'Status'){
-						                                while(newData[t] != "Class"){
-						                                    t++
-						                                    if(newData[t].indexOf("Topic:" == 0)){
-						                                        d[nbr]["Topic"] = newData[t].substring(6)
-						                                    }
-						                                    if(t > newData.length-2){
-						                                        break;
-						                                    }
-						                                }
-						                                if(t > newData.length-2){
-						                                        break;
-						                                    }
-						                                nbr = newData[t+7]
-						                                d[nbr] = {}
-						                                classOrder.push(name);
-						                                d[nbr]["Status"] = "0"
-						                            }
-						                            d[nbr][newData[t]] = newData[t+7];
-						            
-						                        }
-						                    } catch(err){
-						                        //console.log(err)
-						                    }
-						                    struct[name] = d
-						                    //console.log(struct[name])
-						                }
-						                count += 1
-						            }
-						        } catch(err){
-						        	console.log(err);
-						        }
-				        	}
-				    	
-				    })
-					var temp = [];
-				    var p = cheerio.load(body)
-				    p('.SSSIMAGECENTER').each(function(err,open){
-				        temp.push(open.attribs.alt)
-				    })
-				    //console.log(classOrder)
-				    //console.log(struct);
-				    var counter = 0;
-				    var last = "n/a"
-				    for(var classNbr in classOrder){
-				    	if(classOrder[classNbr] == last) continue;
-				    	last = classOrder[classNbr]
-				    	for(var sectionNbr in struct[classOrder[classNbr]]){
-				    		struct[classOrder[classNbr]][sectionNbr]["Status"] = temp[counter++];
-				    	}
-				    }
-				} catch(err){
-				    console.log(err)
-				}
-				//console.log(struct)
-				//console.log(inst + ": " + session + " " + dept + " got class_nbr")
-                callback(struct);
-        	})
+                                            //console.log(newData)
+                                            var nbr = newData[8]
+                                            var class_nbr = newData[0].substring(2 + className.length, 2+className.length + newData[0].indexOf("-"))
+                                            newData.remove(0)
+                                            var d = {}
+                                            d[nbr] = {}
+                                            d[nbr]["Status"] = "0"
+                                            try{
+                                                for(var t = 0; t < newData.length; t++){  
+                                                    if(newData[t] == 'Status'){
+                                                        while(newData[t] != "Class"){
+                                                            t++
+                                                            if(newData[t].indexOf("Topic:" == 0)){
+                                                                d[nbr]["Topic"] = newData[t].substring(6)
+                                                            }
+                                                            if(t > newData.length-2){
+                                                                break;
+                                                            }
+                                                        }
+                                                        if(t > newData.length-2){
+                                                                break;
+                                                            }
+                                                        nbr = newData[t+7]
+                                                        d[nbr] = {}
+                                                        classOrder.push(name);
+                                                        d[nbr]["Status"] = "0"
+                                                    }
+                                                    d[nbr][newData[t]] = newData[t+7];
+                                    
+                                                }
+                                            } catch(err){
+                                                //console.log(err)
+                                            }
+                                            struct[name] = d
+                                            //console.log(struct[name])
+                                        }
+                                        count += 1
+                                    }
+                                } catch(err){
+                                    console.log(err);
+                                }
+                            }
+                        
+                    })
+                    var temp = [];
+                    var p = cheerio.load(body)
+                    p('.SSSIMAGECENTER').each(function(err,open){
+                        temp.push(open.attribs.alt)
+                    })
+                    //console.log(classOrder)
+                    //console.log(struct);
+                    var counter = 0;
+                    var last = "n/a"
+                    for(var classNbr in classOrder){
+                        if(classOrder[classNbr] == last) continue;
+                        last = classOrder[classNbr]
+                        for(var sectionNbr in struct[classOrder[classNbr]]){
+                            struct[classOrder[classNbr]][sectionNbr]["Status"] = temp[counter++];
+                        }
+                    }
+                } catch(err){
+                    console.log(err)
+                }
+                if(Object.keys(struct).length === 0 && struct.constructor === Object){
+                    global.CUNYFIRST_DOWN = true
+                    callback("CUNYFIRST may be down")
+                }
+                else{
+                  callback(struct);  
+                }
+            })
         })
     })
 };
+getSections = function(inst, session, dept, callback){
+    getSectionsWithNum(inst, session, dept, 'G', '0', callback)
+}
+getSections("QNS01","1169","MATH", function(r){console.log(r)})
+
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
