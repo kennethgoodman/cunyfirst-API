@@ -97,7 +97,7 @@ module.exports = function(wss){
 	    			})
 					break;
 				case "getClassesForUser": 
-				    var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and provider=$2"
+				    var q = "SELECT inst, session, dept, classnbr, section from customer_info where phone_number=$1 and provider=$2 and alerted = false"
 	              	sendQuery(q,[data[1],data[2]],function(result){
 	                	var temp = ["classesForUser"];
 	                	result = result.rows
@@ -170,12 +170,39 @@ module.exports = function(wss){
 					break
 				case "submit": 
 		        	checkForEmptyData(data, ws,function(data){
+		        		var phone_num = data[data.length-4]
+		                var carrier = data[data.length-3]
+		                var email = data[data.length-2]
+		                var sendWith = data[data.length -1]
+		        		sendConfirmationText = function(phone_num, carrier, tempText){
+		        			var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and provider=$2 and alerted = false"
+	              			sendQuery(q, [phone_num,carrier],function(result){
+	              				result = result.rows
+	              				for(var row in result){
+	              					row = result[row]
+	              					var dept = row["dept"],classnbr = row["classnbr"], section = row["section"]
+	              					if(dept == undefined && classnbr == undefined && section == undefined)
+	              						continue
+	              					else{
+	              						if(dept == undefined)
+	              							dept = "NA"
+	              						if(classnbr == undefined)
+	              							classnbr = "NA"
+	              						if(section == undefined)
+	              							section = "NA"
+	              						tempText += row["dept"] +" - "+ row["classnbr"] +": "+ row["section"] +",\n"
+	              					}
+	              				}
+	              				tempText = tempText.substring(0, tempText.lastIndexOf(","))
+	              				sendData(ws,["sendNotification", tempText])
+                        		send_confirmation(phone_num, carrier, tempText)
+	              			})
+                    		
+                    	}
 		                var sendFunction = function(data){
-		                  var texted = "false";
-		                  var query = "INSERT INTO customer_info VALUES (";
-		                  var params = [];
-		                  var phone_num = data[data.length-4]
-		                  var carrier = data[data.length-3]
+			                var texted = "false";
+			                var query = "INSERT INTO customer_info VALUES (";
+			                var params = [];
 		                	for(var i = 1; i < data.length-4; i++){ //minus two becuase, last options are contactHow, email
 			                    query += "$"+((i-1)*9 + 1)
 			                    for(var j=2; j <= 9; j++){
@@ -194,8 +221,8 @@ module.exports = function(wss){
 		                		params.push(data[data.length-2]); //email
 		                		params.push(data[data.length-1]); //sendWith
 		                  	}
-		                  //console.log(query)
-		                  console.log("inserting into table");
+		                  
+		                  	console.log("inserting into table");
 		                 	sendQuery(query, params, function(result){
 			                    if(result.hasOwnProperty("Error")){
 			                      //TODO: test to find all possible errors
@@ -211,74 +238,51 @@ module.exports = function(wss){
 				                    }
 			                    }
 			                    else{
-		                        	var temp = "Your have succesfully added "
-	                        		if(data.length == 6){
-	                        			temp += data[1][1] +" - "+ data[1][2] +": "+ data[1][3]
-	                        		}
-	                        		else{
-	                          			for(var i = 1; i < data.length-4; i++){
-	                            			temp += data[i][1] + " - "+ data[i][2] + ": "+ data[i][3]+ ",\n";
-	                          			}
-	                          			temp += temp.substring(0, temp.length - 3)
-	                        		}
-	                        		sendData(ws,["sendNotification", temp])
-		                        	send_confirmation(phone_num, carrier, temp)
-			                      	//sendData(ws, ["Success", "Your classes have succesfully been entered"])
-			                      	console.log("Success adding query");
+			                    	sendConfirmationText(phone_num, carrier,"Classes you are currently signed up for: \n")
 			                    }
 		                	})
 						};
-						sendFunction(data);
-						/*
-		                var q = "SELECT * FROM users WHERE user_id = $1";
-		                //console.log(q)
-		                sendQuery(q, [data[1][7]], function(result){
-		                  	var phnNbr = data[1][5];
-		                  	var provider = data[1][8];
-		                  	var email = data[data.length-2];
-		                  	var sendWith = data[data.length-1];
-		                  	var user_id = data[1][7];
-		                  	sendFunction(data);
-		                  	if(result.rowCount == 0){
-		                    	var q = "INSERT INTO users VALUES($1,$2,$3,$4,$5);";
-		                    	sendQuery(q, [user_id,data[1][0],phnNbr,provider,email],function(result){                    
-			                      	if(result.hasOwnProperty("Error")){
-			                        	sendData(ws, ["err","An error occured, please contact support"])
-			                          	console.log("Unknown error on query");
-			                          	console.log(result.code);
-			                          	console.log(result)
-			                          	return;
-			                      	}
-			                      	else {
-			                        	sendFunction(data);
-			                      	}                    
-		                    	})
-		                  	} else{
-			                    var q = "UPDATE users SET phone_number = $1, provider = $2, email = $3 WHERE phone_number = $1 and email = $3";
-			                    //console.log(result)
-			                    if(phnNbr == "N/A"){
-			                      phnNbr = result.rows[0]["phone_number"];
-			                    }
-			                    if(provider == "default"){
-			                      provider = result.rows[0]["provider"];
-			                    }
-			                    if(email == "N/A"){
-			                      email = result.rows[0]["email"];
-			                    }
-			                    console.log("inserting user");
-			                    sendQuery(q, [phnNbr,provider,email,user_id], function(result){
-			                      if(result.hasOwnProperty("Error")){
-			                          sendData(ws, ["err","An error occured, please contact support"])
-			                          console.log("Unknown error on query");
-			                          return;
-			                      }
-			                      else {
-			                        sendFunction(data);
-			                      }
-			                      //console.log(result)
-			                    })
-			                }
-			            });*/
+						var q = "SELECT inst, session, dept, classnbr, section, alerted from customer_info where phone_number=$1 and provider=$2;"
+	              		sendQuery(q,[phone_num,carrier],function(result){
+	              			var updateQuery = "UPDATE customer_info SET alerted = false where inst = $1 and session = $2 and dept = $3 and classnbr = $4 and section = $5 and alerted = true and phone_number = $6 and provider = $7;"
+	              			newData = []
+	              			newData.push(data[0])
+	              			result = result.rows
+	              			for(var i = 1; i < data.length-4; i++){ // if the row is in the DB already
+	              				var inst = data[i][0]
+	              				var session = data[i][4]
+	              				var dept = data[i][1]
+	              				var classnbr =  data[i][2]
+	              				var section = data[i][3]
+	              				var found = false
+	              				for(var row in result){
+	              					row = result[row]
+		              				if(row["inst"] == inst && row["session"] == session && row["dept"] == dept &&  row["classnbr"] == classnbr && row["section"] == section){
+		              					if(row["alerted"] == true){ //if we have texted them, change texted to true
+		              						sendQuery(updateQuery, [inst, session, dept, classnbr, section, phone_num, carrier], function(){
+
+		              						})
+		              					}
+		              					found = true	
+		              				}
+		       						
+	              				}
+	              				if(found == false){
+	              					//if it isn't there, then we want to add it 
+	              					newData.push(data[i])
+	              				}
+	              			}
+	              			newData.push(phone_num)
+	              			newData.push(carrier)
+	              			newData.push(email)
+	              			newData.push(sendWith)
+	              			if(newData.length == 5){
+		                  		sendConfirmationText(phone_num, carrier, "Classes you are currently signed up for: \n")
+		                  	}
+		                  	else{
+		                  		sendFunction(newData);
+		                  	}
+	              		})
 					})
 					break;
 			}

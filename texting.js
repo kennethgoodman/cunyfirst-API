@@ -56,7 +56,7 @@ send_email = function(recepient, provider, body){
 		});
 	}
 }
-send_confirmation = function(recepient, provider, body){
+send_confirmation_in_batches = function(recepient, provider, body, subject){
 	if(provider != 'other'){
 		var to = recepient;
 		if(provider != "@"){
@@ -79,6 +79,18 @@ send_confirmation = function(recepient, provider, body){
 		c.Messages.send({text: body, phones:"+1"+recepient}, function(err, res){
     		console.log('Messages.send()', err, res);
 		});
+	}
+}
+send_confirmation = function(recepient, provider, body){
+	body_batches = body.match(/(.|[\r\n]){1,120}/g); //batch it in sizes of 130
+	for(var batch in body_batches){
+		if(typeof body_batches[batch] !== "string")
+			continue 
+		var introText = "Text " + (batch+1) + " of " + body_batches.length + "\n"
+		if(batch == 0)
+			send_confirmation_in_batches(recepient, provider, introText + body_batches[batch], "Confirmation")
+		else
+			send_confirmation_in_batches(recepient, provider, body_batches[batch], introText)
 	}
 }
 var send_text= function(number, s, body){
