@@ -45,22 +45,16 @@ ws.onmessage = function (event) {
         console.log(data)
         var makeTableHTML_ForAlreadySignedUp = function(myArray){
             var result = "You are already signed to be alerted for these classes: <br><br><table border=1>";
-            result += "<thead><tr><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th><th>Texted Yet</th><tr><thead>";
+            result += "<thead><tr><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th></tr><thead>";
             for(var i=0; i<myArray.length; i++) {
                 //result += "<tr><td><input type='button' class=\"btn btn-danger removeUserClass\" value='Remove'></td>"
-                result += "<td>"+myArray[i]["inst"]+"</td>" + "<td>"+myArray[i]["session"]+"</td>" 
-                          + "<td>"+myArray[i]["dept"]+"</td>" + "<td>"+myArray[i]["classnbr"]+"</td>" + "<td>"+myArray[i]["section"]+"</td>";
-                if(myArray[i]["alerted"] == false){
-                  result += "<td>No</td>"
-                }
-                else if(myArray[i]["alerted"] == true){
-                  result += "<td>Yes</td>"
-                }
-                else{
-                  result += "<td>Don't Have This Data</td>"
-                }
-                result += "</tr>";
+                result += "<tr><td>"+myArray[i]["inst"]+"</td>" + "<td>"+myArray[i]["session"]+"</td>" 
+                          + "<td>"+myArray[i]["dept"]+"</td>" + "<td>"+myArray[i]["classnbr"]+"</td>" + "<td>"+myArray[i]["section"]+"</td></tr>";
             }
+            if(myArray.length == 0){
+              result += "<tr><td colspan=\"5\" style=\"text-align:center\">You are not signed up for any classes</td></td>"
+            }
+            result += "<tfoot><tr><th>Institution</th><th>Session</th><th>Department</th><th>Class Number</th><th>Class Section</th></tr><tfoot>";
             result += "</table>";
 
             return result;
@@ -188,7 +182,6 @@ ws.onmessage = function (event) {
         t.draw()
       }
       else if(commandFromServer == "sendNotification"){
-        alert(data[1]);
         showNotification(data[1],"http://icons.iconarchive.com/icons/icons8/android/256/Very-Basic-Checkmark-icon.png","/");
         location.reload()
       }
