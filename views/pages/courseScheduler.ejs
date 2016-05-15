@@ -1,60 +1,107 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <% include ../partials/header.ejs %>
-  <% include ../partials/headerCS.ejs %>
-<!-- Setting the right viewport -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-</head>
-<body>
-    <% include ../partials/nav.ejs %>
-<br>
- <div class="wrap" style="margin:auto;">
-        <div style="margin:auto; margin-left:20px; margin-top:80px;">
-            <p id="testing">To add a new class, pick your institution and session. </p><br>
-            <div style="margin: auto;">
-                <select id="inst" default="pick an institution and session">
-                    <option value="defualt" selected="selected">
-                        Pick an institution
-                    </option>
-                </select>
+    <head>
+        <script> queryArray = []; schedulerStruct = {}
+                //holds data for query to server, this is public and global
+        </script> 
+      <% include ../partials/headerCS.ejs %>
+    <!-- Setting the right viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    </head>
+    <body>
+        <% include ../partials/nav.ejs %>
+        <br>
+        <div class="wrap" style="margin:auto;">
+            <div style="margin:auto; margin-left:20px; margin-top:80px;">
+                <p id="testing">To add a new class, pick your institution and session. </p><br>
+                <div style="margin: auto;">
+                    <select id="inst" default="pick an institution and session">
+                        <option value="defualt" selected="selected">
+                            Pick an institution
+                        </option>
+                    </select>
+                </div>
             </div>
-            <p>When you finished filling out the forms, select the classes with your mouse, and click "Get Class!"</p><br>
+            <div class="getScheduleButton">
+                <button type="button" class="btn btn-primary" id="getSchedule" style="margin-bottom: 12px;">Get Schedule</button>
+            </div>
         </div>
-    </div>
-    <div>
-    </div>
         <div class="tableHolder">
             <table id="dataTables" cellspacing="0">
                 <thead>
                     <tr>
-                        <th> </th><th>Dept</th>
+                        <th>Rate My Professor</th><th>Dept</th>
                         <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                        <th>Days and Time</th><th>Room</th>
+                        <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th> </th><th>Dept</th>
+                        <th>Rate My Professor</th><th>Dept</th>
                         <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                        <th>Days and Time</th><th>Room</th>
+                        <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
-    </div>
-    <div style="margin: auto;text-align: center">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- leaderboard ad -->
-        <ins class="adsbygoogle"
-             style="display:inline-block;width:728px;height:90px;"
-             data-ad-client="ca-pub-6625985610418162"
-             data-ad-slot="9430096730"></ins>
-        <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-</body>
+        <div style="margin: auto;text-align: center">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- leaderboard ad -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px;"
+                 data-ad-client="ca-pub-6625985610418162"
+                 data-ad-slot="9430096730"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </body>
 </html>
-<script>
-</script>
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="confirmDialog" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Confirmation On Classes</h4>
+        </div>
+        <div class="modal-body" id="groupsTable">
+            <div class="tableHolder">
+                <table id="groupTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Dept</th>
+                            <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                            <th>Days and Time</th><th>Group</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Dept</th>
+                            <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                            <th>Days and Time</th><th>Group</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="modal-body" id="groupCount" style="text-align:center" ng-app="countApp">
+            <form name="inputForm" novalidate>
+                <input type="text" style="width: 65%;" class="groupCount" id="groupCountId" name="countModel" ng-model="countModel" placeholder="How many classes do you want to take, examples: 5, 7, 5-7" ng-pattern="/^([1-9]|1[0-4])\s*$|^([1-9]|1[0-5])\s?-{1}\s?([1-9]|1[0-4]){1}\s*$/">
+            <div ng-messages="inputForm.countModel.$error">
+                <div ng-message="pattern">Must be a number between 1 and 14 or a number followed by a dash and another number, example: "5-7"</div>
+            </div><br>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" id="getScheduleConfirm">Confirm</button>           
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>

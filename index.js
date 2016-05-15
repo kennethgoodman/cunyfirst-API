@@ -80,6 +80,9 @@ app.get('/faq', function(request,response){
 app.get('/donate', function(request,response){
   response.render('pages/donate')
 })
+app.get('/courseScheduler', function(request, response){
+  response.render('pages/courseScheduler')
+})
 app.get('/db', function(request, response) { //NEED TO PROTECT THIS
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM customer_info', function(err, result) {

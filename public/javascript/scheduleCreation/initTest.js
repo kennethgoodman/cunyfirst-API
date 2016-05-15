@@ -59,6 +59,5 @@
 	]
 	listOfClasses = [ Math201Classes, Math231Classes, MathElectives, RandomENGLElectives, AnthroCOREs ]
 	//console.log(listOfClasses)
-
 	b = balancer(listOfClasses, 4)
 	console.log(b)

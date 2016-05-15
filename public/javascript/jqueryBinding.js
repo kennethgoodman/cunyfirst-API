@@ -1,3 +1,4 @@
+queryArray = []
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 }
@@ -47,7 +48,8 @@ function makeTableHTML(myArray,queryArray) {
     return result;
 }
 $(document).ready(function(){
-    queryArray = queryArray
+    if(queryArray != undefined)
+        queryArray = queryArray
     $('table').on('click', 'input[type="button"]', function(e){
         $(this).closest('tr').remove()
     })
@@ -71,7 +73,7 @@ $(document).ready(function(){
                 queryArray.push("NA")
                 queryArray.push(contactHow)
                 //console.log(queryArray)
-                var whatWillHappen= "you have chosen to be alerted as soon as these classes open: <br><br>"
+                var whatWillHappen = "you have chosen to be alerted as soon as these classes open: <br><br>"
                 whatWillHappen += makeTableHTML(infoArray,queryArray)//.slice(0, -1))
                 $("#confirmInfo").html( whatWillHappen )
                 if(queryArray.length <= 5){

@@ -91,10 +91,16 @@ hardScoreBreak = function(schedule){
 		var thisClass = listOfClasses[i]
 		for(var j = i + 1; j < len; j++){
 			var otherClass = listOfClasses[j]
-			if(thisClass.overlap(otherClass))
+			if(thisClass.overlap(otherClass)){
+				console.log("hardScoreBreak, classes overlap each other")
 				return true
-			if(thisClass.dept == otherClass.dept && this.number == otherClass.number)
+			}
+			if(thisClass.dept == otherClass.dept && thisClass.number == otherClass.number){
+				console.log("hardScoreBreak, dept == dept and number == number")
+				console.log(thisClass.number)
+				console.log(otherClass.number)
 				return true
+			}
 		}
 	}
 	return false

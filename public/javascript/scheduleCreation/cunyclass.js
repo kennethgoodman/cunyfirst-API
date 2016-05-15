@@ -2,12 +2,15 @@ weekends = ["FRI","SAT","SUN"]
 weekdays = ["MON","TUE","WED","THUR"]
 days = { "SUN":0, "MON":1, "TUE":2, "WED":3,"THUR":4,"FRI":5, "SAT":6 }
 class CunyClass{
-	constructor(dept, num,daysOfWeek, section,teacher, teacherScore){
+	constructor(dept, num,daysOfWeek, section, teacher, teacherScore){
 		this.dept = dept
 		this.number = num
 		this.daysOfWeek = daysOfWeek
 		this.section = section
 		this.teacher = teacher
+		if(this.teacher === undefined){
+			this.teacher = ""
+		}
 		this.teacherScore = teacherScore
 	}
 	overlap(other){
@@ -49,5 +52,6 @@ CunyClass.prototype.equals =function(other){
 	return this.dept == other.dept && this.number == other.number && this.section == other.section
 }
 CunyClass.prototype.toString =function(){
-	return "Dept: " + dept.toString() +"\n" + "number: " + number.toString() +"\n" + "daysOfWeek: " + daysOfWeek.toString() +"\n" + "section: " + section.toString() +"\n"
+	return ("Dept: " + this.dept.toString() +"\n" + "number: " + this.number.toString() +"\n" + "daysOfWeek: " + this.daysOfWeek.toString() +"\n" 
+			+ "section: " + this.section.toString() +"\n" + "teacher: " + this.teacher.toString())
 }

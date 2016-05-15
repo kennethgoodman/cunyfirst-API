@@ -1,11 +1,9 @@
 detCounter = {}
 hiddenRowData = {}
 rowsLookedAt = {}
-
 var setAllChildrenWithDepartment = function (department){
     var table = $('#dataTables').DataTable();
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
-    //console.log(matching)
     matching.every( function () {
         table.cell(this, 7).data("checking CUNYFirst")
     } );  
@@ -59,11 +57,7 @@ function format ( data ) {
 }
 $(document).ready(function() {
     var table = $('#dataTables').DataTable({
-        dom: "frtip",
-    	select: {
-    		style: "multi",
-    		className: 'row-selected selected'
-    	},
+        dom: "ftip",
         "columns": [
             {
                 "className":      'details-control',
@@ -81,25 +75,42 @@ $(document).ready(function() {
                 data: 'Status',
                 className: "details-contro",
                 defaultContent: '<button type=\"button\" class=\"btn\"> update </button>'
+            },
+            {
+                data : 'Group',
+                className : 'group-control',
+                defaultContent: '<br><input type="number" style="width: 65%;" name="quantity" min="1" max="12" class="groupInput"><br><p style="display:none" id="fadingMessage">Accepting Only values 1-12</p><br>',
+                "orderDataType": "dom-text-numeric",
             }
         ],
         "order": [[2, 'asc']],
-    	responsive: true,
-    	fixedHeader: true,
-    	"deferRender": true, 
+        responsive: true,
+        fixedHeader: true,
+        "deferRender": true, 
         searching: true,
+    });
+    var groupTable = $('#groupTable').DataTable({
+        dom: "frtip",
+        "columns": [
+            { "data" : "Dept"},
+            { "data" : "Class nbr" },
+            { "data" : "Class Section" },
+            { "data" : "Teacher" },
+            { "data" : "Days And Time" },
+            { "data" : "Group"},
+        ],
+        "order": [[5, 'asc']],
+        responsive: true,
     });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session"); 
     $('#dataTables tbody').on('click', 'td.details-contro', function () { //open/closed
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var department = row.data()['Dept']
-        if (detCounter[department] != undefined ) return
+        if (detCounter[department] != undefined ) return;
         else{
             detCounter[department]= "a string"
-            //console.log('detCounter[department] is now ' +detCounter[department])
             setAllChildrenWithDepartment(department)
-            tr.toggleClass('selected'); //clicking info doesn't select row 
             var rowData = row.data()
             var e = document.getElementById("inst");
             values = JSON.parse(e.options[e.selectedIndex].value)
@@ -115,33 +126,25 @@ $(document).ready(function() {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
-
         var e = document.getElementById("inst");
         values = JSON.parse(e.options[e.selectedIndex].value)
         var inst = values["schoolCode"]
         var session = values["sessionCode"]  
-        var dataToSend = ["getRMP",inst, rowData["Teacher"], row.index()]      
-        if ( row.child.isShown() ) {
-                // This row is already open - close it
+
+        var dataToSend = ["getRMP", inst, rowData["Teacher"], row.index()]      
+        if ( row.child.isShown() ) { // This row is already open - close it
             row.child.hide();
-            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info </button>').draw()
             tr.removeClass('shown');
         }
         else if(hiddenRowData[row.index()] != undefined){
-            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
             row.child( format(hiddenRowData[row.index()]) ).show()
             tr.addClass('shown');
-            tr.toggleClass('selected'); //clicking info doesn't select row
         }
         else{
             row.child(blank).show()
-            //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
-            //row.data('data')
-            //$("#ajax-loader").show();
             tr.addClass('shown');
             ws.send(JSON.stringify(dataToSend))
             rowsLookedAt[row.index()] = true
-            tr.toggleClass('selected'); //clicking info doesn't select row   
         }
     }); 
 });

@@ -60,7 +60,7 @@ userInfoApp.controller('userInputControl', function($scope){
     return false
   }*/
 });
-
+var countApp = angular.module('countApp', ['ngMessages']);
 /*
 var classInfo = angular.module('classInfo', ['ngMessages']);
 classInfo.controller('classInfoControl', function($scope){
