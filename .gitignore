@@ -4,5 +4,3 @@ Dockerfile
 docker-compose.yml
 TODO.txt
 .DS_Store
-public/.DS_Store
-views/.DS_Store
