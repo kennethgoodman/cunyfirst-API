@@ -90,7 +90,7 @@ $(document).ready(function() {
         searching: true,
     });
     var groupTable = $('#groupTable').DataTable({
-        dom: "frtip",
+        dom: "rtip",
         "columns": [
             { "data" : "Dept"},
             { "data" : "Class nbr" },
