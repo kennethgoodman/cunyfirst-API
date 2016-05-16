@@ -1,5 +1,10 @@
 var logger = require('tracer').console({
-                  format : [ "<{{title}}> {{file}}:{{line}}: {{message}}", {error: "<{{title}}> {{file}}:{{line}}: {{message}} \nCall Stack: {{stack}}"}],
+                  format : [ "<{{title}}> {{file}}:{{line}}: {{message}}", 
+                  		{
+                  			error: "<{{title}}> {{file}}:{{line}}: {{message}} \nCall Stack: {{stack}}",
+                  			debug: "{{timestamp}} <{{title}}> {{file}}:{{line}}: {{message}}",
+                  			dateformat : " h:MM:ss TT"
+                  		}],
                   preprocess: function(data){ data.title = data.title.toUpperCase()}
               })
 module.exports = function(wss){
@@ -70,8 +75,10 @@ module.exports = function(wss){
 					break
 				case "get_classes":
 					var a = ["classes"]
-					getClasses([data[1],data[2]],function(data){
+					logger.debug("before getClassesCalled")
+					getClassesGlobal([data[1],data[2]],function(data){
 						a.push(data)
+						logger.debug("after data is received and being sent")
 						sendData(ws,a)
 					})
 					break

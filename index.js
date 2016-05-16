@@ -20,7 +20,7 @@ var logger = require('tracer').console({
                   format : [ "<{{title}}> {{file}}:{{line}}: {{message}}", {error: "<{{title}}> {{file}}:{{line}}: {{message}} \nCall Stack: {{stack}}"}],
                   preprocess: function(data){ data.title = data.title.toUpperCase()}
               })
-//global.logger = logger
+global.logger = logger
 /***************************************************************************************/
 
 
