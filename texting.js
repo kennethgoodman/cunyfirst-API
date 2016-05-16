@@ -84,13 +84,14 @@ send_confirmation_in_batches = function(recepient, provider, body, subject){
 send_confirmation = function(recepient, provider, body){
 	body_batches = body.match(/(.|[\r\n]){1,120}/g); //batch it in sizes of 130
 	for(var batch in body_batches){
+		var batchid = parseInt(batch) + 1
 		if(typeof body_batches[batch] !== "string")
 			continue 
-		var introText = "Text " + (batch+1) + " of " + body_batches.length + "\n"
+		var introText = "Text " + batchid + " of " + body_batches.length + "\n"
 		if(batch == 0)
 			send_confirmation_in_batches(recepient, provider, introText + body_batches[batch], "Confirmation")
 		else
-			send_confirmation_in_batches(recepient, provider, body_batches[batch], introText)
+			send_confirmation_in_batches(recepient, provider, introText + body_batches[batch], introText)
 	}
 }
 var send_text= function(number, s, body){
