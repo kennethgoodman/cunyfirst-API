@@ -46,13 +46,13 @@ send_email = function(recepient, provider, body){
 		}
 		sendgrid.send(payload, function(err, json) {
 		  if (err) { console.error(err); }
-		  console.log(JSON.stringify(json) + " : " + to + ": " + body);
+		  logger.info(JSON.stringify(json) + " : " + to + ": " + body);
 		});
 	}
 	else{
 		var c = new TMClient('yigalsaperstein', 'vL88ayn2N3OdRGWYy3yytqrrn0Znh9');
 		c.Messages.send({text: body, phones:"+1"+recepient}, function(err, res){
-    		console.log('Messages.send()', err, res);
+    		logger.info('Messages.send()', err, res);
 		});
 	}
 }
@@ -96,8 +96,7 @@ send_confirmation = function(recepient, provider, body){
 }
 var send_text= function(number, s, body){
 	text.send(number, body, 'us', function(err){
-		console.log('error in texting')
-		console.log(err)
+		logger.error('error in texting\nerror: %j', err)
 	})
 }
 //send_email('5164046348','Verizon', 'Test');
@@ -107,16 +106,16 @@ send_alert = function(user_id,body){
 		var sendwith = row.sendwith
 		if(sendwith == 'text'){
 			send_email(row.phone_number, row.provider, body)
-			console.log("SENT: " + row.user_id +": " + row.phone_number + " "+ body + " " + sendwith)
+			logger.info("SENT: " + row.user_id +": " + row.phone_number + " "+ body + " " + sendwith)
 		} else if(sendwith == 'email'){
 			send_email(row.email, '@', body)
-			console.log("SENT: " + row.user_id +": " + row.email + " " + body + " " + sendwith)
+			logger.info("SENT: " + row.user_id +": " + row.email + " " + body + " " + sendwith)
 		} else if(sendwith == 'both'){
 			send_email(row.phone_number, row.provider, body)
 			send_email(row.email, '@', body)
-			console.log("SENT: " + row.user_id +": " +  row.phone_number + " "+ row.email + " "+body + " " + sendwith)
+			logger.info("SENT: " + row.user_id +": " +  row.phone_number + " "+ row.email + " "+body + " " + sendwith)
 		} else{
-			console.log("Error: sendwith was not a correct value -" + sendwith + "- " + row.user_id)
+			logger.error("Error: sendwith was not a correct value -" + sendwith + "- " + row.user_id)
 		}
 	})
 }

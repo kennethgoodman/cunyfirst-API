@@ -7,7 +7,7 @@ var job1 = new CronJob('00 30 02 * * *', function() {
       client.connect();
       var query = client.query(q);
       query.on('row', function(row){
-        console.log(row)
+        logger.log(row)
       })
       query.on('end', function(){
         client.end();
@@ -15,7 +15,7 @@ var job1 = new CronJob('00 30 02 * * *', function() {
     }
     deleteTexted();
   }, function(){
-    console.log("deleted users")
+    logger.log("deleted users")
   }, 
   false, 'America/New_York');
 job1.start();

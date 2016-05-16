@@ -43,6 +43,7 @@
     "sql-injection": "0.0.5",
     "textbelt": "0.0.3",
     "textmagic-rest-client": "0.0.5",
+    "tracer": "^0.8.3",
     "twilio": "^2.5.2",
     "websocket.io": "^0.2.1",
     "ws": "0.4.x",

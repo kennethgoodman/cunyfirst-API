@@ -1,14 +1,18 @@
+var logger = require('tracer').console({
+                  format : [ "<{{title}}> {{file}}:{{line}}: {{message}}", {error: "<{{title}}> {{file}}:{{line}}: {{message}} \nCall Stack: {{stack}}"}],
+                  preprocess: function(data){ data.title = data.title.toUpperCase()}
+              })
 module.exports = function(wss){
 	wss.on("connection", function(ws){
 		var id = setInterval(function(){
 			ws.send(JSON.stringify(["keep open", new Date()]),function(){})
 		},2500) // constantly ping the client side every 2.5 seconds, is this bad?
-		console.log("websocket connection open")
+		logger.info("websocket connection open")
 		ws.on("close", function(){
-			console.log("websocket connection closing")
+			logger.info("websocket connection closing")
 		})
 		ws.on('message', function(data){
-			console.log("message received : " + data)
+			logger.log("message received : " + data)
 			data = JSON.parse(data)
 			commandRecieved = data[0];
 			switch(commandRecieved){
@@ -73,8 +77,8 @@ module.exports = function(wss){
 					break
 				case "removeUserClass":
 					var query = "REMOVE FROM customer_info WHERE inst = $1 AND session = $2 AND dept = $3 and classnbr = $4 AND section = $5";
-					console.log(query)
-					console.log(data.slice(2, data.length - 1))
+					logger.log(query)
+					logger.log(data.slice(2, data.length - 1))
 					//sendQuery(query, data.slice(1, data.length - 1))
 					break
 				case "get_class":
@@ -164,7 +168,7 @@ module.exports = function(wss){
 		    					sendData(ws,b)
 		    			}
 		    			catch(err){
-		    				console.log(err)
+		    				logger.error("Error was thrown\nerror: %j" ,err)
 		    			}
 					})
 					break
@@ -222,18 +226,18 @@ module.exports = function(wss){
 		                		params.push(data[data.length-1]); //sendWith
 		                  	}
 		                  
-		                  	console.log("inserting into table");
+		                  	logger.log("inserting into table");
 		                 	sendQuery(query, params, function(result){
 			                    if(result.hasOwnProperty("Error")){
 			                      //TODO: test to find all possible errors
 			                    	if(result.code == '23505'){
 			                        	sendData(ws, ["err", "You\'ve signed up for one of these classes already, if this is a mistake, please contact support"])
-			                        	console.log("PK problem error on query");
+			                        	logger.warn("PK problem error on query");
 			                        	return;
 			                      	}
 			                      	else{
 			                        	sendData(ws, ["err","An error occured, please contact support"])
-			                        	console.log("Unknown error on query");
+			                        	logger.error("Unknown error on query");
 				                        return;
 				                    }
 			                    }
@@ -303,14 +307,14 @@ module.exports = function(wss){
 		for(var d in data){
 	      	if(data[d] === ""){
 		        sendData(socket,["err", "One of your fields is empty, if this is a mistake, please contact support."])
-		        console.log("Error: empty field");
+		        logger.warn("Error: empty field");
 		        return false;
 	      	}
 		    try{
 		        for(var e in data[d]){
 		      		if(data[d][e] === ""){
 		            	sendData(socket, ["err", "One of your fields is empty, if this is a mistake, please contact support"])
-		            	console.log("Error: empty field");
+		            	logger.warn("Error: empty field");
 		            	return false;
 		          	}
 		        }

@@ -33,8 +33,7 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
         if(err) {
             global.CUNYFIRST_DOWN = true
             callback("CUNYFIRST may be down")
-            console.log("error in first request.post: err: ")
-            console.error(err);
+            logger.log("error in first request.post: err: %j", err)
             return;
         }
         var parsed = cheerio.load(body);
@@ -107,15 +106,14 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
                                     
                                                 }
                                             } catch(err){
-                                                //console.log(err)
+                                                logger.warn(err)
                                             }
                                             struct[name] = d
-                                            //console.log(struct[name])
                                         }
                                         count += 1
                                     }
                                 } catch(err){
-                                    console.log(err);
+                                    logger.warn(err);
                                 }
                             }
                         
@@ -125,8 +123,6 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
                     p('.SSSIMAGECENTER').each(function(err,open){
                         temp.push(open.attribs.alt)
                     })
-                    //console.log(classOrder)
-                    //console.log(struct);
                     var counter = 0;
                     var last = "n/a"
                     for(var classNbr in classOrder){
@@ -137,7 +133,7 @@ getSectionsWithNum = function(inst, session, dept,theKey, theClassNum, callback)
                         }
                     }
                 } catch(err){
-                    console.log(err)
+                    logger.warn(err)
                 }
                 if(Object.keys(struct).length === 0 && struct.constructor === Object){
                     global.CUNYFIRST_DOWN = true
@@ -235,7 +231,7 @@ getInst = function(callback){
         var parsed = cheerio.load(body);
         x(body, '.PSDROPDOWNLIST@html')(function(err,data){
             if(err){
-                console.log(err)
+                logger.error(err)
                 return
             }
             data = data.split('<option value=').join("")
@@ -269,32 +265,6 @@ getInst = function(callback){
 }
 deleteTable = function(){
 	sendQuery("TRUNCATE data_for_dropdowns",[], function(result){
-		console.log(result)
+		logger.log(result)
 	})
 }
-addDataToTable = function(callback){
-	getInst( function(inst){
-		getSession(inst, function(inst, session){
-			getDept(inst, session, function(inst,session,dept){
-				getSections(inst,session,dept,function(inst,session,dept, nbr, section){
-					var temp = {inst:inst.trim(), session:session.trim(), dept:dept.trim(), nbr:nbr.trim(), section:section.trim()};
-					classesArray.push(temp);
-					console.log(classesArray.length);
-					console.log(temp)
-					//var q = "INSERT INTO data_for_dropdowns (inst, session, dept, class_number, section) VALUES (\'" + inst + "\', \'" + session +"\', \'"+ dept + "\', \'" + nbr  + "\', \'" + section + "\');" 
-					//console.log(q)
-					try{
-							//sendQuery(String(q), function(result){
-							//console.log(result)
-					} catch(err){
-						console.log(err)
-						console.log("#######" + q)
-					}
-				});
-			})
-		});
-	})
-}
-
-
-

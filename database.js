@@ -12,7 +12,7 @@ queryDatabasePerRow = function(query,callback){
 		return;
 	}
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  if (err) console.log(err);
+	  if (err) logger.error(err);
 	  
 	  client
 	    .query(query)	//'SELECT * FROM clients_and_their_info')
@@ -26,15 +26,13 @@ queryDatabasePerRow = function(query,callback){
 sendQuery = function(query, params, callback){
 	if(query == undefined || query == null){
 		callback({error:"bad query"})
-		console.log("bad query\n" + query)
-		console.log("params: " + params)
+		logger.error("bad query\nquery: %s\n params:%s", query, params)
 		return;
 	}
 	//console.log(query)
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 		  if (err) {
-		  	console.log("bad query" + query)
-		  	console.log(err);
+		  	logger.error("Error while connecting\n%j", err);
 		  	pg.end();
 		  	return;
 		  }
@@ -43,10 +41,8 @@ sendQuery = function(query, params, callback){
 		    .query(query, params, function(err, result) {
 			    if(err) {
 			      err["Error"] = true;
-			      console.error('error running query', err);
+			      logger.error('Error running query\nquery: %s\n params: %s\nerror: %j', query, params, err);
 			      callback(err)
-			      console.log("bad query\n" + query)
-			      console.log("\nparams: \t" + params)
 			      client.end();
 			    }
 			    else{
@@ -58,6 +54,7 @@ sendQuery = function(query, params, callback){
 }
 sendQuery2 = function(q,params, callback){
 	if(q == undefined || q == null){
+		logger.error("bad query\nquery: %s\n params:%s", query, params)
 		callback({error:"bad query"})
 		return;
 	}
@@ -80,11 +77,8 @@ viewTable = function(callback){
 			   , [], callback)
 }
 testAddDataToTable = function(callback){
-	console.log("here")
 	count = 0
 	var interval = setInterval( function(){
-
-		console.log("in setInterval")
 		sendQuery('Insert into testTable (data) values (\'' + count + '\')',[], callback);
 		count += 1
 		if(count > 50)
@@ -135,7 +129,6 @@ getTeacherInfo = function(params,callback){
 	var tries = 0
 	sql = "select distinct schools.name as schoolName from schools, session where schools.id = session.school and schools.id = $1"
 	sendQuery2(sql, [params[0]], function(data){
-			console.log(data)
 			temp = function(){
 			sendQuery( "select distinct * from ratemyprofessor where inst like \'%"+ data["schoolname"]  +"%\' and name = $1" ,[params[1]],function(result){
 				try{
@@ -157,6 +150,5 @@ getTeacherInfo = function(params,callback){
 		}
 		temp()
 	})
-
 }
 //testAddDataToTable(function(result){console.log(result)})

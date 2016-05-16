@@ -6,6 +6,25 @@ try{
 }catch(err){
 	//do nothing if this fails, we are in dev
 }
+/*********************** npm modules in use ********************************************/
+var pg = require('pg'); // for postgres access
+var assert = require('assert');
+var WebSocketServer = require('ws').Server; // to send messeges easily between client and server
+var http = require('http'); // for creating the server
+var express = require('express'); // for creating the application, classic lib for node
+var session = require('express-session');
+var app = express();
+var raygun = require('raygun'); //for error handling 
+var pgSession = require('connect-pg-simple')(session);
+var logger = require('tracer').console({
+                  format : [ "<{{title}}> {{file}}:{{line}}: {{message}}", {error: "<{{title}}> {{file}}:{{line}}: {{message}} \nCall Stack: {{stack}}"}],
+                  preprocess: function(data){ data.title = data.title.toUpperCase()}
+              })
+//global.logger = logger
+/***************************************************************************************/
+
+
+
 /*********************** other js files in this directory ******************************/
 require('./database');
 require('./mainLoop');
@@ -16,18 +35,6 @@ require('./cronJobs');
 var websocket = require('./websocket');
 /***************************************************************************************/
 
-/*********************** npm modules in use ********************************************/
-
-var pg = require('pg'); // for postgres access
-var assert = require('assert');
-var WebSocketServer = require('ws').Server; // to send messeges easily between client and server
-var http = require('http'); // for creating the server
-var express = require('express'); // for creating the application, classic lib for node
-var session = require('express-session');
-var app = express();
-var raygun = require('raygun'); //for error handling 
-var pgSession = require('connect-pg-simple')(session);
-/***************************************************************************************/
 
 
 /*********************** set up server ********************************************/
@@ -100,16 +107,17 @@ app.get('/db', function(request, response) { //NEED TO PROTECT THIS
 });
 
 app.get('*', function(req,res,next){ //for all other attempts
+  logger.log(req)
   var err = new Error();
   err.status = 404;
   next(err)
 })
 app.use(function(err, req, res, next){
   if(err.status !== 404){
-    console.log(err);
+    logger.error(err);
     //return next();
   }
-  console.log(err)
+  logger.error(err)
   res.send(err.message || 'There is no page at this link') //error is 404, Maybe create a 404 ejs page
 })
 /**********************************************************************************/

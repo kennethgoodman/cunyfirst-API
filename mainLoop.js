@@ -14,7 +14,6 @@ var counter = 0; //count how many threads in the function, only want one at the 
 global.CUNYFIRST_DOWN = false
 queueRead2 = function lambda(){
 	var item = queue.shift();
-	//console.log(item)
 	if(item != undefined){ 
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
@@ -26,23 +25,22 @@ queueRead2 = function lambda(){
 				var params = [item.inst,item.session,item.dept]
 				sendQuery2(q, params, function(row){
 					if(row == undefined || row == null) {
-						console.log("returning")
+						logger.warn("row was null or undefined")
 						return;
 					}
 					if(row.error){
 						if(Math.random() > .95) //cuny first may be down, so lets do this infrequently
-							console.log(row.error)
+							logger.error(row.error)
 						return
 					}
 					try{
 						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
-						//console.log(new Date() + ": " + text)
 					} catch(err){
-						console.log("Error when trying to create text")
-						console.log("row[\"classnbr\"] = " + row["classnbr"])
-						console.log("row[\"section\"] = " + row["section"])
-						console.log("struct[row[\"classnbr\"]] = " + struct[row["classnbr"]])
-						console.log(err)
+						logger.log("Error when trying to create text")
+						logger.log("row[\"classnbr\"] = " + row["classnbr"])
+						logger.log("row[\"section\"] = " + row["section"])
+						logger.log("struct[row[\"classnbr\"]] = " + struct[row["classnbr"]])
+						logger.error(err)
 					}
 					if(struct.hasOwnProperty(row["classnbr"]) && struct[row["classnbr"]].hasOwnProperty(row["section"]) && struct[row["classnbr"]][row["section"]]["Status"] == "Open"){
 						var q = 'select phone_number, provider, email, sendwith, alerted from customer_info where inst=$1 and session=$2 and dept=$3 and classnbr=$4 and section=$5 and alerted=false';
@@ -55,9 +53,9 @@ queueRead2 = function lambda(){
 
 				                sendQuery(query, params, function(result){ //change alerted to TRUE in DB
 				                	try{
-				                		console.log(result.command + + " "  + item.dept + " " + row["classnbr"] + " " +row["section"]);
+				                		logger.log(result.command + + " "  + item.dept + " " + row["classnbr"] + " " +row["section"]);
 				                	} catch(err){
-				                		console.log(result);
+				                		logger.warn("Error was thrown: \nresult: %s\nerror: %j", result, err);
 				                	}
 				                })
 				            }
@@ -66,7 +64,7 @@ queueRead2 = function lambda(){
 				})
 			})
 		} catch(err){
-			console.log(err)
+			logger.warn("Error was thrown:\nerror: %j", err);
 		}
 	}
 	counter--;	
