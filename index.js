@@ -7,8 +7,10 @@ try{
 	//do nothing if this fails, we are in dev
 }
 /*********************** other js files in this directory ******************************/
+require('./database');
 require('./mainLoop');
 require('./carrier');
+require('./serverSideVariables')
 require('./worker');
 require('./cronJobs');
 var websocket = require('./websocket');

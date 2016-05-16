@@ -23,7 +23,7 @@ module.exports = function(wss){
 					break
 				case "get_inst":
 					var a = ["inst"]
-					getInstitutions( function(data){
+					getInstitutionsGlobal( function(data){
 						a.push(data)
 						sendData(ws,a)
 					})
