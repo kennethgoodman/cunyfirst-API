@@ -11,7 +11,7 @@ module.exports = function(wss){
 	wss.on("connection", function(ws){
 		var id = setInterval(function(){
 			ws.send(JSON.stringify(["keep open", new Date()]),function(){})
-		},2500) // constantly ping the client side every 2.5 seconds, is this bad?
+		},500) // constantly ping the client side every .5 seconds, is this bad?
 		logger.info("websocket connection open")
 		ws.on("close", function(){
 			logger.info("websocket connection closing")
