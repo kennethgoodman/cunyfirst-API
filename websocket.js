@@ -75,10 +75,8 @@ module.exports = function(wss){
 					break
 				case "get_classes":
 					var a = ["classes"]
-					logger.debug("before getClassesCalled")
 					getClassesGlobal([data[1],data[2]],function(data){
 						a.push(data)
-						logger.debug("after data is received and being sent")
 						sendData(ws,a)
 					})
 					break

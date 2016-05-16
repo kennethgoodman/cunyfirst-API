@@ -45,7 +45,7 @@ getClassesGlobal = function(params, callback){
 	else{
 		getClasses(params, callback)
 	}
-	
+
 	if(params[0] in global.dict_of_count_for_classes_for_each_school){
 		if(params[1] in global.dict_of_count_for_classes_for_each_school[params[0]]){
 			global.dict_of_count_for_classes_for_each_school[params[0]][params[1]]++
@@ -75,7 +75,7 @@ var loggingVariables = setInterval(function(){
 	logger.log("counter_for_list_of_insts_and_session has been called %d times", counter_for_list_of_insts_and_session)
 	for(var school in global.dict_of_count_for_classes_for_each_school){
 		for(var session in global.dict_of_count_for_classes_for_each_school[school]){
-			logger.log("counter_for_list_of_insts_and_session has been called %d times for isnt: %s and session: %s", counter_for_list_of_insts_and_session, school, session)
+			logger.log("dict_of_count_for_classes_for_each_schools has been called %d times for isnt: %s and session: %s", counter_for_list_of_insts_and_session, school, session)
 		}
 	}
 }, 1000 * 60 * 60)
