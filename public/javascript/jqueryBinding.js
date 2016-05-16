@@ -59,7 +59,7 @@ $(document).ready(function(){
     $('table').on('click', 'input[type="button"]', function(e){
         $(this).closest('tr').remove()
     })
-    $("#submitData").unbind('click').click( function (e) {
+    $(".submitData").unbind('click').click( function (e) {
         $("#confirm").prop("disabled",false);//just in case the button is disabled
         clicked(function(queryArray,infoArray){
             $('body').css('overflow','hidden')
