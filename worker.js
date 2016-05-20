@@ -199,6 +199,7 @@ getSession = function (inst, callback){
         };
         request.post(submit_options, function(err,res,body){
         	request.post(submit_options, function(err,res,body){
+                console.log(body)
         		var p = cheerio.load(body)
         		var sessions = {};
         		p('option').each(function(err,td){
@@ -216,6 +217,7 @@ getSession = function (inst, callback){
         });
     })
 }
+
 getInst = function(callback){
     request.post(options, function(err, res, body) {
     	try{
@@ -263,6 +265,12 @@ getInst = function(callback){
         })
     })
 }
+getInst(function (result){
+    getSession('QNS01', function (a, b){
+        console.log(a)
+        console.log(b)
+    })
+})
 deleteTable = function(){
 	sendQuery("TRUNCATE data_for_dropdowns",[], function(result){
 		logger.log(result)
