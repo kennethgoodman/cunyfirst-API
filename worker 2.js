@@ -201,9 +201,6 @@ getSections = function (inst, session, dept, callback){
         })
     })
 }
-getSections("BAR01", "1169", "PHY" ,function(struct){
-    //console.log(struct)
-})
 
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
