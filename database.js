@@ -5,7 +5,13 @@ try{
     //do nothing if this fails, we are in dev
 }
 var pg = require('pg');
-pg.defaults.poolIdleTimeout = 2000;
+pg.defaults.poolIdleTimeout = 2000; //2 seconds
+var counter = 0;
+var logger = require('tracer').console({
+                  format : [ "<{{title}}> {{file}}:{{line}}: {{message}}", {error: "<{{title}}> {{file}}:{{line}}: {{message}} \nCall Stack: {{stack}}"}],
+                  preprocess: function(data){ data.title = data.title.toUpperCase()}
+              })
+global.logger = logger
 queryDatabasePerRow = function(query,callback){
 	if(query == undefined || query == null){
 		callback({error:"bad query"})
@@ -68,7 +74,6 @@ sendQuery2 = function(q,params, callback){
 		client.end();
 	})
 }
-var counter = 0;
 viewTable = function(callback){
 	sendQuery("SELECT schools.name AS schoolName, session.name, session.id, session.school  \
 			   FROM schools, session \

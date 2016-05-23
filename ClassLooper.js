@@ -37,37 +37,23 @@ allClasses = function (){
 		})
 	});
 }
-console.log(Date())
-console.log(escape('insert (%L),', "\'QNS01\'"))
-//allClasses()
+
 allSessions = function (institutions, callback){
 	var sessionArray= []
-	//console.log(institutions)
-	var s = function sessionLoop (i) {
-		//console.log(i)  
+	var s= function sessionLoop (i) {      
    		setTimeout(function () {   
       		getSession(institutions[--i], function (r, m){
 				for (j in m){
 					var item = {inst: institutions[i], session: m[j]}
-					//console.log(item)
 					sessionArray.push(item)
-					//console.log("in GS: " + sessionArray)
 				}
-			})
-      		//console.log(i)
-			setTimeout( function(){
-				if (i>0) sessionLoop(i);      //it's i>-1 because this way it'll try to iterate an extra time before the callback, buying us an extra 3 seconds
-   				else {
-   					//console.log("IN ST: "+sessionArray)
-   					callback(sessionArray)
-   				}
-			},1000*3.3)              
-
+			})              
+   			if (i>-1) sessionLoop(i);      //it's i>-1 because this way it'll try to iterate an extra time before the callback, buying us an extra 3 seconds
+   			else callback(sessionArray)
    		}, 1000*3)
 	}; 
 	s(institutions.length)
 }
-
 allSubjects = function (array, callback){
 	//console.log(array)
 	if( array == [])
