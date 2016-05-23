@@ -29,6 +29,8 @@ var parseDropdownOptions = function(body, selectIndexString, callback){
     var selectHtml = selectHtml.substring(selectHtml.indexOf("<option"), selectHtml.indexOf("</select>"))
     
     optionsString = selectHtml.split('<option value=').join("")
+    optionsString = optionsString.replace("&nbsp;","")
+    optionsString = optionsString.replace("&nbsp;","")
     optionsString = optionsString.split('></option>').join("")
     optionsString = optionsString.split('</option>').join("")
     optionsString = optionsString.split("selected").join("")
@@ -40,6 +42,8 @@ var parseDropdownOptions = function(body, selectIndexString, callback){
     valueTextStruct = {}
     for(var i = 1; i < options.length - 1 ; i++){
         temp = options[i].split(">")
+        temp[1] = temp[1].trim()
+        temp[0] = temp[0].trim()
         valueTextStruct[temp[1]] = temp[0]
     }
     callback(valueTextStruct)
@@ -72,7 +76,7 @@ var urlProducerClasses = function (icsid, icstate, session, subject){
 getSections = function (inst, session, dept, callback){
     request.get(options, function(err, res, body) {
         if(err) {
-            console.error(err);
+            logger.error(err);
             return;
         }
         var parsed = cheerio.load(body);
@@ -94,7 +98,6 @@ getSections = function (inst, session, dept, callback){
                         var temp = bodySplit[i]
 
                         var classNumberAndInfo = temp.substring(temp.indexOf("/a>")+3, temp.indexOf("</DIV>")).split("&nbsp;").join("")
-                        console.log(classNumberAndInfo)
                         var classNumber = classNumberAndInfo.split(" ")
                         var dept = classNumber[0]
 
@@ -115,7 +118,7 @@ getSections = function (inst, session, dept, callback){
                             try{
                                 struct[classNumber][section] = { "Section" : section }
                             } catch(error){
-                                console.error("error: %j", error)
+                                logger.error("error: %j", error)
                                 break
                             }
 
@@ -189,6 +192,7 @@ getSections = function (inst, session, dept, callback){
                     }
                 
                     if(Object.keys(struct).length === 0 && struct.constructor === Object){
+                        logger.log("CF is down")
                         global.CUNYFIRST_DOWN = true
                         callback("CUNYFIRST may be down")
                     }
@@ -205,7 +209,7 @@ getSections = function (inst, session, dept, callback){
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
-            console.error(err);
+            logger.error(err);
             return;
         }
         var parsed = cheerio.load(body);
@@ -226,7 +230,7 @@ getDept = function(inst, session, callback){
 getSession = function (inst, callback){
     request.post(options, function(err, res, body) {
         if(err) {
-            console.error(err);
+            logger.error(err);
             return;
         }
         var parsed = cheerio.load(body);
@@ -249,11 +253,11 @@ getInst = function(callback){
         try{
             if(body.length == 0) return;
         } catch(err){
-            console.log(err)
+            logger.log(err)
             return false;
         }
         if(err) {
-            console.error(err);
+            logger.error(err);
             return;
         }
         var selectIndexString = "select name='CLASS_SRCH_WRK2_INSTITUTION$31$"

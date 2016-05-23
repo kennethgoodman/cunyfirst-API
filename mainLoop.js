@@ -18,6 +18,7 @@ queueRead2 = function lambda(){
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
 				if(struct === "CUNYFIRST may be down"){
+					logger.log("CF is down")
 					global.CUNYFIRST_DOWN = true
 					return
 				}
@@ -33,16 +34,16 @@ queueRead2 = function lambda(){
 							logger.error(row.error)
 						return
 					}
-					try{
-						var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
-					} catch(err){
-						logger.log("Error when trying to create text")
-						logger.log("row[\"classnbr\"] = " + row["classnbr"])
-						logger.log("row[\"section\"] = " + row["section"])
-						logger.log("struct[row[\"classnbr\"]] = " + struct[row["classnbr"]])
-						logger.error(err)
-					}
 					if(struct.hasOwnProperty(row["classnbr"]) && struct[row["classnbr"]].hasOwnProperty(row["section"]) && struct[row["classnbr"]][row["section"]]["Status"] == "Open"){
+						try{
+							var text = item.dept + ": "+ row["classnbr"] +', ' + row["section"] + ' is ' + struct[row["classnbr"]][row["section"]]["Status"] + ". Teacher: " + struct[row["classnbr"]][row["section"]]['Instructor'];
+						} catch(err){
+							logger.log("Error when trying to create text")
+							logger.log("row[\"classnbr\"] = " + row["classnbr"])
+							logger.log("row[\"section\"] = " + row["section"])
+							logger.log("struct[row[\"classnbr\"]] = " + struct[row["classnbr"]])
+							logger.error(err)
+						}
 						var q = 'select phone_number, provider, email, sendwith, alerted from customer_info where inst=$1 and session=$2 and dept=$3 and classnbr=$4 and section=$5 and alerted=false';
 						var params = [item.inst,item.session,item.dept,row["classnbr"],row["section"]]
 						sendQuery2(q, params, function(data){
