@@ -107,7 +107,6 @@ app.get('/db', function(request, response) { //NEED TO PROTECT THIS
 });
 
 app.get('*', function(req,res,next){ //for all other attempts
-  logger.log(req)
   var err = new Error();
   err.status = 404;
   next(err)
