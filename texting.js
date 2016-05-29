@@ -32,7 +32,7 @@ var db = require('./database');
 //var sendgrid = require("sendgrid")("app43697655@heroku.com", "qq3pw5fk3558");
 var sendgrid = require("sendgrid")(process.env.SENDGRID_API_KEY);
 send_email = function(recepient, provider, body){
-	if(provider != 'other'){
+	if(provider != 'other' && provider != 'defualt'){
 		var to = recepient;
 		if(provider != "@"){
 			var carrier = returnCarriers();

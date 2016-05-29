@@ -92,19 +92,6 @@ app.get('/donate', function(request,response){
 app.get('/courseScheduler', function(request, response){
   response.render('pages/courseScheduler')
 })
-app.get('/db', function(request, response) { //NEED TO PROTECT THIS
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM customer_info', function(err, result) {
-      done();
-      if (err){ 
-        console.error(err); response.send("Error " + err); 
-      }
-      else{ 
-        response.render('pages/db', {results: result.rows} ); 
-      }
-    });
-  })
-});
 
 app.get('*', function(req,res,next){ //for all other attempts
   var err = new Error();
