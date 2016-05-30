@@ -75,10 +75,10 @@ var inst_and_session_interval = setInterval(function() {
 var loggingVariables = setInterval(function(){
 	logger.log("Logging Variables:")
 	logger.log("logging started at %s", global.startTime)
-	logger.log("counter_for_list_of_insts_and_session has been called %d times", counter_for_list_of_insts_and_session)
+	logger.log("counter_for_list_of_insts_and_session has been called %d times", global.counter_for_list_of_insts_and_session)
 	for(var school in global.dict_of_count_for_classes_for_each_school){
 		for(var session in global.dict_of_count_for_classes_for_each_school[school]){
-			logger.log("dict_of_count_for_classes_for_each_schools has been called %d times for isnt: %s and session: %s", dict_of_count_for_classes_for_each_schools[school][session], school, session)
+			logger.log("dict_of_count_for_classes_for_each_school has been called %d times for isnt: %s and session: %s", global.dict_of_count_for_classes_for_each_school[school][session], school, session)
 		}
 	}
 }, 1000 * 60 * 60) // every hour
