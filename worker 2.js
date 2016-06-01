@@ -87,6 +87,9 @@ getSections = function (inst, session, dept, callback){
         catch(err){
             logger.log("There was an error, body: %s", body)
             logger.log("Error %j", err)
+            global.CUNYFIRST_DOWN = true
+            callback("CUNYFIRST may be down")
+            return
         }
         submit_options = {
             url: urlProducer(key, '1', inst, session),
