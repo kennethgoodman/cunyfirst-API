@@ -85,7 +85,6 @@ getSections = function (inst, session, dept, callback){
             key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
         }
         catch(err){
-            logger.log("There was an error, body: %s", body)
             logger.log("Error %j", err)
             global.CUNYFIRST_DOWN = true
             callback("CUNYFIRST may be down")
