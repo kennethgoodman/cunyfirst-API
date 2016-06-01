@@ -80,7 +80,14 @@ getSections = function (inst, session, dept, callback){
             return;
         }
         var parsed = cheerio.load(body);
-        var key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
+        var key;
+        try{
+            key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
+        }
+        catch(err){
+            logger.log("There was an error, body: %s", body)
+            logger.log("Error %j", err)
+        }
         submit_options = {
             url: urlProducer(key, '1', inst, session),
             headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
