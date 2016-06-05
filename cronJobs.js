@@ -1,16 +1,16 @@
+var db = require('./database')
 var CronJob = require('cron').CronJob;
 var job1 = new CronJob('00 30 02 * * *', function() {
     deleteTexted = function(){
       var pg = require('pg');
-      var q = 'DELETE FROM customer_info WHERE alerted = true';
-      var client = new pg.Client(process.env.DATABASE_URL);
-      client.connect();
-      var query = client.query(q);
-      query.on('row', function(row){
-        logger.log(row)
+      var query = 'SELECT FROM customer_info WHERE alerted = true'
+      sendQuery2(query, [], function(row){
+        var q = 'INSERT INTO deleted_users (inst, session, dept, section, phone_number, provider) values ($1, $2, $3, $4, $5, $6)'
+        sendQuery(q, [row.inst, row.session, row.dept, row.section, row.phone_number, row.provider], function(r){})
       })
-      query.on('end', function(){
-        client.end();
+      var q = 'DELETE FROM customer_info WHERE alerted = true';
+      sendQuery(q,[],function(r){
+        console.log(r)
       })
     }
     deleteTexted();
