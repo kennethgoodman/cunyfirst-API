@@ -29,6 +29,14 @@
         <div class="row">
             <div class="tableHolder" class="col-sm-12 col-md-12">
                 <div class="row">
+                    <div class="col-md-1 col-sm-1" id="cores">
+                        <% cores = ["core a","core b"] %>
+                        <% for(var i=0; i < cores.length; i++) { %>
+                            <button type="button" id="core"<%= i %> >
+                                Add <%= cores[i] %>
+                            </button><br>
+                        <% } %>
+                    </div>
                     <div class="col-md-10 col-sm-10">
                         <table id="dataTables" class="bitacoratable" cellspacing="0">
                             <thead>
