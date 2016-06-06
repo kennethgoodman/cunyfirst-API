@@ -322,4 +322,22 @@ $(document).ready(function(){
             $('.slider-time2').html(hours2 + ':' + minutes2);
         }
     });
+    $(document).on("click", "tr", function () {
+        $(this).toggleClass("selectedRow");
+    });
+    $('#trash').droppable({
+        drop: function(event, ui) {
+            var classes = ui.helper.attr('class').split(" ")
+            var rowNum = classes[1]
+            var tableId = classes[2]
+            var temp_table = $(tableId).DataTable()
+            var row = temp_table.row(rowNum)
+            var section = row.data()["Class nbr"]
+            row.remove()
+            temp_table.draw()
+            rowsSecondDT[tableId][section] = false
+            $(".groupedTable .dataTables_empty").text("Drag and drop classes from the main table above");
+            ui.draggable.remove(); 
+        }
+    });
 });

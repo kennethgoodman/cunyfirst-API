@@ -2,6 +2,7 @@
 <html>
     <head>
         <script> queryArray = []; schedulerStruct = {}
+                  rowsSecondDT = {}
                 //holds data for query to server, this is public and global
         </script> 
       <% include ../partials/headerCS.ejs %>
@@ -25,24 +26,55 @@
                 <button type="button" class="btn btn-primary" id="getSchedule" style="margin-bottom: 12px;">Get Schedule</button>
             </div>
         </div>
-        <div class="tableHolder">
-            <table id="dataTables" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Rate My Professor</th><th>Dept</th>
-                        <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                        <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Rate My Professor</th><th>Dept</th>
-                        <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                        <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
-                    </tr>
-                </tfoot>
-            </table>
+        <div class="row">
+            <div class="tableHolder" class="col-sm-12 col-md-12">
+                <div class="row">
+                    <div class="col-md-10 col-sm-10">
+                        <table id="dataTables" class="bitacoratable" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Rate My Professor</th><th>Dept</th>
+                                    <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                                    <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Rate My Professor</th><th>Dept</th>
+                                    <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                                    <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="col-md-1 col-sm-1" id="trash">
+                        The TRASH
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="row" style="margin-left:20px"><% for(var i=0; i < 3; i++ ) {%>
+            <div class="col-sm-4 col-md-4">
+                <div class="row"> 
+                    <% for(var j=0; j < 2; j++ ) { %> 
+                    <div class="col-sm-12 col-md-6" >
+                        <div class="tableHolder">
+                            <table id=<%="groupedTable" + String(i*2 + j + 1) %> class="bitacoratable groupedTable" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Class nbr</th>
+                                        <th>Teacher</th>
+                                    </tr>
+                                </thead>
+                            </table> 
+                        </div>
+                    </div> 
+                    <% } %>
+                </div>
+            </div><% } %>
+        </div>
+        
+        <br><br><br><br>
         <div style="margin: auto;text-align: center">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
             <!-- leaderboard ad -->

@@ -308,6 +308,26 @@ table.dataTable tbody td.no-padding {
 #donateText:hover:before {
   content:"Thank you!"
 }
+
+.bitacoratable {
+    overflow-y: auto;
+    float:left;
+}
+tbody.tr { cursor: pointer; }
+.selectedRow, .selectedRow:active, tr:active {
+    background-color: #E7E7E7;
+    cursor: move;
+}
+#trash { 
+  width: 200px; 
+  min-height: 150px; 
+  padding: 0.5em; 
+  float: right; 
+  margin: 10px 10px 8px 20px;  
+  border: 1px dotted red; 
+  position: fixed;
+  right: 100px;
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;

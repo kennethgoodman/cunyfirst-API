@@ -89,19 +89,6 @@ $(document).ready(function() {
         "deferRender": true, 
         searching: true,
     });
-    var groupTable = $('#groupTable').DataTable({
-        dom: "rtip",
-        "columns": [
-            { "data" : "Dept"},
-            { "data" : "Class nbr" },
-            { "data" : "Class Section" },
-            { "data" : "Teacher" },
-            { "data" : "Days And Time" },
-            { "data" : "Group"},
-        ],
-        "order": [[5, 'asc']],
-        responsive: true,
-    });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session"); 
     $('#dataTables tbody').on('click', 'td.details-contro', function () { //open/closed
         var tr = $(this).closest('tr');
@@ -147,4 +134,28 @@ $(document).ready(function() {
             rowsLookedAt[row.index()] = true
         }
     }); 
+    var groupTable = $('#groupTable').DataTable({
+        dom: "rtip",
+        "columns": [
+            { "data" : "Dept"},
+            { "data" : "Class nbr" },
+            { "data" : "Class Section" },
+            { "data" : "Teacher" },
+            { "data" : "Days And Time" },
+            { "data" : "Group"},
+        ],
+        "order": [[5, 'asc']],
+        responsive: true,
+    });
+    $('.groupedTable').DataTable({
+        dom: "tip",
+        "columns": [
+            { data : "Class nbr" },
+            { data : "Teacher" },
+        ],
+        "order": [[0, 'asc']],
+        responsive: true,
+        "deferRender": true, 
+    })
+    $(".groupedTable .dataTables_empty").text("Drag and drop classes from the main table above"); 
 });

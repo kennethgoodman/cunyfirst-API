@@ -4,3 +4,4 @@ Dockerfile
 docker-compose.yml
 TODO.txt
 .DS_Store
+parser_table.py

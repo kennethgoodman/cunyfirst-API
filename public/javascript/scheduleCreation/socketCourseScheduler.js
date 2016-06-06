@@ -56,6 +56,8 @@ ws.onmessage = function (event) {
               }
           }
           t.draw()
+
+
       }
       else if(commandFromServer == "classes"){ 
           data = data[1]
@@ -73,6 +75,59 @@ ws.onmessage = function (event) {
                     })
           }
           t.draw();
+          var allRows = t.rows()[0]
+          for(var i = 0; i < allRows.length; i++){
+            var row = t.row( allRows[i] ).node();
+            $(row).addClass("draggable_tr")
+          }
+          var table = $('#dataTables').DataTable()
+          table.draw()
+
+          $(table.rows().nodes()).draggable({ helper: function(){ 
+                        var tr = $(this).closest('tr');
+                        var row = table.row( tr );
+                        var rowData = row.data()
+                        return "<tr class='selectedRow'>\
+                                <td>" + rowData["Class nbr"] + " - " + rowData["Class Section"] + "</td>\
+                                <td>" + rowData["Teacher"] + "</td></tr>"
+                        }, cursor: "move", revert: "invalid", cursorAt: { top: 5, left: 5 } });
+          
+          var addDroppable = function(id){
+            var theGroupedTable = $(id).DataTable()
+            $(id).droppable({
+              drop: function (event, ui) {
+                console.log(ui)
+                var section = ui.helper[0].children[0].textContent
+                var teacher = ui.helper[0].children[1].textContent
+                console.log(rowsSecondDT)
+                if(!rowsSecondDT[id][section]){
+                  theGroupedTable.row.add({
+                    "Class nbr"    : section,
+                    "Teacher"      : teacher,
+                  })
+                  theGroupedTable.draw()
+                  rowsSecondDT[id][section] = true
+                }  
+                $(theGroupedTable.rows().nodes()).draggable({ //TODO only this row
+                  helper: function(){ 
+                        var tr = $(this).closest('tr'); 
+                        var row = theGroupedTable.row( tr );
+                        var rowData = row.data()
+                        var className = "'selectedRow " + row.index() + " " + id + "'"
+                       return "<tr class=" + className            + ">\
+                                <td>"      + rowData["Class nbr"] + "</td>\
+                                <td>"      + rowData["Teacher"]   + "</td></tr>"
+                        },
+                  cursor: "move", revert: "invalid", cursorAt: { top: 5, left: 5 }
+                }); 
+              }
+            });
+          }
+          for(var i = 1; i <= 6; i++){
+            var id = "#groupedTable" + String(i)
+            rowsSecondDT[id] = {}
+            addDroppable(id) 
+          }  
       }
       else if(commandFromServer == "teacherInfo"){
         var table = $('#dataTables').dataTable().api();
