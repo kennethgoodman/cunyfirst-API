@@ -3,7 +3,7 @@ var CronJob = require('cron').CronJob;
 var job1 = new CronJob('00 30 02 * * *', function() {
     deleteTexted = function(){
       var pg = require('pg');
-      var query = 'SELECT FROM customer_info WHERE alerted = true'
+      var query = 'SELECT * FROM customer_info WHERE alerted = true'
       sendQuery2(query, [], function(row){
         var q = 'INSERT INTO deleted_users (inst, session, dept, section, phone_number, provider) values ($1, $2, $3, $4, $5, $6)'
         sendQuery(q, [row.inst, row.session, row.dept, row.section, row.phone_number, row.provider], function(r){})
