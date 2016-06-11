@@ -18,7 +18,7 @@ queueRead2 = function lambda(){
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
 				if(struct === "CUNYFIRST may be down"){
-					logger.log("CF is down")
+					if(global.CUNYFIRST_DOWN == false) logger.log("CF is down")
 					global.CUNYFIRST_DOWN = true
 					return
 				}

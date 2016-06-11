@@ -41,6 +41,7 @@ var parseDropdownOptions = function(body, selectIndexString, callback){
     var options = optionsString.split("\n")
     valueTextStruct = {}
     for(var i = 1; i < options.length - 1 ; i++){
+        temp = options[i].replace("&#039;", "\'").replace("&#039;", "\'").replace("&#039;", "\'").replace("&#039;", "\'")
         temp = options[i].split(">")
         temp[1] = temp[1].trim()
         temp[0] = temp[0].trim()
@@ -85,7 +86,10 @@ getSections = function (inst, session, dept, callback){
             key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
         }
         catch(err){
-            logger.log("Error %j", err)
+            if(global.CUNYFIRST_DOWN == false) {
+                logger.log("Error %j", err)
+                logger.log("CUNYFIRST may be down")
+            }
             global.CUNYFIRST_DOWN = true
             callback("CUNYFIRST may be down")
             return
@@ -214,7 +218,6 @@ getSections = function (inst, session, dept, callback){
         })
     })
 }
-
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
