@@ -18,7 +18,10 @@ queueRead2 = function lambda(){
 		try{
 			getSections(item.inst, item.session, item.dept, function(struct){
 				if(struct === "CUNYFIRST may be down"){
-					if(global.CUNYFIRST_DOWN == false) logger.log("CF is down")
+					if(global.LOG_CF_DOWN == false){
+						logger.log("CF is down")
+						global.LOG_CF_DOWN = true
+					}
 					global.CUNYFIRST_DOWN = true
 					return
 				}
@@ -90,6 +93,7 @@ setInterval( function(){
 
 },15000)
 setInterval( function(){ global.CUNYFIRST_DOWN = false }, 1000*60) //every minute change back, so we check if its still down 
+setInterval( function(){ global.LOG_CF_DOWN = false }, 1000*60*60) //every hour change back, so we still log
 setInterval(function(){ 
 	if(queue.length && counter < 1 && !global.CUNYFIRST_DOWN){ //if cunyfirst is not down 
 		counter++;

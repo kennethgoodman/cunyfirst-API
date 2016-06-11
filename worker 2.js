@@ -86,9 +86,10 @@ getSections = function (inst, session, dept, callback){
             key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
         }
         catch(err){
-            if(global.CUNYFIRST_DOWN == false) {
+            if(global.LOG_CF_DOWN == false) {
                 logger.log("Error %j", err)
                 logger.log("CUNYFIRST may be down")
+                global.LOG_CF_DOWN = true
             }
             global.CUNYFIRST_DOWN = true
             callback("CUNYFIRST may be down")
