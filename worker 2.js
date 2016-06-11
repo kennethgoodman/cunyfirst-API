@@ -77,8 +77,14 @@ var urlProducerClasses = function (icsid, icstate, session, subject){
 getSections = function (inst, session, dept, callback){
     request.get(options, function(err, res, body) {
         if(err) {
-            logger.error(err);
-            return;
+            if(global.LOG_CF_DOWN == false) {
+                logger.error("Error %j", err)
+                logger.log("CUNYFIRST may be down")
+                global.LOG_CF_DOWN = true
+            }
+            global.CUNYFIRST_DOWN = true
+            callback("CUNYFIRST may be down")
+            return
         }
         var parsed = cheerio.load(body);
         var key;
@@ -87,7 +93,7 @@ getSections = function (inst, session, dept, callback){
         }
         catch(err){
             if(global.LOG_CF_DOWN == false) {
-                logger.log("Error %j", err)
+                logger.error("Error %j", err)
                 logger.log("CUNYFIRST may be down")
                 global.LOG_CF_DOWN = true
             }
