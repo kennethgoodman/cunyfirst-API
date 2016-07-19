@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script> queryArray = []; schedulerStruct = {}
-                  rowsSecondDT = {}
+        <script>  queryArray = []; 
+                  schedulerStruct = {}
+                  rowsSecondDT = {};
+                  amountOfTabs = 6;
                 //holds data for query to server, this is public and global
         </script> 
+       <% amountOfTabs = 6 %>
       <% include ../partials/headerCS.ejs %>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <% include ../partials/nav.ejs %>
+        <br><br>
         <br>
+        <script>
+        
+        </script>
         <div class="wrap" style="margin:auto;">
             <div style="margin:auto; margin-left:20px; margin-top:80px;">
                 <p id="testing">To add a new class, pick your institution and session.</p><br>
@@ -25,63 +32,52 @@
             <div class="getScheduleButton">
                 <button type="button" class="btn btn-primary" id="getSchedule" style="margin-bottom: 12px;">Get Schedule</button>
             </div>
+        </div> 
+        <div style="text-align:center">
+        <% cores = ["core a","core b"] %>
+        <% for(var i=0; i < cores.length; i++) { %>
+            <button type="button" id="core<%= i %>" >
+                Add <%= cores[i] %>
+            </button><br>
+        <% } %>
         </div>
-        <div class="row">
-            <div class="tableHolder" class="col-sm-12 col-md-12">
-                <div class="row">
-                    <div class="col-md-1 col-sm-1" id="cores">
-                        <% cores = ["core a","core b"] %>
-                        <% for(var i=0; i < cores.length; i++) { %>
-                            <button type="button" id="core"<%= i %> >
-                                Add <%= cores[i] %>
-                            </button><br>
-                        <% } %>
-                    </div>
-                    <div class="col-md-10 col-sm-10">
-                        <table id="dataTables" class="bitacoratable" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Rate My Professor</th><th>Dept</th>
-                                    <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                                    <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Rate My Professor</th><th>Dept</th>
-                                    <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                                    <th>Days and Time</th><th>Room</th><th>Status</th><th>Group</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="col-md-1 col-sm-1" id="trash">
-                        The TRASH
-                    </div>
-                </div>
+        <div class="container">
+          <ul class="nav nav-tabs" id="TabsId">
+            <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+            <% for(var i=0; i < amountOfTabs; i++) { %>
+                <li id="li_menu<%=i+1%>"><a data-toggle="tab" href="#menu<%=i+1%>">Class Option <%=i+1%></a></li>
+            <% } %>
+            <li id="addTabLi"><a data-toggle="tab" href="#addTabId" id="addTab"><span class="glyphicon glyphicon-plus"></span></a></li>
+          </ul>            
+          <div class="tab-content">
+            <div id="home" class="tab-pane fade in active">
+                <h3>HOME</h3>
+                <p> To get started, go through each tab and pick classes. Each tab will represent a different choice. <br><br>Ex: You want to take one anthro class and one math class. Tab 1 would contain all the anthro choices and tab 2 will contain all the math choices.
+                <br><br>The tables take a couple seconds to load once you select a dropdown. Thank you for your patience.
+                </p>
             </div>
-        </div>
-        <div class="row" style="margin-left:20px"><% for(var i=0; i < 3; i++ ) {%>
-            <div class="col-sm-4 col-md-4">
-                <div class="row"> 
-                    <% for(var j=0; j < 2; j++ ) { %> 
-                    <div class="col-sm-12 col-md-6" >
-                        <div class="tableHolder">
-                            <table id=<%="groupedTable" + String(i*2 + j + 1) %> class="bitacoratable groupedTable" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Class nbr</th>
-                                        <th>Teacher</th>
-                                    </tr>
-                                </thead>
-                            </table> 
-                        </div>
-                    </div> 
-                    <% } %>
+            <% for(var i=0; i < amountOfTabs; i++) { %>
+                <div id="menu<%=i+1%>" class="tab-pane fade">
+                    <table id="groupedTable<%=i+1%>" class="bitacoratable groupedTable" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Rate My Professor</th><th>Dept</th>
+                                <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                                <th>Days and Time</th><th>Room</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Rate My Professor</th><th>Dept</th>
+                                <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
+                                <th>Days and Time</th><th>Room</th><th>Status</th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-            </div><% } %>
+            <% } %>
+          </div>
         </div>
-        
         <br><br><br><br>
         <div style="margin: auto;text-align: center">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -93,6 +89,51 @@
             <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
+        </div>
+        <div class="schedulerHolder col-xs-14 col-sm-8 col-lg-10">
+          <div>
+            <div id='calendar'></div>
+          </div>
+        </div>
+        <div class="preferencesHolder col-xs-4 col-sm-4 col-lg-2">
+          <br><br><br><br>
+          <div class="scheduleButtonHolder">
+            <button class="btn btn-primary leftScheduleButton"><span>Previous Schedule</span></button>
+            <button class="btn btn-primary rightScheduleButton"><span>Next Schedule</span></button>
+          </div>
+          <br>
+          <div style="text-align: center;"><button class="btn btn-primary" id="GetResultsSchedule"> Get Results </button></div>
+            <br>
+            <p>
+              Which weekend days can you go to school on?
+            </p>
+            <form class="form-inline">
+              <label class="checkbox-inline checkbox"><input id="fridayMorning" type="checkbox" value="">Friday Morning/Afternoon (before 3pm)</label><br>
+              <label class="checkbox-inline checkbox"><input id="fridayNight" type="checkbox" value="">Friday Night</label><br>
+              <label class="checkbox-inline checkbox"><input id="saturday" type="checkbox" value="">Saturday</label><br>
+              <label class="checkbox-inline checkbox"><input id="sunday" type="checkbox" value="">Sunday</label><br>
+            </form>
+            <br>
+            <div>
+                <p>
+                  <label for="DaysInSchool">You want to be in school:</label>
+                   <span class="slider-schoolRange"> 2 </span> - <span class="slider-schoolRange2"> 4 </span> days<br><br>
+                  <div id="DaysInSchoolslider-range" style="width:50%"></div>
+                </p>
+              </div>
+              <br>
+              <br>
+            <div id="time-range">
+                <p>Times you are willing to spend in school: <span class="slider-time">9:30 AM</span> - <span class="slider-time2">5:30 PM</span></p><br>
+                <div class="sliders_step1">
+                    <div id="slider-range"></div>
+                </div>
+            </div><br><br>
+            <div id="maxBreaks">
+              <label for="maxBreakTimeSlider"> The max total amount of time between classes in one week that you want is:</label>
+              <span class="slider-maxBreakTime"> 6 hours and 0 minutes </span><br><br>
+              <div id="maxBreakTimeSlider-range-min" style="width:100%"></div>
+            </div>
         </div>
     </body>
 </html>
@@ -112,15 +153,21 @@
                     <thead>
                         <tr>
                             <th>Dept</th>
-                            <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                            <th>Days and Time</th><th>Group</th>
+                            <th>Class nbr</th>
+                            <th>Class Section</th>
+                            <th>Teacher</th>
+                            <th>Days and Time</th>
+                            <th>Class Option </th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <th>Dept</th>
-                            <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                            <th>Days and Time</th><th>Group</th>
+                            <th>Class nbr</th>
+                            <th>Class Section</th>
+                            <th>Teacher</th>
+                            <th>Days and Time</th>
+                            <th>Class Option </th>
                         </tr>
                     </tfoot>
                 </table>
@@ -142,51 +189,11 @@
     </div>
   </div>
 </div>
-<div class="container">
-  <!-- Modal -->
-  <div class="modal fade" id="userPreferencesDialog" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">User Preferences</h4>
-        </div>
-        <div class="modal-body" id="modelForm">
-          <form>
-              <div>
-                <p>
-                  <label for="DaysInSchool">Days In School Range:</label>
-                   <span class="slider-time">10:00 AM</span> - <span class="slider-time2">4:00 PM</span>
-                  <!--input type="text" id="DaysInSchool" readonly style="border:0; color:#f6931f; font-weight:bold;"--><br>
-                  <div id="DaysInSchoolslider-range" style="width:50%"></div>
-                </p>
-              </div>
-              <br>
-            <p>
-              Which weekend days can you go to school on?
-            </p>
-            <form class="form-inline">
-            <label class="checkbox-inline"><input id="fridayMorning" type="checkbox" value="">Friday Morning/Afternoon (before 3pm)</label>
-            <label class="checkbox-inline"><input id="fridayNight" type="checkbox" value="">Friday Night</label>
-            <label class="checkbox-inline"><input id="saturday" type="checkbox" value="">Saturday</label>
-            <label class="checkbox-inline"><input id="sunday" type="checkbox" value="">Sunday</label>
-            </form>
-            <br>
-            <div id="time-range">
-                <p>Times you are willing to spend in school: <span class="slider-time">10:00 AM</span> - <span class="slider-time2">4:00 PM</span></p><br>
-                <div class="sliders_step1">
-                    <div id="slider-range"></div>
-                </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" id="backButton">Back</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success" id="preferencesConfirm">Confirm</button>           
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<style type="text/css">
+.fc-minor .selectedRow {
+  background-color: ""
+}
+tr.selectedRow {
+  background-color: ""
+}
+</style>

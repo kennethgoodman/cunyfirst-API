@@ -86,12 +86,17 @@ findSoftScore = function(schedule, debug, creditsTaking){
 	}
 	return softScore
 }
-hardScoreBreak = function(schedule){
+hardScoreBreak = function(schedule, extra){
+	var extra = typeof extra !== 'undefined' ?  extra : function(schedule){ return true };
 	listOfClasses = schedule.getListOfClasses()
 	len = listOfClasses.length
 	for(var i in listOfClasses){
 		i = parseInt(i)
 		var thisClass = listOfClasses[i]
+		if(!extra(thisClass)){
+			console.log("hardScoreBreak, extra failed")
+			return true
+		}
 		for(var j = i + 1; j < len; j++){
 			var otherClass = listOfClasses[j]
 			if(thisClass.overlap(otherClass)){

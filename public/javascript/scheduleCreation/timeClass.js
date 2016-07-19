@@ -30,7 +30,7 @@ class Time{
 		if(this.hour < other.getHour())
 			return true
 		else if(this.hour == other.getHour())
-			return this.minute() < other.getMinute()
+			return this.minute < other.getMinute()
 		return false
 	}
 	lessThenOrEqual(other){

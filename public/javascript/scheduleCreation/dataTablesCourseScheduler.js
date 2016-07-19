@@ -1,16 +1,15 @@
 detCounter = {}
 hiddenRowData = {}
 rowsLookedAt = {}
-var setAllChildrenWithDepartment = function (department){
-    var table = $('#dataTables').DataTable();
+var setAllChildrenWithDepartment = function (department, id){
+    var table = $('#' + id).DataTable();
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
     matching.every( function () {
         table.cell(this, 7).data("checking CUNYFirst")
     } );  
 }
-var changeStatus = function (row, s){
-    //console.log("this came")
-    var table = $('#dataTables').DataTable();
+var changeStatus = function (row, s, id){
+    var table = $(id).DataTable();
     table.cell(row, 7).data(s) //7 for the 7th column
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
@@ -56,8 +55,12 @@ function format ( data ) {
     '</table>';
 }
 $(document).ready(function() {
-    var table = $('#dataTables').DataTable({
+    var table = $('.groupedTable').DataTable({
         dom: "ftip",
+        select: {
+            style: "multi",
+            className: 'row-selected selected'
+        },
         "columns": [
             {
                 "className":      'details-control',
@@ -76,12 +79,6 @@ $(document).ready(function() {
                 className: "details-contro",
                 defaultContent: '<button type=\"button\" class=\"btn\"> update </button>'
             },
-            {
-                data : 'Group',
-                className : 'group-control',
-                defaultContent: '<br><input type="number" style="width: 65%;" name="quantity" min="1" max="12" class="groupInput"><br><p style="display:none" id="fadingMessage">Accepting Only values 1-12</p><br>',
-                "orderDataType": "dom-text-numeric",
-            }
         ],
         "order": [[2, 'asc']],
         responsive: true,
@@ -89,15 +86,14 @@ $(document).ready(function() {
         "deferRender": true, 
         searching: true,
     });
-    $("#dataTables .dataTables_empty").text("Please choose your institution and session"); 
-    $('#dataTables tbody').on('click', 'td.details-contro', function () { //open/closed
+    $(".groupedTable .dataTables_empty").text("Please choose your institution and session"); 
+    $('.groupedTable tbody').on('click', 'td.details-contro', function () { //open/closed
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var department = row.data()['Dept']
         if (detCounter[department] != undefined ) return;
         else{
             detCounter[department]= "a string"
-            setAllChildrenWithDepartment(department)
             var rowData = row.data()
             var e = document.getElementById("inst");
             values = JSON.parse(e.options[e.selectedIndex].value)
@@ -106,10 +102,14 @@ $(document).ready(function() {
             var dataToSend = ["updateStatus",inst, session, rowData["Class nbr"].substring(0,rowData["Class nbr"].indexOf("-") - 1),
                               rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]        
             ws.send(JSON.stringify(dataToSend))
+
+            for(var i = 1; i <= amountOfTabs; i++)
+                setAllChildrenWithDepartment(department, "groupedTable" + i)
         }
 
     })  
-    $('#dataTables tbody').on('click', 'td.details-control', function () { 
+    $('.groupedTable tbody').on('click', 'td.details-control', function () { 
+        var tableId = $(this).closest('tr').closest('table').attr('id');
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
@@ -117,15 +117,16 @@ $(document).ready(function() {
         values = JSON.parse(e.options[e.selectedIndex].value)
         var inst = values["schoolCode"]
         var session = values["sessionCode"]  
+        var teacher = rowData["Teacher"]
 
-        var dataToSend = ["getRMP", inst, rowData["Teacher"], row.index()]      
+        var dataToSend = ["getRMP", inst, teacher, row.index(), tableId ]      
         if ( row.child.isShown() ) { // This row is already open - close it
             row.child.hide();
             tr.removeClass('shown');
         }
-        else if(hiddenRowData[row.index()] != undefined){
-            row.child( format(hiddenRowData[row.index()]) ).show()
-            tr.addClass('shown');
+        else if(hiddenRowData[teacher] != undefined){
+            row.child( format(hiddenRowData[teacher]) ).show()
+           tr.addClass('shown');
         }
         else{
             row.child(blank).show()
@@ -146,16 +147,5 @@ $(document).ready(function() {
         ],
         "order": [[5, 'asc']],
         responsive: true,
-    });
-    $('.groupedTable').DataTable({
-        dom: "tip",
-        "columns": [
-            { data : "Class nbr" },
-            { data : "Teacher" },
-        ],
-        "order": [[0, 'asc']],
-        responsive: true,
-        "deferRender": true, 
-    })
-    $(".groupedTable .dataTables_empty").text("Drag and drop classes from the main table above"); 
+    }); 
 });

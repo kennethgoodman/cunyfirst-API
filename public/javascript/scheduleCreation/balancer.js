@@ -1,6 +1,6 @@
 function* all_subets(totalList, numberOfElements){
 	if(numberOfElements > totalList.length)
-		throw "cant select more than size"
+		alert("cant select more than number of classes")
 	var c = Combinatorics.bigCombination(totalList,numberOfElements)
 	while(a = c.next()){
 		var d = Combinatorics.cartesianProduct.apply(null, a)
@@ -16,27 +16,27 @@ insertIntoListOfSchedules =function(schedules, newSchedule){
 	return schedules.sort(function(a,b){return a.softScore > b.softScore})
 }
 balancer = function(possibleClasses,numberOfElements){
-	minmaxSoftScore = -9999999
-	topNSchedules = []
+	//minmaxSoftScore = -9999999
+	schedules = []
 	var gen = all_subets(possibleClasses, numberOfElements)
 	while( (schedule = gen.next().value ) != undefined){
 		schedule = new Schedule(schedule)
-		if(hardScoreBreak(schedule)){
-			continue
+		if(!hardScoreBreak(schedule)){
+			schedules.push(schedule)
 		}
-		softScore = findSoftScore(schedule,false,numberOfElements*3)
-		schedule.softScore = softScore
-		if(topNSchedules.length < 3){
-			topNSchedules.push(schedule)
-			topNSchedules = topNSchedules.sort(function(a,b){return a.softScore > b.softScore })
-			minmaxSoftScore = topNSchedules[0].softScore
-			continue
-		}
+		//softScore = findSoftScore(schedule,false,numberOfElements*3)
+		//schedule.softScore = softScore
+		//if(true || topNSchedules.length < 3){
+		
+			//topNSchedules = topNSchedules.sort(function(a,b){return a.softScore > b.softScore })
+			//minmaxSoftScore = topNSchedules[0].softScore
+		//}
+		/*
 		else if(softScore > minmaxSoftScore){
 			topNSchedules = insertIntoListOfSchedules(topNSchedules, schedule)
 			minmaxSoftScore = topNSchedules[0].softScore
-		}
+		}*/
 	}
-	return topNSchedules
+	return schedules
 }
 

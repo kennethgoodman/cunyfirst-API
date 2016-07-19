@@ -1,4 +1,23 @@
 queryArray = []
+schedules = []
+checkedSchedules = []
+currentIndex = 0
+function getTeacherScore(teacherName){
+    return undefined
+}
+function getTeacherScores(){
+    $('.row-selected').each(function(index){
+        console.log(this)
+        console.log($(this).children()[4])
+    })
+}
+var setAllChildrenWithDepartment = function (department, id){
+    var table = $('#' + id).DataTable();
+    var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
+    matching.every( function () {
+        table.cell(this, 7).data("checking CUNYFirst")
+    } );  
+}
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 }
@@ -16,6 +35,103 @@ function ValidateEmail(inputText)
 }  
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
+}
+function add_event_handler(current_idx){
+    var table = $("#groupedTable" + current_idx).DataTable();
+    $("#groupedTable" + current_idx + " tbody").on('click', 'td.details-contro', function () { //open/closed
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+        console.log(row)
+        var department = row.data()['Dept']
+        if (detCounter[department] != undefined ) return;
+        else{
+            detCounter[department]= "a string"
+            var rowData = row.data()
+            var e = document.getElementById("inst");
+            values = JSON.parse(e.options[e.selectedIndex].value)
+            var inst = values["schoolCode"]
+            var session = values["sessionCode"]  
+            var dataToSend = ["updateStatus",inst, session, rowData["Class nbr"].substring(0,rowData["Class nbr"].indexOf("-") - 1),
+                              rowData["Class nbr"].substr(rowData["Class nbr"].indexOf("-") + 2),rowData["Class Section"], row.index(), rowData["Teacher"]]        
+            ws.send(JSON.stringify(dataToSend))
+
+            for(var i = 1; i <= amountOfTabs; i++)
+                setAllChildrenWithDepartment(department, "groupedTable" + i)
+        }
+    })  
+    $("#groupedTable" + current_idx + " tbody").on('click', 'td.details-control', function () { 
+        var tableId = $(this).closest('tr').closest('table').attr('id');
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+        var rowData = row.data()
+        var e = document.getElementById("inst");
+        values = JSON.parse(e.options[e.selectedIndex].value)
+        var inst = values["schoolCode"]
+        var session = values["sessionCode"]  
+        var teacher = rowData["Teacher"]
+
+        var dataToSend = ["getRMP", inst, teacher, row.index(), tableId ]      
+        if ( row.child.isShown() ) { // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else if(hiddenRowData[teacher] != undefined){
+            row.child( format(hiddenRowData[teacher]) ).show()
+           tr.addClass('shown');
+        }
+        else{
+            row.child(blank).show()
+            tr.addClass('shown');
+            ws.send(JSON.stringify(dataToSend))
+            rowsLookedAt[row.index()] = true
+        }
+    }); 
+}
+function add_Data_To_DataTable(current_idx){
+    var rowsData = $("#groupedTable" + 1).DataTable().rows().data()
+    var rowsDataLength = rowsData.length
+    var table = $("#groupedTable" + current_idx).DataTable();
+    for(var rowIndex = 0; rowIndex < rowsDataLength; rowIndex++ ){
+        var tableObject = rowsData[rowIndex]
+        table.rows.add([ tableObject ])
+        if(rowIndex >= rowsDataLength - 1)
+            break
+    }
+    table.draw()
+    add_event_handler(current_idx)
+}
+function initDataTable(current_idx){
+    $("#groupedTable" + current_idx).DataTable({
+        dom: "ftip",
+        select: {
+            style: "multi",
+            className: 'row-selected selected'
+        },
+        "columns": [
+            {
+                "className":      'details-control',
+                "orderable":      false,
+                "data":           '',
+                "defaultContent": '<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info</button>'
+            },
+            { "data" : "Dept"},
+            { "data" : "Class nbr" },
+            { "data" : "Class Section" },
+            { "data" : "Teacher" },
+            { "data" : "Days And Time" },
+            { "data" : "Room" },
+            {
+                data: 'Status',
+                className: "details-contro",
+                defaultContent: '<button type=\"button\" class=\"btn\"> update </button>'
+            },
+        ],
+        "order": [[2, 'asc']],
+        responsive: true,
+        fixedHeader: true,
+        "deferRender": true, 
+        searching: true,
+    });
 }
 function parseDaysAndTimes(daysTimes){
     var dayMapping = {
@@ -79,6 +195,36 @@ function parseDaysAndTimes(daysTimes){
     }
     return [days, timesArray]
 }
+function fillSchedule(schedule){
+    $("#calendar").fullCalendar( 'removeEvents' ); // reset calender
+    var dayMapping = {
+        "SUN" : "Sunday",
+        "MON" : "Monday",
+        "TUE" : "Tuesday",
+        "WED" : "Wednesday",
+        "THUR" : "Thursday",
+        "FRI" : "Friday",
+        "SAT" : "Saturday"
+    }
+    for( var theClass in schedule.listOfClasses){
+        var temp = schedule.listOfClasses[theClass]
+        var section = temp.section                     
+        var number = section.number
+        var classTime = section.class_time[0]
+        var start = classTime.startTime
+        var end = classTime.endTime
+        for(var d in temp.daysOfWeek){
+            var day = dayMapping[ temp.daysOfWeek[d] ]
+            $('#calendar').fullCalendar( 'addEventSource', [ { 
+                title: temp.dept + "-" + temp.number + ": " + section.number + "\n" + temp.teacher,
+                start: moment().day(day).hour(start.hour).minute(start.minute),
+                end: moment().day(day).hour(end.hour).minute(end.minute),
+                allDay: false }
+                ] 
+            )
+        }
+    }
+}
 function makeTableHTML(myArray,queryArray) {
     removeRow = function(e){
         delete queryArray[parseInt(e.id)]
@@ -112,80 +258,198 @@ function makeTableHTML(myArray,queryArray) {
 
     return result;
 }
+function breaksHardScore(schedule){
+    var fridayMorning = $("#fridayMorning").is(":checked") // before 3pm
+    var fridayNight = $("#fridayNight").is(":checked") //after 3pm
+    var saturday = $("#saturday").is(":checked")
+    var sunday = $("#sunday").is(":checked")
+    var startTime = parseTime($('.slider-time').html().trim())
+    var endTime = parseTime($('.slider-time2').html().trim())
+    var minDays = $(".slider-schoolRange").html().trim()
+    var maxDays = $(".slider-schoolRange2").html().trim()
+    for(var theClassIndex in schedule.listOfClasses){
+        var theClass = schedule.listOfClasses[theClassIndex]
+        if(theClass.daysOfWeek.length < minDays || theClass.daysOfWeek.length > maxDays ){
+            return true
+        }
+            
+        for(var d in theClass.daysOfWeek){
+            var day = theClass.daysOfWeek[d]
+            if((day == "SAT" && !saturday) || (day == "SUN" && !sunday)){
+                console.log("failed for being on sat/sun")
+                console.log((day == "SAT" && !saturday))
+                console.log((day == "SUN" && !sunday))
+                return true
+            }
+        }
+        for(var classTime in theClass.section.class_time){
+            var theClassTime = theClass.section.class_time[classTime]
+            if(!startTime.lessThenOrEqual(theClassTime.startTime) || !theClassTime.endTime.lessThenOrEqual(endTime)){
+                return true
+            }
+        }
+    }
+    return false
+}
+function parseTime(stringTime){
+    var PM = stringTime.slice(-2) == "PM"
+    var stringTime = stringTime.substring(0, stringTime.length - 2)
+    stringTime = stringTime.split(":");
+    hour = parseInt(stringTime[0])
+    hour += PM && hour != 12 ? 12 : 0;
+    return new Time(hour, parseInt(stringTime[1]))
+}
+function setupSchedules(){
+    $("#calendar").fullCalendar( 'removeEvents' ); // reset calender
+    checkedSchedules = []
+    for(var s in schedules){
+        var schedule = schedules[s]
+        if(!breaksHardScore(schedule)){
+            checkedSchedules.push(schedule)
+        }
+    }
+    currentIndex = 0; // reset index
+    $(".leftScheduleButton").prop("disabled",true);
+    len = checkedSchedules.length
+    if(len >= 1){
+        fillSchedule(checkedSchedules[0])
+        if(len == 1)
+            $(".rightScheduleButton").prop("disabled",true);
+        else
+            $(".rightScheduleButton").prop("disabled",false);
+    }
+    else { // no schedules
+        $(".rightScheduleButton").prop("disabled",true);
+        $('#calendar').fullCalendar( 'addEventSource', [ { 
+            title: "No Schedules, Please redo a search or change the parameters",
+            start: moment().day("Sunday").hour(0).minute(0),
+            end: moment().day("Saturday").hour(23).minute(59),
+            allDay: true }
+            ] 
+        )
+    }
+}
 $(document).ready(function(){
+    $('#calendar').fullCalendar({
+        header: {
+            left: '',
+            right: ''
+        },
+        defaultView: 'agendaWeek',
+        editable: false,
+        columnFormat: 'dddd',
+        aspectRatio: 1.72,
+        minTime: "07:00:00",
+        maxTime: "23:30:00",
+    });
+    $('#calendar').fullCalendar( 'addEventSource', [ { 
+        title: "No Schedules, Please pick classes and do a search",
+        start: moment().day("Sunday").hour(0).minute(0),
+        end: moment().day("Saturday").hour(23).minute(59),
+        allDay: true }
+        ] 
+    )
+    $(".leftScheduleButton").prop("disabled",true);
+    $(".rightScheduleButton").prop("disabled",true);
+    $(".leftScheduleButton").unbind('click').click(function(){
+        currentIndex -= 1;
+        fillSchedule(checkedSchedules[currentIndex])
+        $(".rightScheduleButton").prop("disabled",false);
+        if(currentIndex == 0)
+           $(".leftScheduleButton").prop("disabled",true);
+    })
+    $(".rightScheduleButton").unbind('click').click(function(){
+        currentIndex = currentIndex + 1;
+        fillSchedule(checkedSchedules[currentIndex])
+        $(".leftScheduleButton").prop("disabled",false);
+        if(currentIndex >= checkedSchedules.length - 1)
+           $(".rightScheduleButton").prop("disabled",true);
+    })
     if(queryArray != undefined)
         queryArray = queryArray
     $('table').on('click', 'input[type="button"]', function(e){
         $(this).closest('tr').remove()
     })
     $("#getSchedule").unbind('click').click( function (e) {
+        //getTeacherScores()
         $("#confirmDialog").modal("show")
-        arrayOfarrays = [ [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+        arrayOfarrays = [  ];
+        for(var z = 0; z <= amountOfTabs+1; z++)
+            arrayOfarrays = arrayOfarrays.concat([[]])
         var t = $('#groupTable').DataTable();
         t.clear();
-        for(var i in schedulerStruct){
-            var temp = schedulerStruct[i]
-            var nbr = temp["Class nbr"]
-            var classnbr = nbr.substr(nbr.indexOf("-")+2);
-            var deptartment = nbr.substring(0,nbr.indexOf("-") - 1);
-            var sectionNbr = temp["Class Section"]
-            var daysTimes = temp['Days And Time']
-            var tempDaysAndTimes = parseDaysAndTimes(daysTimes)
-            var days = tempDaysAndTimes[0]
-            var times = tempDaysAndTimes[1]
-            var teacherName = temp['Teacher']
-            var theClassTimes = []
-            var daysCounter = 0
-            for(var i = 0 ; i < times.length; i += 2){
-                theClassTimes.push( new Class_Time( new Time(times[i][0],times[i][1]), new Time(times[i+1][0],times[i+1][1]), days[daysCounter++] ))
+        for(var k = 1; k <= amountOfTabs; k++){
+            var table = $("#groupedTable" + k).DataTable()
+            var rows = table.rows('.row-selected')
+            for(var j in rows[0]){
+                var temp = table.row(rows[0][j]).data()
+                var nbr = temp["Class nbr"]
+                var classnbr = nbr.substr(nbr.indexOf("-")+2);
+                var deptartment = nbr.substring(0,nbr.indexOf("-") - 1);
+                var sectionNbr = temp["Class Section"]
+                var daysTimes = temp['Days And Time']
+                var tempDaysAndTimes = parseDaysAndTimes(daysTimes)
+                var days = tempDaysAndTimes[0]
+                var times = tempDaysAndTimes[1]
+                var teacherName = temp['Teacher']
+                var theClassTimes = []
+                var daysCounter = 0
+                for(var i = 0 ; i < times.length; i += 2){
+                    theClassTimes.push( new Class_Time( new Time(times[i][0],times[i][1]), new Time(times[i+1][0],times[i+1][1]), days[daysCounter++] ))
+                }
+                var teacherScore = getTeacherScore(teacherName)
+                var classSection = new Section( theClassTimes, sectionNbr );
+                var tempCunyClass = new CunyClass(dept         = deptartment, 
+                                                  number       = classnbr, 
+                                                  daysOfWeek   = days, 
+                                                  section      = classSection,
+                                                  teacher      = teacherName,
+                                                  teacherScore = teacherScore
+                                                 );
+                arrayOfarrays[k].push(tempCunyClass)
+                t.row.add({
+                      "Dept"         : deptartment.trim(),
+                      "Class nbr"    : classnbr, 
+                      "Class Section": sectionNbr, 
+                      "Teacher"      : teacherName, 
+                      "Days And Time": daysTimes,
+                      "Group"        : k
+                    })
+
             }
-            var classSection = new Section( theClassTimes, sectionNbr );
-            var tempCunyClass = new CunyClass(dept       = deptartment, 
-                                              number     = classnbr, 
-                                              daysOfWeek = days, 
-                                              section    = classSection,
-                                              teacher    = teacherName
-                                             );
-            arrayOfarrays[temp["group"]].push(tempCunyClass)
-            t.row.add({
-                  "Dept"         : deptartment.trim(),
-                  "Class nbr"    : classnbr, 
-                  "Class Section": sectionNbr, 
-                  "Teacher"      : teacherName, 
-                  "Days And Time": daysTimes,
-                  "Group"        : temp["group"]
-                })
+            t.draw()
         }
-        t.draw();
         $("#getScheduleConfirm").unbind('click').click( function (e) {
             $("#confirmDialog").modal("toggle")
-            $("#userPreferencesDialog").modal("show")
-            $("#backButton").unbind('click').click(function(){
-                    $("#userPreferencesDialog").modal("toggle")
-                    $("#confirmDialog").modal("show")
-            })
-            $("#preferencesConfirm").unbind('click').click(function(){
-                var numberOfClasses = $("#groupCountId").val()
-                if(numberOfClasses.indexOf("-") != -1){
-                    numberOfClasses = numberOfClasses.split("-")
-                    numberOfClasses[0] = numberOfClasses[0].trim()
-                    numberOfClasses[1] = numberOfClasses[1].trim()
-                    if(numberOfClasses[0] > numberOfClasses[1]){
-                        numberOfClasses = [numberOfClasses[1], numberOfClasses[0]]
-                    }
+            schedules = []
+            var listOfClasses = []
+            for(var i in arrayOfarrays){
+                if(arrayOfarrays[i].length > 0){
+                    listOfClasses.push(arrayOfarrays[i])
                 }
-                var listOfClasses = []
-                for(var i in arrayOfarrays){
-                    if(arrayOfarrays[i].length > 0){
-                        listOfClasses.push(arrayOfarrays[i])
-                    }
+            }
+            var numberOfClasses = $("#groupCountId").val()
+            if(numberOfClasses > amountOfTabs)
+                alert("Can't take more classes than the number of classes you have chosen from")
+            if(numberOfClasses.indexOf("-") != -1){ // it is there
+                numberOfClasses = numberOfClasses.split("-")
+                numberOfClasses[0] = numberOfClasses[0].trim()
+                numberOfClasses[1] = numberOfClasses[1].trim()
+                if(numberOfClasses[0] > numberOfClasses[1]){
+                    numberOfClasses = [numberOfClasses[1], numberOfClasses[0]]
                 }
-                b = balancer(listOfClasses,numberOfClasses)
-                console.log("Printing Top Schedules")
-                console.log(b)
-            })
+                for(var i = numberOfClasses[0]; i <= numberOfClasses[1]; i++)
+                    schedules = schedules.concat(balancer(listOfClasses,i))
+            }
+            else{
+                schedules = balancer(listOfClasses,numberOfClasses)
+            }
+            setupSchedules()
         })
     });
+    $("#GetResultsSchedule").unbind('click').click(function(){
+        setupSchedules()
+    })
     $('#inst').unbind('change').change(function(){
         //$("#ajax-loader").show();
         var e = document.getElementById("inst");
@@ -194,61 +458,6 @@ $(document).ready(function(){
         ws.send(JSON.stringify(["get_classes",values["schoolCode"], values["sessionCode"]]));
         //send message for get session
     })
-    $('body').on('input', '.groupInput',function(){
-        $this = $(this)
-        var table = $('#dataTables').DataTable();
-        var tr = $this.closest('tr')
-        var row = table.row( tr );
-        var rowData = row.data()
-        var key = rowData["Class Section"]
-        var group = $this.val()
-        if(key in schedulerStruct){
-          delete schedulerStruct[key] // delete it and re-add it
-        }
-        
-        if (($this.val() < 1 || $this.val() > 12) && $this.val().length != 0){
-          if ($this.val() < 1) {
-              group = 1
-          }
-          else if ($this.val() > 12) {
-              group = 12
-          }
-        }
-        rowData["group"] = group
-        schedulerStruct[key] = rowData
-    })
-    $('body').on('focus', '.groupInput',function(){
-      $(this).on('mousewheel.disableScroll', function (e) {
-        e.preventDefault()
-      })
-      var table = $('#dataTables').DataTable();
-      var $this = $(this)
-
-      interval = setInterval(
-          function () {
-              if (($this.val() < 1 || $this.val() > 12) && $this.val().length != 0) {
-                  if ($this.val() < 1) {
-                      $this.val(1)
-                  }
-                  else if ($this.val() > 12) {
-                      $this.val(12)
-                  }
-
-                  $('#fadingMessage').fadeIn(1000, function () {
-                    $(this).fadeOut(500)
-                  })
-              }
-          }, 50)
-    })
-    $('input').on('blur', 'input[type=number]', function (e) {
-        $(this).off('mousewheel.disableScroll')
-    })
-    $('body').on('blur', '.groupInput',function(e){
-      if (interval != false) {
-        window.clearInterval(interval)
-        interval = false;
-      }
-    })
     $(function() {
         var sliderItem = $( "#DaysInSchoolslider-range" )
         var textItem = $( "#DaysInSchool" )
@@ -256,9 +465,30 @@ $(document).ready(function(){
             range: true,
             min: 1,
             max: 7,
-            values: [ 3, 4 ],
+            values: [ 2, 4 ],
             slide: function( event, ui ) {
                 textItem.val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " Days");
+                $('.slider-schoolRange').html(ui.values[ 0 ])
+                $('.slider-schoolRange2').html(ui.values[ 1 ])
+            }
+        });
+        textItem.val( sliderItem.slider( "values", 0 ) + " - " + sliderItem.slider( "values", 1 ) + " Days" );
+    });
+    $(function() {
+        var sliderItem = $( "#maxBreakTimeSlider-range-min" )
+        var textItem = $( "#maxBreakTimeSlider" )
+        sliderItem.slider({
+            range: "min",
+            min: 0,
+            max: 36*60,
+            step: 30,
+            value:  6*60,
+            slide: function( event, ui ) {
+                var hours1 = Math.floor(ui.value / 60);
+                var minutes1 = ui.value - (hours1 * 60);
+                if (hours1.length == 1) hours1 = '0' + hours1;
+                if (minutes1.length == 1) minutes1 = '0' + minutes1;
+                $('.slider-maxBreakTime').html(hours1 +  " hours and " + minutes1 + " minutes");
             }
         });
         textItem.val( sliderItem.slider( "values", 0 ) + " - " + sliderItem.slider( "values", 1 ) + " Days" );
@@ -268,7 +498,7 @@ $(document).ready(function(){
         min: 360,
         max: 1410,
         step: 15,
-        values: [600, 960],
+        values: [570, 1050], //930AM -> 530p
         slide: function (e, ui) {
             var hours1 = Math.floor(ui.values[0] / 60);
             var minutes1 = ui.values[0] - (hours1 * 60);
@@ -325,19 +555,33 @@ $(document).ready(function(){
     $(document).on("click", "tr", function () {
         $(this).toggleClass("selectedRow");
     });
-    $('#trash').droppable({
-        drop: function(event, ui) {
-            var classes = ui.helper.attr('class').split(" ")
-            var rowNum = classes[1]
-            var tableId = classes[2]
-            var temp_table = $(tableId).DataTable()
-            var row = temp_table.row(rowNum)
-            var section = row.data()["Class nbr"]
-            row.remove()
-            temp_table.draw()
-            rowsSecondDT[tableId][section] = false
-            $(".groupedTable .dataTables_empty").text("Drag and drop classes from the main table above");
-            ui.draggable.remove(); 
-        }
+    $(document).ready(function() {
+        $('#addTab').click( function(e){
+            e.preventDefault();
+            var current_idx = $("#TabsId").find("li").length - 1;
+            $(this).closest('li').before("<li><a data-toggle='tab' href='#menu" + current_idx + "'>Class Option " + current_idx + "</a></li>" )
+            var tableStr = "<div id='menu" + current_idx + "' class='tab-pane fade'> \
+                                <table id='groupedTable" + current_idx + "' class='bitacoratable groupedTable' cellspacing='0'>\
+                                    <thead>\
+                                        <tr>\
+                                            <th>Rate My Professor</th><th>Dept</th>\
+                                            <th>Class nbr</th><th>Class Section</th><th>Teacher</th> \
+                                            <th>Days and Time</th><th>Room</th><th>Status</th> \
+                                        </tr> \
+                                    </thead> \
+                                    <tfoot> \
+                                        <tr> \
+                                            <th>Rate My Professor</th><th>Dept</th> \
+                                            <th>Class nbr</th><th>Class Section</th><th>Teacher</th> \
+                                            <th>Days and Time</th><th>Room</th><th>Status</th> \
+                                        </tr> \
+                                    </tfoot> \
+                                </table> \
+                            </div>"
+            $(".tab-content").append(tableStr)
+            initDataTable(current_idx)
+            add_Data_To_DataTable(current_idx)
+            amountOfTabs += 1
+        });
     });
 });

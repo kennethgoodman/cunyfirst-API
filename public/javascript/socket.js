@@ -135,7 +135,6 @@ ws.onmessage = function (event) {
         var row = table.row( data[2] )
         hiddenRowData[data[2]] = ["Loading...",data[1]]
         row.child( format(["Loading...this may take a minute",data[1]]) );
-        //$("#ajax-loader").hide();
       }
       else if(commandFromServer == "statusInfo"){
         //console.log("got call statusInfo")
