@@ -21,7 +21,7 @@ balancer = function(possibleClasses,numberOfElements){
 	var gen = all_subets(possibleClasses, numberOfElements)
 	while( (schedule = gen.next().value ) != undefined){
 		schedule = new Schedule(schedule)
-		if(!hardScoreBreak(schedule)){
+		if(!hardScoreBreakModel(schedule)){
 			schedules.push(schedule)
 		}
 		//softScore = findSoftScore(schedule,false,numberOfElements*3)

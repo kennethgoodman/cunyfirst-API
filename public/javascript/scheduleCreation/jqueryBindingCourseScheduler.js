@@ -259,31 +259,27 @@ function makeTableHTML(myArray,queryArray) {
     return result;
 }
 function breaksHardScore(schedule){
-    var fridayMorning = $("#fridayMorning").is(":checked") // before 3pm
-    var fridayNight = $("#fridayNight").is(":checked") //after 3pm
-    var saturday = $("#saturday").is(":checked")
-    var sunday = $("#sunday").is(":checked")
-    var startTime = parseTime($('.slider-time').html().trim())
-    var endTime = parseTime($('.slider-time2').html().trim())
-    var minDays = $(".slider-schoolRange").html().trim()
-    var maxDays = $(".slider-schoolRange2").html().trim()
+    startTimes = []
+    endTimes = []
+    for(var i = 0; i < 7; i++){
+        startTimes.push(parseTime($('#slider-time1' + i).html().trim()))
+        endTimes.push(parseTime($('#slider-time2' + i).html().trim()))
+    }
+    var dayMapping = {
+        "SUN" : 0,
+        "MON" : 1,
+        "TUE" : 2,
+        "WED" : 3,
+        "THUR" : 4,
+        "FRI" : 5,
+        "SAT" : 6
+    }
     for(var theClassIndex in schedule.listOfClasses){
         var theClass = schedule.listOfClasses[theClassIndex]
-        if(theClass.daysOfWeek.length < minDays || theClass.daysOfWeek.length > maxDays ){
-            return true
-        }
-            
-        for(var d in theClass.daysOfWeek){
-            var day = theClass.daysOfWeek[d]
-            if((day == "SAT" && !saturday) || (day == "SUN" && !sunday)){
-                console.log("failed for being on sat/sun")
-                console.log((day == "SAT" && !saturday))
-                console.log((day == "SUN" && !sunday))
-                return true
-            }
-        }
         for(var classTime in theClass.section.class_time){
             var theClassTime = theClass.section.class_time[classTime]
+            var startTime = startTimes[dayMapping[theClassTime.day]]
+            var endTime = endTimes[dayMapping[theClassTime.day]]
             if(!startTime.lessThenOrEqual(theClassTime.startTime) || !theClassTime.endTime.lessThenOrEqual(endTime)){
                 return true
             }
@@ -370,14 +366,14 @@ $(document).ready(function(){
     $('table').on('click', 'input[type="button"]', function(e){
         $(this).closest('tr').remove()
     })
-    $("#getSchedule").unbind('click').click( function (e) {
+    $("#GetResultsSchedule").unbind('click').click( function (e) {
         //getTeacherScores()
-        $("#confirmDialog").modal("show")
+        //$("#confirmDialog").modal("show")
         arrayOfarrays = [  ];
         for(var z = 0; z <= amountOfTabs+1; z++)
             arrayOfarrays = arrayOfarrays.concat([[]])
-        var t = $('#groupTable').DataTable();
-        t.clear();
+        //var t = $('#groupTable').DataTable();
+        //t.clear();
         for(var k = 1; k <= amountOfTabs; k++){
             var table = $("#groupedTable" + k).DataTable()
             var rows = table.rows('.row-selected')
@@ -395,7 +391,10 @@ $(document).ready(function(){
                 var theClassTimes = []
                 var daysCounter = 0
                 for(var i = 0 ; i < times.length; i += 2){
-                    theClassTimes.push( new Class_Time( new Time(times[i][0],times[i][1]), new Time(times[i+1][0],times[i+1][1]), days[daysCounter++] ))
+                    theClassTimes.push( new Class_Time( new Time(times[i][0],times[i][1]), 
+                                                        new Time(times[i+1][0],times[i+1][1]), 
+                                                        days[daysCounter++] 
+                                                    ))
                 }
                 var teacherScore = getTeacherScore(teacherName)
                 var classSection = new Section( theClassTimes, sectionNbr );
@@ -407,7 +406,7 @@ $(document).ready(function(){
                                                   teacherScore = teacherScore
                                                  );
                 arrayOfarrays[k].push(tempCunyClass)
-                t.row.add({
+                /*t.row.add({
                       "Dept"         : deptartment.trim(),
                       "Class nbr"    : classnbr, 
                       "Class Section": sectionNbr, 
@@ -415,12 +414,12 @@ $(document).ready(function(){
                       "Days And Time": daysTimes,
                       "Group"        : k
                     })
-
+                */
             }
-            t.draw()
+            //t.draw()
         }
-        $("#getScheduleConfirm").unbind('click').click( function (e) {
-            $("#confirmDialog").modal("toggle")
+        //$("#getScheduleConfirm").unbind('click').click( function (e) {
+        //    $("#confirmDialog").modal("toggle")
             schedules = []
             var listOfClasses = []
             for(var i in arrayOfarrays){
@@ -428,28 +427,12 @@ $(document).ready(function(){
                     listOfClasses.push(arrayOfarrays[i])
                 }
             }
-            var numberOfClasses = $("#groupCountId").val()
-            if(numberOfClasses > amountOfTabs)
-                alert("Can't take more classes than the number of classes you have chosen from")
-            if(numberOfClasses.indexOf("-") != -1){ // it is there
-                numberOfClasses = numberOfClasses.split("-")
-                numberOfClasses[0] = numberOfClasses[0].trim()
-                numberOfClasses[1] = numberOfClasses[1].trim()
-                if(numberOfClasses[0] > numberOfClasses[1]){
-                    numberOfClasses = [numberOfClasses[1], numberOfClasses[0]]
-                }
-                for(var i = numberOfClasses[0]; i <= numberOfClasses[1]; i++)
-                    schedules = schedules.concat(balancer(listOfClasses,i))
-            }
-            else{
-                schedules = balancer(listOfClasses,numberOfClasses)
-            }
+            var maxClasses = $("#maxNumClasses").val()
+            for(var i = $("#minNumClasses").val(); i <= maxClasses; i++)
+                schedules = schedules.concat(balancer(listOfClasses,i))
+            console.log(schedules)
             setupSchedules()
-        })
     });
-    $("#GetResultsSchedule").unbind('click').click(function(){
-        setupSchedules()
-    })
     $('#inst').unbind('change').change(function(){
         //$("#ajax-loader").show();
         var e = document.getElementById("inst");
@@ -480,9 +463,9 @@ $(document).ready(function(){
         sliderItem.slider({
             range: "min",
             min: 0,
-            max: 36*60,
-            step: 30,
-            value:  6*60,
+            max: 6*60,
+            step: 15,
+            value:  2*60,
             slide: function( event, ui ) {
                 var hours1 = Math.floor(ui.value / 60);
                 var minutes1 = ui.value - (hours1 * 60);
@@ -493,65 +476,67 @@ $(document).ready(function(){
         });
         textItem.val( sliderItem.slider( "values", 0 ) + " - " + sliderItem.slider( "values", 1 ) + " Days" );
     });
-    $("#slider-range").slider({
-        range: true,
-        min: 360,
-        max: 1410,
-        step: 15,
-        values: [570, 1050], //930AM -> 530p
-        slide: function (e, ui) {
-            var hours1 = Math.floor(ui.values[0] / 60);
-            var minutes1 = ui.values[0] - (hours1 * 60);
+    sliderFunction = function(theId,theClassOne,theClassTwo){
+        $(theId).slider({
+            range: true,
+            min: 360,
+            max: 1410,
+            step: 15,
+            values: [570, 1050], //930AM -> 530p
+            slide: function (e, ui) {
+                var hours1 = Math.floor(ui.values[0] / 60);
+                var minutes1 = ui.values[0] - (hours1 * 60);
 
-            if (hours1.length == 1) hours1 = '0' + hours1;
-            if (minutes1.length == 1) minutes1 = '0' + minutes1;
-            if (minutes1 == 0) minutes1 = '00';
-            if (hours1 >= 12) {
-                if (hours1 == 12) {
+                if (hours1.length == 1) hours1 = '0' + hours1;
+                if (minutes1.length == 1) minutes1 = '0' + minutes1;
+                if (minutes1 == 0) minutes1 = '00';
+                if (hours1 >= 12) {
+                    if (hours1 == 12) {
+                        hours1 = hours1;
+                        minutes1 = minutes1 + " PM";
+                    } else {
+                        hours1 = hours1 - 12;
+                        minutes1 = minutes1 + " PM";
+                    }
+                } else {
                     hours1 = hours1;
-                    minutes1 = minutes1 + " PM";
-                } else {
-                    hours1 = hours1 - 12;
-                    minutes1 = minutes1 + " PM";
+                    minutes1 = minutes1 + " AM";
                 }
-            } else {
-                hours1 = hours1;
-                minutes1 = minutes1 + " AM";
-            }
-            if (hours1 == 0) {
-                hours1 = 12;
-                minutes1 = minutes1;
-            }
+                if (hours1 == 0) {
+                    hours1 = 12;
+                    minutes1 = minutes1;
+                }
+                $(theClassOne).html(hours1 + ':' + minutes1);
 
+                var hours2 = Math.floor(ui.values[1] / 60);
+                var minutes2 = ui.values[1] - (hours2 * 60);
 
-
-            $('.slider-time').html(hours1 + ':' + minutes1);
-
-            var hours2 = Math.floor(ui.values[1] / 60);
-            var minutes2 = ui.values[1] - (hours2 * 60);
-
-            if (hours2.length == 1) hours2 = '0' + hours2;
-            if (minutes2.length == 1) minutes2 = '0' + minutes2;
-            if (minutes2 == 0) minutes2 = '00';
-            if (hours2 >= 12) {
-                if (hours2 == 12) {
+                if (hours2.length == 1) hours2 = '0' + hours2;
+                if (minutes2.length == 1) minutes2 = '0' + minutes2;
+                if (minutes2 == 0) minutes2 = '00';
+                if (hours2 >= 12) {
+                    if (hours2 == 12) {
+                        hours2 = hours2;
+                        minutes2 = minutes2 + " PM";
+                    } else if (hours2 == 24) {
+                        hours2 = 11;
+                        minutes2 = "59 PM";
+                    } else {
+                        hours2 = hours2 - 12;
+                        minutes2 = minutes2 + " PM";
+                    }
+                } else {
                     hours2 = hours2;
-                    minutes2 = minutes2 + " PM";
-                } else if (hours2 == 24) {
-                    hours2 = 11;
-                    minutes2 = "59 PM";
-                } else {
-                    hours2 = hours2 - 12;
-                    minutes2 = minutes2 + " PM";
+                    minutes2 = minutes2 + " AM";
                 }
-            } else {
-                hours2 = hours2;
-                minutes2 = minutes2 + " AM";
+                $(theClassTwo).html(hours2 + ':' + minutes2);
             }
+        });
+    }
+    sliderFunction("#slider-range",'.slider-time1','.slider-time2')
+    for(var i = 0; i < 7; i++)
+        sliderFunction("#slider-range" + i,'#slider-time1' + i,'#slider-time2' + i)
 
-            $('.slider-time2').html(hours2 + ':' + minutes2);
-        }
-    });
     $(document).on("click", "tr", function () {
         $(this).toggleClass("selectedRow");
     });
@@ -559,8 +544,10 @@ $(document).ready(function(){
         $('#addTab').click( function(e){
             e.preventDefault();
             var current_idx = $("#TabsId").find("li").length - 1;
-            $(this).closest('li').before("<li><a data-toggle='tab' href='#menu" + current_idx + "'>Class Option " + current_idx + "</a></li>" )
+            $(this).closest('li').before("<li><a data-toggle='tab' href='#menu" + current_idx + "'>Class Group " + current_idx + "</a></li>" )
             var tableStr = "<div id='menu" + current_idx + "' class='tab-pane fade'> \
+                                <p> You want <input type='number' name='quantity' min='1' max='5' style='width:40px' value='1' id='NumberOfClassesFromGroup" + current_idx + "'> \
+                                classes from this group (You will only get one class for each Department-Class combo)</p> \
                                 <table id='groupedTable" + current_idx + "' class='bitacoratable groupedTable' cellspacing='0'>\
                                     <thead>\
                                         <tr>\

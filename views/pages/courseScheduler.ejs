@@ -29,9 +29,6 @@
                     </select>
                 </div>
             </div>
-            <div class="getScheduleButton">
-                <button type="button" class="btn btn-primary" id="getSchedule" style="margin-bottom: 12px;">Get Schedule</button>
-            </div>
         </div> 
         <div style="text-align:center">
         <% cores = ["core a","core b"] %>
@@ -45,7 +42,7 @@
           <ul class="nav nav-tabs" id="TabsId">
             <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
             <% for(var i=0; i < amountOfTabs; i++) { %>
-                <li id="li_menu<%=i+1%>"><a data-toggle="tab" href="#menu<%=i+1%>">Class Option <%=i+1%></a></li>
+                <li id="li_menu<%=i+1%>"><a data-toggle="tab" href="#menu<%=i+1%>">Class Group <%=i+1%></a></li>
             <% } %>
             <li id="addTabLi"><a data-toggle="tab" href="#addTabId" id="addTab"><span class="glyphicon glyphicon-plus"></span></a></li>
           </ul>            
@@ -58,6 +55,7 @@
             </div>
             <% for(var i=0; i < amountOfTabs; i++) { %>
                 <div id="menu<%=i+1%>" class="tab-pane fade">
+                  <p> You want <input type="number" name="quantity" min="1" max="5" style="width:40px" value="1" id="NumberOfClassesFromGroup<%=i%>"> classes from this group (You will only get one class for each Department-Class combo)</p>
                     <table id="groupedTable<%=i+1%>" class="bitacoratable groupedTable" cellspacing="0">
                         <thead>
                             <tr>
@@ -91,6 +89,43 @@
             </script>
         </div>
         <div class="schedulerHolder col-xs-14 col-sm-8 col-lg-10">
+          <div class="row seven-cols">
+            <% for(var i=0; i < 7; i++) { %>
+              <div class="col-xs-5 col-sm-5 col-md-1" style="left: <%=111 - i*16%>px; top:20px;" id="timeRangeHolder<%=i%>">
+                <div id="time-range<%=i%>" class="timeRangeClass">
+                    <span id="slider-time1<%=i%>">9:30 AM</span> - <span id="slider-time2<%=i%>">5:30 PM</span><br><Br>
+                    <div class="sliders_step<%=i%>">
+                        <div id="slider-range<%=i%>" style="width:70%;"></div>
+                    </div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+          <style type="text/css">
+          @media (min-width: 768px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1  {
+              width: 100%;
+            }
+          }
+
+          @media (min-width: 992px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+              width: 14.285714285714285714285714285714%;
+            }
+          }
+
+          @media (min-width: 1200px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+              width: 14.285714285714285714285714285714%;
+            }
+          }
+          </style>
           <div>
             <div id='calendar'></div>
           </div>
@@ -104,34 +139,12 @@
           <br>
           <div style="text-align: center;"><button class="btn btn-primary" id="GetResultsSchedule"> Get Results </button></div>
             <br>
-            <p>
-              Which weekend days can you go to school on?
-            </p>
-            <form class="form-inline">
-              <label class="checkbox-inline checkbox"><input id="fridayMorning" type="checkbox" value="">Friday Morning/Afternoon (before 3pm)</label><br>
-              <label class="checkbox-inline checkbox"><input id="fridayNight" type="checkbox" value="">Friday Night</label><br>
-              <label class="checkbox-inline checkbox"><input id="saturday" type="checkbox" value="">Saturday</label><br>
-              <label class="checkbox-inline checkbox"><input id="sunday" type="checkbox" value="">Sunday</label><br>
-            </form>
+            <label for="minNumClasses"> minimum number of classes:  <input type="number" name="quantity" min="1" max="15" style="width:50px" value="1" id="minNumClasses"> <br>
+            <label for="maxNumClasses"> maximum number of classes:  <input type="number" name="quantity" min="1" max="15" style="width:50px" value="1" id="maxNumClasses"> <br>
             <br>
-            <div>
-                <p>
-                  <label for="DaysInSchool">You want to be in school:</label>
-                   <span class="slider-schoolRange"> 2 </span> - <span class="slider-schoolRange2"> 4 </span> days<br><br>
-                  <div id="DaysInSchoolslider-range" style="width:50%"></div>
-                </p>
-              </div>
-              <br>
-              <br>
-            <div id="time-range">
-                <p>Times you are willing to spend in school: <span class="slider-time">9:30 AM</span> - <span class="slider-time2">5:30 PM</span></p><br>
-                <div class="sliders_step1">
-                    <div id="slider-range"></div>
-                </div>
-            </div><br><br>
             <div id="maxBreaks">
-              <label for="maxBreakTimeSlider"> The max total amount of time between classes in one week that you want is:</label>
-              <span class="slider-maxBreakTime"> 6 hours and 0 minutes </span><br><br>
+              <label for="maxBreakTimeSlider"> The max amount of time between classes you want is:</label>
+              <span class="slider-maxBreakTime"> 2 hours and 0 minutes </span><br><br>
               <div id="maxBreakTimeSlider-range-min" style="width:100%"></div>
             </div>
         </div>
@@ -157,7 +170,7 @@
                             <th>Class Section</th>
                             <th>Teacher</th>
                             <th>Days and Time</th>
-                            <th>Class Option </th>
+                            <th>Class Group </th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -167,7 +180,7 @@
                             <th>Class Section</th>
                             <th>Teacher</th>
                             <th>Days and Time</th>
-                            <th>Class Option </th>
+                            <th>Class Group </th>
                         </tr>
                     </tfoot>
                 </table>

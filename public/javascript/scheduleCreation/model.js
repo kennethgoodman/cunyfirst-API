@@ -86,7 +86,7 @@ findSoftScore = function(schedule, debug, creditsTaking){
 	}
 	return softScore
 }
-hardScoreBreak = function(schedule, extra){
+hardScoreBreakModel = function(schedule, extra){
 	var extra = typeof extra !== 'undefined' ?  extra : function(schedule){ return true };
 	listOfClasses = schedule.getListOfClasses()
 	len = listOfClasses.length
