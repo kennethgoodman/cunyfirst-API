@@ -80,6 +80,35 @@ module.exports = function(wss){
 						sendData(ws,a)
 					})
 					break
+				case "getTestClasses":
+					checkForEmptyData(data, ws, function(data){
+						var a = ["classes"]
+						var temp = {}
+						var template = {
+										'subject_name'	: 'Mathematics',
+										'subject_code'	: 'MATH',
+										'class_id'	  	: '',
+										'class_num'   	: '',
+										'teacher'     	: 'Teacher',
+										'days_and_times': '',
+										'room'			: 'Kiely 231',
+									}
+						var counter = 1			
+						var tempTemplate = JSON.parse(JSON.stringify(template)) // copy it
+						tempTemplate['class_id'] = '10' + counter, tempTemplate['days_and_times'] = 'MoTu 10:45AM - 12:00PM', tempTemplate['class_num'] = counter++
+						temp[tempTemplate['class_id']] = tempTemplate
+						
+						tempTemplate = JSON.parse(JSON.stringify(template)) // copy it
+						tempTemplate['class_id'] = '10' + counter, tempTemplate['days_and_times'] = 'MoTu 12:10PM - 1:25PM', tempTemplate['class_num'] = counter++
+						temp[tempTemplate['class_id']] = tempTemplate
+						
+						tempTemplate = JSON.parse(JSON.stringify(template)) // copy it
+						tempTemplate['class_id'] = '10' + counter, tempTemplate['days_and_times'] = 'TBA', tempTemplate['class_num'] = counter++
+						temp[tempTemplate['class_id']] = tempTemplate
+						
+						a.push(temp)
+						sendData(ws, a)
+					})
 				case "removeUserClass":
 					var query = "REMOVE FROM customer_info WHERE inst = $1 AND session = $2 AND dept = $3 and classnbr = $4 AND section = $5";
 					logger.log(query)
@@ -131,13 +160,14 @@ module.exports = function(wss){
 		        		var institution = data[1]
 						var teacher = data[2]
 						var index = data[3]
+						var tableId = data[4]
 						var b = ["teacherInfo"]
 						getTeacherInfo([institution,teacher], function(data){
-							//console.log(data)
 							b.push(data[0])
 							b.push(index)
+							b.push(tableId)
+							b.push(teacher)
 							sendData(ws,b)
-							//console.log(b)
 						})
 					})
 		        	break
