@@ -11,28 +11,28 @@ class Class_Time{
 		return this.endTime
 	}
 	isMorning(){
-		return this.getStartTime().lessThenOrEqual(new Time(9,15))
+		return this.getStartTime().lessThanOrEqual(new Time(9,15))
 	}
 	overlap(b){
 		if(this.day != b.day)
 			return false
-		else if(this.getStartTime().lessThenOrEqual(b.getStartTime()) && b.getStartTime().lessThenOrEqual(this.getEndTime()))
+		else if(this.getStartTime().lessThanOrEqual(b.getStartTime()) && b.getStartTime().lessThanOrEqual(this.getEndTime()))
 			return true
-		else if(b.getStartTime().lessThenOrEqual(this.getStartTime()) && this.getStartTime().lessThenOrEqual(b.getEndTime()))
+		else if(b.getStartTime().lessThanOrEqual(this.getStartTime()) && this.getStartTime().lessThanOrEqual(b.getEndTime()))
 			return true
 		return false
 	}
-	lessThen(b){
-		return this.getStartTime().lessThen(b.getStartTime)
+	lessThan(b){
+		return this.startTime.lessThan(b.startTime)
 	}
-	lessThenOrEqual(b){
-		return this.getStartTime().lessThenOrEqual(b.getStartTime())
+	lessThanOrEqual(b){
+		return this.getStartTime().lessThanOrEqual(b.getStartTime())
 	}
-	greaterThen(b){
-		return this.getStartTime().greaterThen(b.getStartTime())
+	greaterThan(b){
+		return this.getStartTime().greaterThan(b.getStartTime())
 	}
-	greaterThenOrEqual(b){
-		return this.getStartTime().greaterThenOrEqual(b.getStartTime())
+	greaterThanOrEqual(b){
+		return this.getStartTime().greaterThanOrEqual(b.getStartTime())
 	}
 }
 Class_Time.prototype.toString = function(){

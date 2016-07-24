@@ -195,8 +195,16 @@ function parseDaysAndTimes(daysTimes){
     }
     return [days, timesArray]
 }
-function fillSchedule(schedule){
-    $("#calendar").fullCalendar( 'removeEvents' ); // reset calender
+function addAllDayEvent(cal,theClass,section){
+    cal.fullCalendar( 'addEventSource', [ { 
+        title: theClass.dept + "-" + theClass.number + ": " + section.number + "\n" + theClass.teacher + "\nNo time Info",
+        start: moment().day("Sunday").hour(0).minute(0),
+        end: moment().day("Saturday").hour(23).minute(59),
+        allDay: true }
+        ] 
+    )
+}
+function addClassToCal(cal,theClass,section, start, end){
     var dayMapping = {
         "SUN" : "Sunday",
         "MON" : "Monday",
@@ -206,6 +214,20 @@ function fillSchedule(schedule){
         "FRI" : "Friday",
         "SAT" : "Saturday"
     }
+    for(var d in theClass.daysOfWeek){
+        var day = dayMapping[ theClass.daysOfWeek[d] ]
+        cal.fullCalendar( 'addEventSource', [ { 
+            title: theClass.dept + "-" + theClass.number + ": " + section.number + "\n" + theClass.teacher,
+            start: moment().day(day).hour(start.hour).minute(start.minute),
+            end: moment().day(day).hour(end.hour).minute(end.minute),
+            allDay: false }
+            ] 
+        )
+    }
+}
+function fillSchedule(schedule){
+    var cal = $('#calendar');
+    cal.fullCalendar( 'removeEvents' ); // reset calender
     for( var theClass in schedule.listOfClasses){
         var temp = schedule.listOfClasses[theClass]
         var section = temp.section                     
@@ -213,16 +235,11 @@ function fillSchedule(schedule){
         var classTime = section.class_time[0]
         var start = classTime.startTime
         var end = classTime.endTime
-        for(var d in temp.daysOfWeek){
-            var day = dayMapping[ temp.daysOfWeek[d] ]
-            $('#calendar').fullCalendar( 'addEventSource', [ { 
-                title: temp.dept + "-" + temp.number + ": " + section.number + "\n" + temp.teacher,
-                start: moment().day(day).hour(start.hour).minute(start.minute),
-                end: moment().day(day).hour(end.hour).minute(end.minute),
-                allDay: false }
-                ] 
-            )
-        }
+        if(start.hour == null || start.minute == null || end.hour == null || end.minute == null)
+            addAllDayEvent(cal,temp,section)
+        else
+            addClassToCal(cal, temp, section, start, end)
+        
     }
 }
 function makeTableHTML(myArray,queryArray) {
@@ -258,6 +275,65 @@ function makeTableHTML(myArray,queryArray) {
 
     return result;
 }
+function breaksTeacherRule(teacher){
+    return false
+}
+function breaksHardScoreByDay(schedule){
+    // set up start/end times
+    startTimes = []
+    endTimes = []
+    for(var i = 0; i < 7; i++){
+        startTimes.push(parseTime($('#slider-time1' + i).html().trim()))
+        endTimes.push(parseTime($('#slider-time2' + i).html().trim()))
+    }
+    // set up mapping
+    var dayMapping = {
+        "SUN" : 0,
+        "MON" : 1,
+        "TUE" : 2,
+        "WED" : 3,
+        "THUR" : 4,
+        "FRI" : 5,
+        "SAT" : 6
+    }
+
+    // set up maxBreakTime
+    var temp = $('.slider-maxBreakTime').html()
+    var hourOfBreaks = parseInt(temp.substring(0,temp.indexOf("hour")).trim())
+    var minOfBreaks = parseInt(temp.substring(temp.indexOf("min")-3,temp.indexOf("min")).trim())
+    var maxBreakTime = new Time(hourOfBreaks, minOfBreaks)
+
+    // do checks
+    schedule = new ClassesByDay(schedule.getListOfClasses())
+    for(var i = 0; i < 7; i++){
+        if(schedule.listOfClasses[i].length() == 0) continue 
+        // else
+        // check maxBreakTime
+        schedule.listOfClasses[i].listOfCunyClasses.sort()
+        var last = schedule.listOfClasses[i].listOfCunyClasses[0];
+        var firstClassTime = last.section.class_time[0]
+        for(var j = 1; j < schedule.listOfClasses[i].listOfCunyClasses.length; j++){
+            var theClass = schedule.listOfClasses[i].listOfCunyClasses[j]
+            var theClassTime = theClass.section.class_time[0]
+            if(theClassTime.startTime == null || theClassTime.endTime == null) continue
+            
+            var breakTime = Time.subtraction(theClassTime.startTime,last.section.class_time[0].endTime)
+            if(breakTime.greaterThan(maxBreakTime))
+                return true
+            last = theClass
+        }   
+        // check that first and last class follow timings
+        var lastClassTime = last.section.class_time[0]
+        var startTime = startTimes[dayMapping[lastClassTime.day]]
+        var endTime = endTimes[dayMapping[lastClassTime.day]]
+        if( firstClassTime.startTime == null || lastClassTime.endTime == null || lastClassTime.day == null) continue
+        if( firstClassTime.startTime.lessThan(startTime) || lastClassTime.endTime.greaterThan(endTime)) return true
+    }
+    for(var i in schedule.listOfClasses[7]){
+        // if RMP about null day
+    }
+    return false
+}
 function breaksHardScore(schedule){
     startTimes = []
     endTimes = []
@@ -276,14 +352,18 @@ function breaksHardScore(schedule){
     }
     for(var theClassIndex in schedule.listOfClasses){
         var theClass = schedule.listOfClasses[theClassIndex]
+        if(breaksTeacherRule(theClass.teacher))
+            return true
         for(var classTime in theClass.section.class_time){
             var theClassTime = theClass.section.class_time[classTime]
             var startTime = startTimes[dayMapping[theClassTime.day]]
             var endTime = endTimes[dayMapping[theClassTime.day]]
-            if(!startTime.lessThenOrEqual(theClassTime.startTime) || !theClassTime.endTime.lessThenOrEqual(endTime)){
-                return true
-            }
+            if(theClassTime.startTime == null || theClassTime.endTime == null || theClassTime.day == null) continue
+            if(!startTime.lessThanOrEqual(theClassTime.startTime) || !theClassTime.endTime.lessThanOrEqual(endTime)) return true
         }
+    }
+    for(var i in schedule.listOfClasses[7]){
+        // if RMP about null day
     }
     return false
 }
@@ -300,6 +380,7 @@ function setupSchedules(){
     checkedSchedules = []
     for(var s in schedules){
         var schedule = schedules[s]
+        console.log(breaksHardScore(schedule) === breaksHardScoreByDay(schedule))
         if(!breaksHardScore(schedule)){
             checkedSchedules.push(schedule)
         }
@@ -384,7 +465,10 @@ $(document).ready(function(){
                 var deptartment = nbr.substring(0,nbr.indexOf("-") - 1);
                 var sectionNbr = temp["Class Section"]
                 var daysTimes = temp['Days And Time']
-                var tempDaysAndTimes = parseDaysAndTimes(daysTimes)
+                if(daysTimes.trim() == "TBA")
+                    tempDaysAndTimes = [[null],[[null,null],[null,null]]]
+                else
+                    tempDaysAndTimes = parseDaysAndTimes(daysTimes)
                 var days = tempDaysAndTimes[0]
                 var times = tempDaysAndTimes[1]
                 var teacherName = temp['Teacher']
@@ -430,7 +514,6 @@ $(document).ready(function(){
             var maxClasses = $("#maxNumClasses").val()
             for(var i = $("#minNumClasses").val(); i <= maxClasses; i++)
                 schedules = schedules.concat(balancer(listOfClasses,i))
-            console.log(schedules)
             setupSchedules()
     });
     $('#inst').unbind('change').change(function(){
@@ -474,7 +557,6 @@ $(document).ready(function(){
                 $('.slider-maxBreakTime').html(hours1 +  " hours and " + minutes1 + " minutes");
             }
         });
-        textItem.val( sliderItem.slider( "values", 0 ) + " - " + sliderItem.slider( "values", 1 ) + " Days" );
     });
     sliderFunction = function(theId,theClassOne,theClassTwo){
         $(theId).slider({

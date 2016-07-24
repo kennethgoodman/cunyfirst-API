@@ -52,7 +52,8 @@ ws.onmessage = function (event) {
           t.clear();
           for(var nbr in data){
               for(var section in data[nbr]){
-                  t.row.add([dept + ": " + nbr,section,data[nbr][section]['Instructor'],data[nbr][section]['Status'],data[nbr][section]['Days & Times'],data[nbr][section]['Room']])
+                  var temp = data[nbr][section]
+                  t.row.add([dept + ": " + nbr,section,temp['Instructor'],temp['Status'],temp['Days & Times'],temp['Room']])
               }
           }
           t.draw()
@@ -137,5 +138,5 @@ ws.onmessage = function (event) {
 ws.onopen = function(err){
   if(err) console.log(err);
   ws.send(JSON.stringify(["get_inst"]));
-  //ws.send(JSON.stringify(["get_classes",'QNS01', '1169']));
+  setTimeout( function() { ws.send(JSON.stringify(["getTestClasses"])) }, 500);
 }

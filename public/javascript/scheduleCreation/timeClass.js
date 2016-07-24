@@ -10,7 +10,7 @@ class Time{
 		return this.minute
 	}
 	static startsBefore(a,b){
-		return a.lessThen(b)
+		return a.lessThan(b)
 	}
 	static subtraction(first, second){
 		var min = (first.minute - second.getMinute() + 60)%60 //add 60 to get rid of negative numbers
@@ -26,28 +26,27 @@ class Time{
 			hour = 1
 		return new Time((first.hour + second.getHour() + hour), min)
 	}
-	lessThen(other){
-		if(this.hour < other.getHour())
-			return true
-		else if(this.hour == other.getHour())
-			return this.minute < other.getMinute()
+	lessThan(other){
+		if(this.hour == null || this.minute == null) return false
+		else if(this.hour < other.getHour())  return true
+		else if(this.hour == other.getHour()) return this.minute < other.getMinute()
 		return false
 	}
-	lessThenOrEqual(other){
+	lessThanOrEqual(other){
 		if(this.hour < other.getHour())
 			return true
 		else if(this.hour == other.getHour())
 			return this.minute <= other.getMinute()
 		return false
 	}
-	greaterThen(other){
+	greaterThan(other){
 		if(this.hour > other.getHour())
 			return true
 		else if(this.hour == other.getHour())
-			return this.minute() > other.getMinute()
+			return this.minute > other.getMinute()
 		return false
 	}
-	greaterThenOrEqual(other){
+	greaterThanOrEqual(other){
 		if(this.hour > other.getHour())
 			return true
 		else if(this.hour == other.getHour())
