@@ -40,7 +40,7 @@
         </div>
         <div class="container">
           <ul class="nav nav-tabs" id="TabsId">
-            <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+            <li class="active"><a data-toggle="tab" href="#home">How to</a></li>
             <% for(var i=0; i < amountOfTabs; i++) { %>
                 <li id="li_menu<%=i+1%>"><a data-toggle="tab" href="#menu<%=i+1%>">Class Group <%=i+1%></a></li>
             <% } %>
@@ -48,7 +48,7 @@
           </ul>            
           <div class="tab-content">
             <div id="home" class="tab-pane fade in active">
-                <h3>HOME</h3>
+                <h3>How to</h3>
                 <p> To get started, go through each tab and pick classes. Each tab will represent a different choice. <br><br>Ex: You want to take one anthro class and one math class. Tab 1 would contain all the anthro choices and tab 2 will contain all the math choices.
                 <br><br>The tables take a couple seconds to load once you select a dropdown. Thank you for your patience.
                 </p>
@@ -76,18 +76,7 @@
             <% } %>
           </div>
         </div>
-        <br><br><br><br>
-        <div style="margin: auto;text-align: center">
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <!-- leaderboard ad -->
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:728px;height:90px;"
-                 data-ad-client="ca-pub-6625985610418162"
-                 data-ad-slot="9430096730"></ins>
-            <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
+        <br><br>
         <div class="schedulerHolder col-xs-14 col-sm-8 col-lg-10">
           <div class="row seven-cols">
             <% for(var i=0; i < 7; i++) { %>
@@ -139,14 +128,26 @@
           <br>
           <div style="text-align: center;"><button class="btn btn-primary" id="GetResultsSchedule"> Get Results </button></div>
             <br>
-            <label for="minNumClasses"> minimum number of classes:  <input type="number" name="quantity" min="1" max="15" style="width:50px" value="1" id="minNumClasses"> <br>
-            <label for="maxNumClasses"> maximum number of classes:  <input type="number" name="quantity" min="1" max="15" style="width:50px" value="1" id="maxNumClasses"> <br>
+            <label for="minNumClasses"> minimum number of classes:  <input type="number" name="quantity" min="1" max="15" style="width:50px" value="2" id="minNumClasses"> <br>
+            <label for="maxNumClasses"> maximum number of classes:  <input type="number" name="quantity" min="1" max="15" style="width:50px" value="2" id="maxNumClasses"> <br>
             <br>
             <div id="maxBreaks">
               <label for="maxBreakTimeSlider"> The max amount of time between classes you want is:</label>
               <span class="slider-maxBreakTime"> 2 hours and 0 minutes </span><br><br>
               <div id="maxBreakTimeSlider-range-min" style="width:100%"></div>
             </div>
+        </div>
+        <br><br>
+        <div style="margin: auto;text-align: center">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- leaderboard ad -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px;"
+                 data-ad-client="ca-pub-6625985610418162"
+                 data-ad-slot="9430096730"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
     </body>
 </html>
