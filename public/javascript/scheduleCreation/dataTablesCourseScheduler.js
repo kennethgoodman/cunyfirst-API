@@ -56,7 +56,7 @@ function format ( data ) {
 }
 $(document).ready(function() {
     var table = $('.groupedTable').DataTable({
-        dom: "ftip",
+        dom: "lftip", //ftipl", // l - show x entries, f - search, p - pagination, t - table, i - showing x to y of z entries
         select: {
             style: "multi",
             className: 'row-selected selected'
@@ -85,7 +85,22 @@ $(document).ready(function() {
         fixedHeader: true,
         "deferRender": true, 
         searching: true,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
     });
+    var currentlyTakingFromGroupTable = $('.currentlyTakingFromGroup').DataTable({
+        dom: "tip", //ftipl", // l - show x entries, f - search, p - pagination, t - table, i - showing x to y of z entries
+        select: {
+            
+        },
+        "columns": [
+            { "data" : "Class" },
+            { "data" : "Group" },
+        ],
+        responsive: true,
+        fixedHeader: true,
+        "deferRender": true, 
+        searching: false,
+    })
     $(".groupedTable .dataTables_empty").text("Please choose your institution and session"); 
     $('.groupedTable tbody').on('click', 'td.details-contro', function () { //open/closed
         var tr = $(this).closest('tr');

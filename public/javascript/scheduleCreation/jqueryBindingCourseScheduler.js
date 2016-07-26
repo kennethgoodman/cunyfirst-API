@@ -131,6 +131,7 @@ function initDataTable(current_idx){
         fixedHeader: true,
         "deferRender": true, 
         searching: true,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
     });
 }
 function parseDaysAndTimes(daysTimes){
@@ -278,14 +279,22 @@ function makeTableHTML(myArray,queryArray) {
 function breaksTeacherRule(teacher){
     return false
 }
-function breaksHardScoreByDay(schedule){
-    // set up start/end times
+function getSliderTimes(){
     startTimes = []
     endTimes = []
     for(var i = 0; i < 7; i++){
         startTimes.push(parseTime($('#slider-time1' + i).html().trim()))
         endTimes.push(parseTime($('#slider-time2' + i).html().trim()))
     }
+    return [startTimes, endTimes]
+}
+function getMaxBreakTime(){
+    var temp = $('.slider-maxBreakTime').html()
+    var hourOfBreaks = parseInt(temp.substring(0,temp.indexOf("hour")).trim())
+    var minOfBreaks = parseInt(temp.substring(temp.indexOf("min")-3,temp.indexOf("min")).trim())
+    return new Time(hourOfBreaks, minOfBreaks)
+}
+function breaksHardScoreByDay(schedule, startTimes, endTimes, maxBreakTime){
     // set up mapping
     var dayMapping = {
         "SUN" : 0,
@@ -296,13 +305,6 @@ function breaksHardScoreByDay(schedule){
         "FRI" : 5,
         "SAT" : 6
     }
-
-    // set up maxBreakTime
-    var temp = $('.slider-maxBreakTime').html()
-    var hourOfBreaks = parseInt(temp.substring(0,temp.indexOf("hour")).trim())
-    var minOfBreaks = parseInt(temp.substring(temp.indexOf("min")-3,temp.indexOf("min")).trim())
-    var maxBreakTime = new Time(hourOfBreaks, minOfBreaks)
-
     // do checks
     schedule = new ClassesByDay(schedule.getListOfClasses())
     for(var i = 0; i < 7; i++){
@@ -330,17 +332,25 @@ function breaksHardScoreByDay(schedule){
         if( firstClassTime.startTime.lessThan(startTime) || lastClassTime.endTime.greaterThan(endTime)) return true
     }
     for(var i in schedule.listOfClasses[7]){
-        // if RMP about null day
+        if(breaksTeacherRule(teacher)) // if RMP about null day
+            return true
     }
     return false
 }
-function breaksHardScore(schedule){
-    startTimes = []
-    endTimes = []
-    for(var i = 0; i < 7; i++){
-        startTimes.push(parseTime($('#slider-time1' + i).html().trim()))
-        endTimes.push(parseTime($('#slider-time2' + i).html().trim()))
-    }
+function addUiCloseTabsEventHandler(){
+    $(".ui-icon-close").on('click', function(){
+        var li = $(this).closest("li").parent()
+        $($(this).closest("li").children("a").attr("href")).remove()
+        $(this).closest("li").remove()
+        amountOfTabs -= 1
+        var children = li.children()
+        for(var i = 1; i < children.length - 1; i++){
+            var tempText = $(children[i]).children("a").text()
+            $(children[i]).children("a").html(tempText.replace(/[0-9]/g, i))
+        }
+    })
+}
+function breaksHardScore(schedule, startTimes, endTimes, maxBreakTime){
     var dayMapping = {
         "SUN" : 0,
         "MON" : 1,
@@ -380,8 +390,10 @@ function setupSchedules(){
     checkedSchedules = []
     for(var s in schedules){
         var schedule = schedules[s]
-        console.log(breaksHardScore(schedule) === breaksHardScoreByDay(schedule))
-        if(!breaksHardScore(schedule)){
+        sliderTimes = getSliderTimes()
+        maxBreakTimeSlider = getMaxBreakTime()
+        console.log(breaksHardScore(schedule, sliderTimes[0],sliderTimes[1]) === breaksHardScoreByDay(schedule, sliderTimes[0],sliderTimes[1], maxBreakTimeSlider))
+        if(!breaksHardScoreByDay(schedule, sliderTimes[0],sliderTimes[1], maxBreakTimeSlider)){
             checkedSchedules.push(schedule)
         }
     }
@@ -626,7 +638,7 @@ $(document).ready(function(){
         $('#addTab').click( function(e){
             e.preventDefault();
             var current_idx = $("#TabsId").find("li").length - 1;
-            $(this).closest('li').before("<li><a data-toggle='tab' href='#menu" + current_idx + "'>Class Group " + current_idx + "</a></li>" )
+            $(this).closest('li').before("<li><a data-toggle='tab' href='#menu" + current_idx + "'>Class Group " + current_idx + "</a><span class='ui-icon ui-icon-close' role='presentation'></li>" )
             var tableStr = "<div id='menu" + current_idx + "' class='tab-pane fade'> \
                                 <p> You want <input type='number' name='quantity' min='1' max='5' style='width:40px' value='1' id='NumberOfClassesFromGroup" + current_idx + "'> \
                                 classes from this group (You will only get one class for each Department-Class combo)</p> \
@@ -651,6 +663,8 @@ $(document).ready(function(){
             initDataTable(current_idx)
             add_Data_To_DataTable(current_idx)
             amountOfTabs += 1
+            addUiCloseTabsEventHandler()
         });
     });
+    addUiCloseTabsEventHandler()
 });
