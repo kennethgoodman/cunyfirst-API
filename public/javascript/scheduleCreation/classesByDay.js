@@ -30,7 +30,7 @@ class ClassesByDay{
 	[Symbol.iterator](){
 	 	return this.listOfClasses
 	}
-	sort(i){
+	sortThis(i){
 		this.listOfClasses[i].listOfCunyClasses.sort(dynamicSort())
 	}
 }

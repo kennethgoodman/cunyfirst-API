@@ -401,7 +401,7 @@ function breaksHardScoreByDay(schedule, startTimes, endTimes, maxBreakTime){
         if(schedule.listOfClasses[i].length() == 0) continue 
         // else
         // check maxBreakTime
-        schedule.listOfClasses[i].listOfCunyClasses.sort()
+        schedule.sortThis(i)
         var last = schedule.listOfClasses[i].listOfCunyClasses[0]; // this is the first class of the day
         var firstClassTime = last.section.class_time[0]
         for(var j = 1; j < schedule.listOfClasses[i].listOfCunyClasses.length; j++){ //starting from the second class of the day
