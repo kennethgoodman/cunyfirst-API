@@ -34,17 +34,17 @@
         </div>
         <div class="row">
           <div class="col-xs-1 col-md-1 col-lg-1"></div>
-          <div class="col-xs-2 col-md-1 col-lg-2">
+          <div class="col-xs-3 col-md-2 col-lg-2">
             <br><br><br>
             <table class="currentlyTakingFromGroup">
               <thead>
                   <tr>
-                      <th>class</th><th>Group</th>
+                      <th>Group</th><th>Class</th>
                   </tr>
               </thead>
               <tfoot>
                   <tr>
-                      <th>class</th><th>Group</th>
+                      <th>Group</th><th>Class</th>
                   </tr>
               </tfoot>
             </table>
@@ -60,13 +60,13 @@
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
                   <h3>How to</h3>
-                  <p> To get started, go through each tab and pick classes. Each tab will represent a different choice. <br><br>Ex: You want to take one anthro class and one math class. Tab 1 would contain all the anthro choices and tab 2 will contain all the math choices.
+                  <p> To get started, go through each tab and pick classes. Each tab will represent a different group. <br><br>Ex: You want to take one anthro class and one math class. Tab 1 would contain all the anthro choices and tab 2 will contain all the math choices.
                   <br><br>The tables take a couple seconds to load once you select a dropdown. Thank you for your patience.
                   </p>
               </div>
               <% for(var i=0; i < amountOfTabs; i++) { %>
                   <div id="menu<%=i+1%>" class="tab-pane fade">
-                    <p> You want <input type="number" name="quantity" min="1" max="5" style="width:40px" value="1" id="NumberOfClassesFromGroup<%=i%>"> classes from this group (You will only get one class for each Department-Class combo)</p>
+                    <!--p> You want <input type="number" name="quantity" min="1" max="5" style="width:40px" value="1" id="NumberOfClassesFromGroup<%=i%>"> classes from this group (You will only get one class for each Department-Class combo)</p-->
                       <table id="groupedTable<%=i+1%>" class="bitacoratable groupedTable" cellspacing="0">
                           <thead>
                               <tr>
@@ -101,12 +101,12 @@
           <div class="row seven-cols">
             <% for(var i=0; i < 7; i++) { %>
               <div class="col-xs-5 col-sm-5 col-md-1" style="left: <%=111 - i*16%>px; top:20px;" id="timeRangeHolder<%=i%>">
-                <div id="time-range<%=i%>" class="timeRangeClass">
-                    <span id="slider-time1<%=i%>">9:30 AM</span> - <span id="slider-time2<%=i%>">5:30 PM</span><br><Br>
-                    <div class="sliders_step<%=i%>">
-                        <div id="slider-range<%=i%>" style="width:70%;"></div>
-                    </div>
-                </div>
+                  <div id="time-range<%=i%>" class="timeRangeClass">
+                      <span id="slider-time1<%=i%>">9:30 AM</span> - <span id="slider-time2<%=i%>">5:30 PM</span><br><Br>
+                      <div class="sliders_step<%=i%>">
+                          <div id="slider-range<%=i%>" style="width:80%;"></div>
+                      </div>
+                  </div>
               </div>
             <% } %>
           </div>
@@ -142,6 +142,7 @@
         <div class="preferencesHolder col-xs-4 col-sm-4 col-lg-2">
           <br><br><br><br>
           <div class="scheduleButtonHolder">
+            <article> Seeing schedule <p id="scheduleNumber" style="display:inline-block"> 0 </p> of <p id="numberOfSchedules"style="display:inline-block"> 0 </p> </article><br>
             <button class="btn btn-primary leftScheduleButton"><span>Previous Schedule</span></button>
             <button class="btn btn-primary rightScheduleButton"><span>Next Schedule</span></button>
           </div>
@@ -155,6 +156,9 @@
               <label for="maxBreakTimeSlider"> The max amount of time between classes you want is:</label>
               <span class="slider-maxBreakTime"> 2 hours and 0 minutes </span><br><br>
               <div id="maxBreakTimeSlider-range-min" style="width:100%"></div>
+            </div><br><br><br>
+            <div id="SchedulesToCompare">
+              
             </div>
         </div>
         <br><br>

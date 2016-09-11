@@ -317,6 +317,20 @@ tbody.tr { cursor: pointer; }
 .selectedRow, .selectedRow:active, tr:active {
     background-color: #E7E7E7;
 }
+.RMPButton, .statusInfo {
+  width: 100%
+}
+
+.dataTable{
+    cursor: pointer;
+}
+.TurnAllDayOff{
+    margin-bottom: -21px;
+    margin-left: 12px;
+}
+.timeRangeClass{
+
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;

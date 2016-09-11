@@ -4,3 +4,18 @@
 .fc-title{
 	font-size: 19px
 }
+.ui-icon-circle-close {
+	cursor: pointer;
+}
+.ui-icon-close {
+	cursor: pointer;
+	float: right;
+	margin: -2.6em 0 0 0;
+	position: relative;
+}
+.fc-unthemed .fc-today, .selectedRow{
+	background: none;
+}
+#theScheduleTable {
+	cursor: default;
+}

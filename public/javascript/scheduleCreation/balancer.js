@@ -1,6 +1,6 @@
 function* all_subets(totalList, numberOfElements){
 	if(numberOfElements > totalList.length)
-		alert("You are trying to take more classes than Class Groups that you have filled, try adding classes to a group or changing the number of classes you  want to take")
+		throw "You are trying to take more classes than Class Groups that you have filled, try adding classes to a group or changing the number of classes you  want to take"
 	var c = Combinatorics.bigCombination(totalList,numberOfElements)
 	while(a = c.next()){
 		var d = Combinatorics.cartesianProduct.apply(null, a)

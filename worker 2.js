@@ -113,7 +113,6 @@ getSections = function (inst, session, dept, callback){
                     var struct = {}
                     body = body.substring(body.indexOf("win0divSSR_CLSRSLT_WRK_GROUPBOX2$"))
                     bodySplit = body.split("win0divSSR_CLSRSLT_WRK_GROUPBOX2$") //split by section
-                    
                     for(var i = 1; i < bodySplit.length; i++){
                         var temp = bodySplit[i]
 
@@ -133,7 +132,7 @@ getSections = function (inst, session, dept, callback){
                         for(var j = 1; j < rowsSplit.length; j++){
                             var temp2 = rowsSplit[j]
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
                             var section = temp2.substr(temp2.indexOf("</a>") - 5, 5)
                             try{
                                 struct[classNumber][section] = { "Section" : section }
@@ -142,54 +141,54 @@ getSections = function (inst, session, dept, callback){
                                 break
                             }
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASSNAME"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASSNAME"))
                             var className = temp2.substr(temp2.indexOf("</a>")-25,25)
-                            var className = className.substring(className.indexOf(">")+1, className.indexOf("<"))
+                            className = className.substring(className.indexOf(">")+1, className.indexOf("<"))
                             try{
                                 struct[classNumber][section]["className"] = className
                             } catch(error){
                                 struct[classNumber][section]["className"] = 'NA'
                             }
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divMTG_DAYTIME"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_DAYTIME"))
                             var dayTime = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            var dayTime = dayTime.substring(dayTime.indexOf(">")+1, dayTime.indexOf("<")) 
+                            dayTime = dayTime.substring(dayTime.indexOf(">")+1, dayTime.indexOf("<"))
                             try{
                                 struct[classNumber][section]["Days & Times"] = dayTime
                             } catch(error){
                                 struct[classNumber][section]["Days & Times"] = 'NA'
                             }
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divMTG_ROOM"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_ROOM"))
                             var room = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            var room = room.substring(room.indexOf(">")+1, room.indexOf("<")) 
+                            room = room.substring(room.indexOf(">")+1, room.indexOf("<"))
                             try{
                                 struct[classNumber][section]["Room"] = room
                             } catch(error){
                                 struct[classNumber][section]["Room"] = 'NA'
                             }
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divMTG_INSTR"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_INSTR"))
                             var teacher = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            var teacher = teacher.substring(teacher.indexOf(">")+1, teacher.indexOf("<")) 
+                            teacher = teacher.substring(teacher.indexOf(">")+1, teacher.indexOf("<"))
                             try{
                                 struct[classNumber][section]["Instructor"] = teacher
                             } catch(error){
                                 struct[classNumber][section]["Instructor"] = 'NA'
                             }
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divMTG_TOPIC"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_TOPIC"))
                             var meetingDays = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            var meetingDays = meetingDays.substring(meetingDays.indexOf(">")+1, meetingDays.indexOf("<")) 
+                            meetingDays = meetingDays.substring(meetingDays.indexOf(">")+1, meetingDays.indexOf("<"))
                             try{
                                 struct[classNumber][section]["Dates"] = meetingDays
                             } catch(error){
                                 struct[classNumber][section]["Dates"] = 'NA'
                             }
 
-                            var temp2 = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_SSR_STATUS_LONG"))
+                            temp2 = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_SSR_STATUS_LONG"))
                             var status = temp2.substr(temp2.indexOf("alt=") + 5, 12)
-                            var status = status.substring(0, status.indexOf("\"")) 
+                            status = status.substring(0, status.indexOf("\""))
                             try{
                                 struct[classNumber][section]["Status"] = status
                             } catch(error){
@@ -197,9 +196,9 @@ getSections = function (inst, session, dept, callback){
                             }
 
                             var Topic = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_DESCRLONG"))
-                            var Topic = Topic.substring(Topic.indexOf("<span")+1,Topic.indexOf("</span>"))
-                            var Topic = Topic.substring(Topic.indexOf(">")+1)
-                            var Topic = Topic.replace("amp;","") 
+                            Topic = Topic.substring(Topic.indexOf("<span")+1,Topic.indexOf("</span>"))
+                            Topic = Topic.substring(Topic.indexOf(">")+1)
+                            Topic = Topic.replace("amp;","")
                             try{
                                 struct[classNumber][section]["Topic"] = Topic
                             } catch(error){
@@ -210,10 +209,9 @@ getSections = function (inst, session, dept, callback){
                             struct[classNumber][section]["Dept"] = dept
                         }
                     }
-                
                     if(Object.keys(struct).length === 0 && struct.constructor === Object){
-                        logger.log("CF is down")
-                        global.CUNYFIRST_DOWN = true
+                        logger.log("CF is down");
+                        global.CUNYFIRST_DOWN = true;
                         callback("CUNYFIRST may be down")
                     }
                     else{
@@ -224,7 +222,7 @@ getSections = function (inst, session, dept, callback){
                 
         })
     })
-}
+};
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
@@ -237,7 +235,7 @@ getDept = function(inst, session, callback){
             url: urlProducer(key, '1', inst, session),
             headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
             jar: options.jar
-        }
+        };
         request.get(submit_options, function (err, res, body){
             request.get(submit_options, function (err, res, body){
                 var selectIndexString = "select name='SSR_CLSRCH_WRK_SUBJECT_SRCH$"
@@ -245,7 +243,7 @@ getDept = function(inst, session, callback){
             })
         })
     })
-}
+};
 getSession = function (inst, callback){
     request.post(options, function(err, res, body) {
         if(err) {
@@ -265,7 +263,7 @@ getSession = function (inst, callback){
             parseDropdownOptions(body, selectIndexString, function(sessions){ callback(inst, sessions) })
         })
     })
-}
+};
 
 getInst = function(callback){
     request.post(options, function(err, res, body) {
@@ -282,4 +280,4 @@ getInst = function(callback){
         var selectIndexString = "select name='CLASS_SRCH_WRK2_INSTITUTION$31$"
         parseDropdownOptions(body, selectIndexString, callback)
     })
-}
+};

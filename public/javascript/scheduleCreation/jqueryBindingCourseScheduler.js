@@ -1,7 +1,35 @@
 queryArray = []
-schedules = []
+GLOBALschedules = []
 checkedSchedules = []
 currentIndex = 0
+compareColors = []
+maxNumberToCompare = 6
+CompareSchedulesIndex = {}
+function rainbow(numOfSteps, step) {
+    // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
+    // Adam Cole, 2011-Sept-14
+    // HSV to RBG adapted from: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
+    var r, g, b;
+    var h = step / numOfSteps;
+    var i = ~~(h * 6);
+    var f = h * 6 - i;
+    var q = 1 - f;
+    switch(i % 6){
+        case 0: r = 1; g = f; b = 0; break;
+        case 1: r = q; g = 1; b = 0; break;
+        case 2: r = 0; g = 1; b = f; break;
+        case 3: r = 0; g = q; b = 1; break;
+        case 4: r = f; g = 0; b = 1; break;
+        case 5: r = 1; g = 0; b = q; break;
+    }
+    var c = "#" + ("00" + (~ ~(r * 255)).toString(16)).slice(-2) + ("00" + (~ ~(g * 255)).toString(16)).slice(-2) + ("00" + (~ ~(b * 255)).toString(16)).slice(-2);
+    return (c);
+}
+function setUpCompareColors(len){
+    compareColors = []
+    for(var i = 0; i < len; i++)
+        compareColors.push(rainbow(len, i))
+}
 function getTeacherScore(teacherName){
     return undefined
 }
@@ -21,18 +49,6 @@ var setAllChildrenWithDepartment = function (department, id){
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 }
-function ValidateEmail(inputText)  
-{  
-    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
-    var element; //fix this
-    if(inputText.match(mailformat))  {   
-        return true;  
-    }  
-    else  {  
-        alert("You have entered an invalid email address!");  
-        return false;  
-    }  
-}  
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 }
@@ -196,16 +212,18 @@ function parseDaysAndTimes(daysTimes){
     }
     return [days, timesArray]
 }
-function addAllDayEvent(cal,theClass,section){
+function addAllDayEvent(cal,theClass,section, color){
     cal.fullCalendar( 'addEventSource', [ { 
         title: theClass.dept + "-" + theClass.number + ": " + section.number + "\n" + theClass.teacher + "\nNo time Info",
         start: moment().day("Sunday").hour(0).minute(0),
         end: moment().day("Saturday").hour(23).minute(59),
-        allDay: true }
+        allDay: true,
+        color : color,
+        }
         ] 
     )
 }
-function addClassToCal(cal,theClass,section, start, end){
+function addClassToCal(cal,theClass,section, start, end, color){
     var dayMapping = {
         "SUN" : "Sunday",
         "MON" : "Monday",
@@ -221,14 +239,75 @@ function addClassToCal(cal,theClass,section, start, end){
             title: theClass.dept + "-" + theClass.number + ": " + section.number + "\n" + theClass.teacher,
             start: moment().day(day).hour(start.hour).minute(start.minute),
             end: moment().day(day).hour(end.hour).minute(end.minute),
-            allDay: false }
+            allDay: false,
+            color : color,
+             }
             ] 
         )
     }
 }
-function fillSchedule(schedule){
+function putScheduleUp(str){
+    var HTMLstr = 
+                        '</tbody>' +
+                    '</table>' +
+                '</div>'
+    $("#SchedulesToCompare").html(str + HTMLstr)
+}
+function HtmlForRow(theClass,section, id){
+    var HTMLstr = '<tr>' +
+                                '<th scope="row">' + id + '</th>' +
+                                '<td>' + theClass.dept + '</td>' +
+                                '<td>' + theClass.number + '</td>' +
+                                '<td>' + section.number + '</td>' +
+                                '<td>' + theClass.teacher + '</td>' +
+                            '</tr>'
+    return HTMLstr
+}
+function startSchedulesTable(deleteOldOnes, id){
+    var htmlString = '<div style="background-color:' + compareColors[id] + '">' +
+                            '<div class="checkbox">'+
+                                '<label>'+
+                                    '<input type="checkbox" class="compareSchedulesCheckbox" id=compareSchedulesCheckbox' + id + '> Compare this schedule'+
+                                '</label>' +
+                            '</div>' + 
+                            '<table class="table table-bordered theScheduleTable">' +
+                                '<thead>' +
+                                    '<tr>' +
+                                        '<th>#</th>' +
+                                        '<th>dept</th>' +
+                                        '<th>number</th>' +
+                                        '<th>section</th>' +
+                                        '<th>teacher</th>' +
+                                    '</tr>' +
+                                '</thead>' +
+                                '<tbody>'
+    if(!deleteOldOnes)
+        htmlString = $("#SchedulesToCompare").html() + htmlString
+    return htmlString
+}
+function addEventHandlerToCheckbox(){
+    $(".compareSchedulesCheckbox").on('click', function(){
+        var theId = $(this).attr("id")
+        var checked = $("#" + theId).is(":checked")
+        var theIndex = theId.replace("compareSchedulesCheckbox","")
+        if(checked)
+            CompareSchedulesIndex[ theIndex ] = true;
+        else
+            CompareSchedulesIndex[ theIndex ] = false;
+    })
+}
+function checkCheckboxes(){
+    for(var index in CompareSchedulesIndex){
+        if(CompareSchedulesIndex[index]){
+            $("#compareSchedulesCheckbox" + index).attr('checked', true);
+        }
+    }
+}
+function fillSchedule(schedule, removeAll, index ){
+    var color = compareColors[index]
     var cal = $('#calendar');
-    cal.fullCalendar( 'removeEvents' ); // reset calender
+    if( removeAll ) cal.fullCalendar( 'removeEvents' ); // reset calender
+    var htmlForSchedulesTable = startSchedulesTable(removeAll, index)
     for( var theClass in schedule.listOfClasses){
         var temp = schedule.listOfClasses[theClass]
         var section = temp.section                     
@@ -236,11 +315,22 @@ function fillSchedule(schedule){
         var classTime = section.class_time[0]
         var start = classTime.startTime
         var end = classTime.endTime
+        htmlForSchedulesTable += HtmlForRow(temp, section, parseInt(theClass)+1)
         if(start.hour == null || start.minute == null || end.hour == null || end.minute == null)
-            addAllDayEvent(cal,temp,section)
+            addAllDayEvent(cal,temp,section, color)
         else
-            addClassToCal(cal, temp, section, start, end)
-        
+            addClassToCal(cal, temp, section, start, end, color)  
+    }
+    putScheduleUp(htmlForSchedulesTable)
+    checkCheckboxes()
+    $("#scheduleNumber").html(currentIndex+1)
+    addEventHandlerToCheckbox()
+}
+function fillInComparedSchedules(){
+    for(var index in CompareSchedulesIndex){
+        if(CompareSchedulesIndex[index]){
+            fillSchedule(checkedSchedules[index],false, index)
+        }
     }
 }
 function makeTableHTML(myArray,queryArray) {
@@ -312,9 +402,9 @@ function breaksHardScoreByDay(schedule, startTimes, endTimes, maxBreakTime){
         // else
         // check maxBreakTime
         schedule.listOfClasses[i].listOfCunyClasses.sort()
-        var last = schedule.listOfClasses[i].listOfCunyClasses[0];
+        var last = schedule.listOfClasses[i].listOfCunyClasses[0]; // this is the first class of the day
         var firstClassTime = last.section.class_time[0]
-        for(var j = 1; j < schedule.listOfClasses[i].listOfCunyClasses.length; j++){
+        for(var j = 1; j < schedule.listOfClasses[i].listOfCunyClasses.length; j++){ //starting from the second class of the day
             var theClass = schedule.listOfClasses[i].listOfCunyClasses[j]
             var theClassTime = theClass.section.class_time[0]
             if(theClassTime.startTime == null || theClassTime.endTime == null) continue
@@ -388,20 +478,23 @@ function parseTime(stringTime){
 function setupSchedules(){
     $("#calendar").fullCalendar( 'removeEvents' ); // reset calender
     checkedSchedules = []
-    for(var s in schedules){
-        var schedule = schedules[s]
+    for(var s in GLOBALschedules){
+        var schedule = GLOBALschedules[s]
         sliderTimes = getSliderTimes()
         maxBreakTimeSlider = getMaxBreakTime()
-        console.log(breaksHardScore(schedule, sliderTimes[0],sliderTimes[1]) === breaksHardScoreByDay(schedule, sliderTimes[0],sliderTimes[1], maxBreakTimeSlider))
+        // console.log(breaksHardScore(schedule, sliderTimes[0],sliderTimes[1]) === breaksHardScoreByDay(schedule, sliderTimes[0],sliderTimes[1], maxBreakTimeSlider))
         if(!breaksHardScoreByDay(schedule, sliderTimes[0],sliderTimes[1], maxBreakTimeSlider)){
             checkedSchedules.push(schedule)
         }
     }
+    
     currentIndex = 0; // reset index
     $(".leftScheduleButton").prop("disabled",true);
     len = checkedSchedules.length
+    setUpCompareColors(len)
+    $("#numberOfSchedules").html(len)
     if(len >= 1){
-        fillSchedule(checkedSchedules[0])
+        fillSchedule(checkedSchedules[0],true, 0)
         if(len == 1)
             $(".rightScheduleButton").prop("disabled",true);
         else
@@ -410,12 +503,13 @@ function setupSchedules(){
     else { // no schedules
         $(".rightScheduleButton").prop("disabled",true);
         $('#calendar').fullCalendar( 'addEventSource', [ { 
-            title: "No Schedules, Please redo a search or change the parameters",
+            title: "No Schedules, Please redo a search or change the parameters ( min/max days in school, min/max classes)",
             start: moment().day("Sunday").hour(0).minute(0),
             end: moment().day("Saturday").hour(23).minute(59),
             allDay: true }
             ] 
         )
+        $('#scheduleNumber').html('0')
     }
 }
 $(document).ready(function(){
@@ -435,21 +529,21 @@ $(document).ready(function(){
         title: "No Schedules, Please pick classes and do a search",
         start: moment().day("Sunday").hour(0).minute(0),
         end: moment().day("Saturday").hour(23).minute(59),
-        allDay: true }
-        ] 
-    )
+        allDay: true }])
     $(".leftScheduleButton").prop("disabled",true);
     $(".rightScheduleButton").prop("disabled",true);
     $(".leftScheduleButton").unbind('click').click(function(){
         currentIndex -= 1;
-        fillSchedule(checkedSchedules[currentIndex])
+        fillSchedule(checkedSchedules[currentIndex],true, currentIndex)
+        fillInComparedSchedules()
         $(".rightScheduleButton").prop("disabled",false);
         if(currentIndex == 0)
            $(".leftScheduleButton").prop("disabled",true);
     })
     $(".rightScheduleButton").unbind('click').click(function(){
         currentIndex = currentIndex + 1;
-        fillSchedule(checkedSchedules[currentIndex])
+        fillSchedule(checkedSchedules[currentIndex],true, currentIndex)
+        fillInComparedSchedules()
         $(".leftScheduleButton").prop("disabled",false);
         if(currentIndex >= checkedSchedules.length - 1)
            $(".rightScheduleButton").prop("disabled",true);
@@ -516,17 +610,27 @@ $(document).ready(function(){
         }
         //$("#getScheduleConfirm").unbind('click').click( function (e) {
         //    $("#confirmDialog").modal("toggle")
-            schedules = []
-            var listOfClasses = []
-            for(var i in arrayOfarrays){
-                if(arrayOfarrays[i].length > 0){
-                    listOfClasses.push(arrayOfarrays[i])
-                }
+        GLOBALschedules = []
+        var listOfClasses = []
+        for(var i in arrayOfarrays){
+            if(arrayOfarrays[i].length > 0){
+                listOfClasses.push(arrayOfarrays[i])
             }
-            var maxClasses = $("#maxNumClasses").val()
-            for(var i = $("#minNumClasses").val(); i <= maxClasses; i++)
-                schedules = schedules.concat(balancer(listOfClasses,i))
-            setupSchedules()
+        }
+        var maxClasses = $("#maxNumClasses").val()
+        for(var i = $("#minNumClasses").val(); i <= maxClasses; i++) {
+            var newTempSchedules = []
+            try {
+                newTempSchedules = balancer(listOfClasses, i)
+            } catch (err) {
+                console.log(err)
+                // TODO: what to do on error
+            }
+            if(newTempSchedules.length) {
+                GLOBALschedules = GLOBALschedules.concat(newTempSchedules)
+            }
+        }
+        setupSchedules()
     });
     $('#inst').unbind('change').change(function(){
         //$("#ajax-loader").show();
@@ -534,6 +638,7 @@ $(document).ready(function(){
         values = JSON.parse(e.options[e.selectedIndex].value)
         //console.log(values)
         ws.send(JSON.stringify(["get_classes",values["schoolCode"], values["sessionCode"]]));
+        $('.currentlyTakingFromGroup').DataTable().clear().draw(); // empty side table
         //send message for get session
     })
     $(function() {
@@ -630,10 +735,9 @@ $(document).ready(function(){
     sliderFunction("#slider-range",'.slider-time1','.slider-time2')
     for(var i = 0; i < 7; i++)
         sliderFunction("#slider-range" + i,'#slider-time1' + i,'#slider-time2' + i)
-
-    $(document).on("click", "tr", function () {
+    /*$(document).on("click", "tr", function () {
         $(this).toggleClass("selectedRow");
-    });
+    });*/
     $(document).ready(function() {
         $('#addTab').click( function(e){
             e.preventDefault();
@@ -667,4 +771,18 @@ $(document).ready(function(){
         });
     });
     addUiCloseTabsEventHandler()
+    $('#minNumClasses').change(function () {
+        minVal = $('#minNumClasses').val()
+        maxVal = $('#maxNumClasses').val()
+        if(  minVal > maxVal ){
+            $('#maxNumClasses').val(minVal)
+        }
+    })
+    $('#maxNumClasses').change(function () {
+        minVal = $('#minNumClasses').val()
+        maxVal = $('#maxNumClasses').val()
+        if(  maxVal < minVal ){
+            $('#minNumClasses').val(maxVal)
+        }
+    })
 });

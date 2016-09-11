@@ -13,10 +13,10 @@ class Time{
 		return a.lessThan(b)
 	}
 	static subtraction(first, second){
-		var min = (first.minute - second.getMinute() + 60)%60 //add 60 to get rid of negative numbers
-		var hour = 0
+		var min = (first.minute - second.getMinute() + 60)%60; //add 60 to get rid of negative numbers
+		var hour = 0;
 		if((first.minute - second.getMinute()) < 0)
-			hour = -1
+			hour = -1;
 		return new Time((first.hour - second.getHour() + hour)%24, min)
 	}
 	static addition(first, second){

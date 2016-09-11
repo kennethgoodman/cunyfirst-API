@@ -90,7 +90,6 @@ setInterval( function(){
 		
 		})//TODO put in a test to check if row returned an error
 	}
-
 },15000)
 setInterval( function(){ global.CUNYFIRST_DOWN = false }, 1000*60) //every minute change back, so we check if its still down 
 setInterval( function(){ global.LOG_CF_DOWN = false }, 1000*60*60) //every hour change back, so we still log
@@ -99,4 +98,4 @@ setInterval(function(){
 		counter++;
 		queueRead2() 
 	}
-}, 12500);
+}, 17500);
