@@ -1,0 +1,17 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title: Kenneth Goodmans Website
+email: kennethsgoodman@yahoo.com
+description: > # this means to ignore newlines until "baseurl:"
+  A website to link to all my github projects and where I currently am in life.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://kennethgoodman.github.io/cunyfirst-API" # the base hostname & protocol for your site
+github_username:  kennethgoodman
+# Build settings
+markdown: kramdown
