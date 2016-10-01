@@ -80,9 +80,12 @@ if(WEBSITE_DOWN || process.env.WEBSITE_DOWN == "DOWN"){
 }
 
 /****************************** Different Website Links ***************************/
-app.get('/', function(request,response){
+app.get('/indexTest', function(request,response){
     response.render('pages/index');
-})
+});
+app.get('/', function(request,response){
+    response.render('pages/sign_up_to_get_texted');
+});
 app.get('/faq', function(request,response){
     response.render('pages/faq');
 })

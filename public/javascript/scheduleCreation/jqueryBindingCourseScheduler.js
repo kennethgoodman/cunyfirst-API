@@ -43,7 +43,7 @@ var setAllChildrenWithDepartment = function (department, id){
     var table = $('#' + id).DataTable();
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
     matching.every( function () {
-        table.cell(this, 7).data("checking CUNYFirst")
+        table.cell(this, 8).data("checking CUNYFirst")
     } );  
 }
 function replaceAll(str, find, replace) {
@@ -633,14 +633,13 @@ $(document).ready(function(){
         setupSchedules()
     });
     $('#inst').unbind('change').change(function(){
-        //$("#ajax-loader").show();
         var e = document.getElementById("inst");
         values = JSON.parse(e.options[e.selectedIndex].value)
-        //console.log(values)
-        ws.send(JSON.stringify(["get_classes",values["schoolCode"], values["sessionCode"]]));
+        ws.send(JSON.stringify(["get_classes_w_topic",values["schoolCode"], values["sessionCode"]])); // get classes
+        ws.send(JSON.stringify(["get_topics",values["schoolCode"], values["sessionCode"]])); // get topics
         $('.currentlyTakingFromGroup').DataTable().clear().draw(); // empty side table
-        //send message for get session
-    })
+        $(".currentlyTakingFromGroup .dataTables_empty").text("Start selecting classes for them to show up here");
+    });
     $(function() {
         var sliderItem = $( "#DaysInSchoolslider-range" )
         var textItem = $( "#DaysInSchool" )
@@ -662,8 +661,8 @@ $(document).ready(function(){
         var textItem = $( "#maxBreakTimeSlider" )
         sliderItem.slider({
             range: "min",
-            min: 0,
-            max: 6*60,
+            min: 15,
+            max: 14*60,
             step: 15,
             value:  2*60,
             slide: function( event, ui ) {
@@ -770,19 +769,24 @@ $(document).ready(function(){
             addUiCloseTabsEventHandler()
         });
     });
-    addUiCloseTabsEventHandler()
+    addUiCloseTabsEventHandler();
     $('#minNumClasses').change(function () {
-        minVal = $('#minNumClasses').val()
-        maxVal = $('#maxNumClasses').val()
+        minVal = $('#minNumClasses').val();
+        maxVal = $('#maxNumClasses').val();
         if(  minVal > maxVal ){
             $('#maxNumClasses').val(minVal)
         }
-    })
+    });
     $('#maxNumClasses').change(function () {
-        minVal = $('#minNumClasses').val()
-        maxVal = $('#maxNumClasses').val()
+        minVal = $('#minNumClasses').val();
+        maxVal = $('#maxNumClasses').val();
         if(  maxVal < minVal ){
             $('#minNumClasses').val(maxVal)
         }
-    })
+    });
+    $("#topicTable").on('click', 'td', function () {
+        var topicClicked = this.innerHTML;
+        var table = $('.groupedTable').DataTable();
+        table.search( topicClicked.replace("Requirement Designation: ","").replace("&amp;","&") ).draw();
+    });
 });

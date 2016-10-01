@@ -1,16 +1,16 @@
-detCounter = {}
-hiddenRowData = {}
-rowsLookedAt = {}
+detCounter = {};
+hiddenRowData = {};
+rowsLookedAt = {};
 var setAllChildrenWithDepartment = function (department, id, str){
     var table = $('#' + id).DataTable();
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
     matching.every( function () {
-        table.cell(this, 7).data(str)
+        table.cell(this, 8).data(str)
     } );  
 }
 var changeStatus = function (row, s, id){
     var table = $(id).DataTable();
-    table.cell(row, 7).data(s) //7 for the 7th column
+    table.cell(row, 8).data(s) //7 for the 7th column
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
@@ -72,20 +72,24 @@ $(document).ready(function() {
                 "className":      'details-control',
                 "orderable":      false,
                 "data":           '',
+                "width": "4%",
                 "defaultContent": '<button type=\"button\" class=\"btn btn-info RMPButton\"><span class=\"glyphicon glyphicon-info-sign\"></span> Rate My Professor</button>'
             },
-            { "data" : "Dept"},
-            { "data" : "Class nbr" },
-            { "data" : "Class Section" },
-            { "data" : "Teacher" },
-            { "data" : "Days And Time" },
-            { "data" : "Room" },
+            { "data" : "Dept", "width": "10%"},
+            { "data" : "Class nbr","width": "5%" },
+            { "data" : "Class Section","width": "5%" },
+            { "data" : "Teacher","width": "5%" },
+            { "data" : "Days And Time", "width": "10%" },
+            { "data" : "Room", "width": "5%" },
+            { "data" : "Topic", "width": "5%" },
             {
                 data: 'Status',
                 className: "details-contro",
-                defaultContent: '<button type=\"button\" class=\"btn btn-info statusInfo\"> Open/Closed Status </button>'
+                defaultContent: '<button type=\"button\" class=\"btn btn-info statusInfo\"> Open/Closed Status </button>',
+                "width": "4%"
             },
         ],
+        "autoWidth": false,
         "order": [[2, 'asc']],
         responsive: true,
         fixedHeader: true,
@@ -106,8 +110,16 @@ $(document).ready(function() {
         fixedHeader: true,
         "deferRender": true, 
         searching: false,
-    })
-    $(".currentlyTakingFromGroup .dataTables_empty").text("Start selecting classes for them to show up here"); 
+    });
+    // var topicTable = $('#topicTable').DataTable({
+    //    "dom": "ftp",
+    //     "columns" : [
+    //        { "data" : "Topic" }
+    //    ],
+    //     "pageLength": 5,
+    //     searching: true
+    // });
+    $(".currentlyTakingFromGroup .dataTables_empty").text("Please choose your institution and session");
     $(".groupedTable .dataTables_empty").text("Please choose your institution and session"); 
     $('.groupedTable tbody').on('click', 'td.details-contro', function () { //open/closed
         var tr = $(this).closest('tr');
@@ -133,7 +145,7 @@ $(document).ready(function() {
             for(var i = 1; i <= amountOfTabs; i++)
                 setAllChildrenWithDepartment(department, "groupedTable" + i, defaultString)
         }
-    })  
+    });
     $('.groupedTable tbody').on('click', 'td', function() {
         if( $(this).hasClass("details-control") || $(this).hasClass("details-contro") )
             return;
@@ -145,16 +157,20 @@ $(document).ready(function() {
         var classText =  children[2].innerHTML.replace(" ", "").replace(" ","") + "-" + children[3].innerHTML;
         var rows = currentlyTakingFromGroupTable.rows().indexes();
         var data = currentlyTakingFromGroupTable.rows( rows ).data();
+        var removedRow = false;
         for(var d in data){
             if(data[d]["Class"] === classText && data[d]["Group"] === group ){
-                currentlyTakingFromGroupTable.row( d ).remove().draw( false );
-                return
+                currentlyTakingFromGroupTable.row( data[d] ).remove().draw( false );
+                removedRow = true;
+                break
             }
         }
-        currentlyTakingFromGroupTable.row.add( {
-            "Group" : group,
-            "Class" : classText
-        });
+        if(!removedRow){
+            currentlyTakingFromGroupTable.row.add( {
+                "Group" : group,
+                "Class" : classText
+            });
+        }
         currentlyTakingFromGroupTable.draw();
         $(".currentlyTakingFromGroup .dataTables_empty").text("Start selecting classes for them to show up here"); 
         $(".deleteRow").on('click', function(){
@@ -164,12 +180,17 @@ $(document).ready(function() {
             var tempTable = $("#groupedTable" + groupText ).DataTable();
             var rows = tempTable.rows().indexes();
             var data = tempTable.rows( rows ).data();
-            for(var d in data ){
-                try{ 
-                    var tempStr = data[d]["Class nbr"].replace(" ", "").replace(" ","") + "-" + data[d]["Class Section"];
+            for(var d in data){
+                var rowObj = data[d];
+                if(typeof rowObj == "function"){
+                    continue;
+                }
+                try{
+                    var tempStr = rowObj["Class nbr"].replace(" ", "").replace(" ","") + "-" + rowObj["Class Section"];
                     if( tempStr === children[1].innerHTML ){
-                        $(tempTable.row( d ).node()).removeClass("row-selected selected");
+                        $(tempTable.row( rowObj ).node()).removeClass("row-selected selected");
                     }
+                    break
                 } catch(e) {
 
                 }
@@ -177,8 +198,7 @@ $(document).ready(function() {
             currentlyTakingFromGroupTable.row($(this).closest("tr")).remove().draw(false)
             $(".currentlyTakingFromGroup .dataTables_empty").text("Start selecting classes for them to show up here");
         })
-    })
-
+    });
     $('.groupedTable tbody').on('click', 'td.details-control', function () { 
         var tableId = $(this).closest('tr').closest('table').attr('id');
         var tr = $(this).closest('tr');
@@ -191,10 +211,10 @@ $(document).ready(function() {
         if(typeof valueUnparsed == "string" && valueUnparsed.trim() == "defualt")
             showNoInst = true
         else{
-            var values = JSON.parse(e.options[e.selectedIndex].value)
-            var inst = values["schoolCode"]
-            var session = values["sessionCode"]  
-            var teacher = rowData["Teacher"]
+            var values = JSON.parse(e.options[e.selectedIndex].value);
+            var inst = values["schoolCode"];
+            var session = values["sessionCode"];
+            var teacher = rowData["Teacher"];
             dataToSend = ["getRMP", inst, teacher, row.index(), tableId ]  
         }
             
@@ -220,7 +240,7 @@ $(document).ready(function() {
     }); 
     $('.details-control').on('click', function(){
        console.log(this) 
-    })
+    });
     var groupTable = $('#groupTable').DataTable({
         dom: "rtip",
         "columns": [

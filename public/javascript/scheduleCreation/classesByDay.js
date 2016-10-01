@@ -15,9 +15,9 @@ class ClassesByDay{
 				class_times.push(new Class_Time(startTime, endTime, day))
 				var newSection = new Section(class_times, o["section"]["number"])
 				var copied = new CunyClass(o["dept"],o["number"],dayOfWeek,newSection,o["teacher"],o["teacherScore"])
-				var dayIndex = days[dayOfWeek]
+				var dayIndex = days[dayOfWeek];
 				if(dayOfWeek == null)
-					dayIndex = 7
+					dayIndex = 7;
 				this.listOfClasses[dayIndex].push(copied)
 			}
 		}

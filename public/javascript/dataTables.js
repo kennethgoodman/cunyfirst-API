@@ -7,13 +7,13 @@ var setAllChildrenWithDepartment = function (department){
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
     //console.log(matching)
     matching.every( function () {
-        table.cell(this, 7).data("checking CUNYFirst")
+        table.cell(this, 8).data("checking CUNYFirst")
     } );  
 }
 var changeStatus = function (row, s){
     //console.log("this came")
     var table = $('#dataTables').DataTable();
-    table.cell(row, 7).data(s) //7 for the 7th column
+    table.cell(row, 8).data(s) //7 for the 7th column
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
@@ -69,7 +69,7 @@ $(document).ready(function() {
                 "className":      'details-control',
                 "orderable":      false,
                 "data":           '',
-                "defaultContent": '<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info</button>'
+                "defaultContent": '<button type=\"button\" class=\"btn btn-info RMPInfoButton\"><span class=\"glyphicon glyphicon-info-sign\"></span> Info</button>'
             },
             { "data" : "Dept"},
             { "data" : "Class nbr" },
@@ -90,12 +90,22 @@ $(document).ready(function() {
         searching: true,
     });
     $("#dataTables .dataTables_empty").text("Please choose your institution and session"); 
+    /*$('#dataTables tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            //table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    } );*/
     $('#dataTables tbody').on('click', 'td.details-contro', function () { //open/closed
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var department = row.data()['Dept']
         if (detCounter[department] != undefined ) return
         else{
+            tr.toggleClass('row-selected')
             detCounter[department]= "a string"
             //console.log('detCounter[department] is now ' +detCounter[department])
             setAllChildrenWithDepartment(department)
@@ -111,26 +121,44 @@ $(document).ready(function() {
         }
 
     })  
-    $('#dataTables tbody').on('click', 'td.details-control', function () { 
+    $('#dataTables tbody').on('click', 'td.details-control .RMPInfoButton', function () { 
+        var table = $('#dataTables').DataTable();
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var rowData = row.data()
-
+        var rowIndex = row.index()
+        var selectedRows = table.rows( { selected: true } ).flatten();
+        console.log($.inArray(row.index(), selectedRows.splice(0, selectedRows.length)) >= 0)
         var e = document.getElementById("inst");
         values = JSON.parse(e.options[e.selectedIndex].value)
         var inst = values["schoolCode"]
         var session = values["sessionCode"]  
-        var dataToSend = ["getRMP",inst, rowData["Teacher"], row.index()]      
+        var dataToSend = ["getRMP",inst, rowData["Teacher"], row.index(), '#dataTables']      
         if ( row.child.isShown() ) {
             // This row is already open - close it
             row.child.hide();
             tr.removeClass('shown');
+            if( $.inArray(row.index(), selectedRows.splice(0, selectedRows.length)) >= 0 ){ //if selected
+                row.select()//row.deselect()
+            }
+            else{
+                row.select()
+                tr.toggleClass('selected'); //clicking info doesn't select row
+                tr.toggleClass('row-selected')
+            }
         }
-        else if(hiddenRowData[row.index()] != undefined){
+        else if(hiddenRowData[rowIndex] != undefined){
             //table.cell(this).data('<button type=\"button\" class=\"btn btn-info\"><span class=\"glyphicon glyphicon-info-sign\"></span> Close </button>').draw()
-            row.child( format(hiddenRowData[row.index()]) ).show()
+            row.child( format(hiddenRowData[rowIndex]) ).show()
             tr.addClass('shown');
-            tr.toggleClass('selected'); //clicking info doesn't select row
+            if( $.inArray(row.index(), selectedRows.splice(0, selectedRows.length)) >= 0 ){ //if selected
+                row.select()
+            }
+            else{
+                row.select()
+                tr.toggleClass('selected'); //clicking info doesn't select row
+                tr.toggleClass('row-selected')
+            }
         }
         else{
             row.child(blank).show()
@@ -139,8 +167,15 @@ $(document).ready(function() {
             //$("#ajax-loader").show();
             tr.addClass('shown');
             ws.send(JSON.stringify(dataToSend))
-            rowsLookedAt[row.index()] = true
-            tr.toggleClass('selected'); //clicking info doesn't select row   
+            rowsLookedAt[rowIndex] = true
+            if( $.inArray(row.index(), selectedRows.splice(0, selectedRows.length)) >= 0 ){ //if selected
+                row.select()//row.deselect()
+            }
+            else{
+                row.select()
+                tr.toggleClass('selected'); //clicking info doesn't select row
+                tr.toggleClass('row-selected')
+            }
         }
     }); 
 });

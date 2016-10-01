@@ -331,6 +331,10 @@ tbody.tr { cursor: pointer; }
 .timeRangeClass{
 
 }
+
+#topicTable{
+    cursor: pointer;
+}
 /*.ajax-loader {
   position: absolute;
   left: 0;

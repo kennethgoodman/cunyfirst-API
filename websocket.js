@@ -64,25 +64,39 @@ module.exports = function(wss){
 					break;
 				case "get_dept":
 					checkForEmptyData(data, ws, function(data){
-						var a = ["dept"]
-						var institution = data[1]
-						var session = data[2]
+						var a = ["dept"];
+						var institution = data[1];
+						var session = data[2];
 						getDept(institution,session,function(data){
-							a.push(data)
+							a.push(data);
 							sendData(ws,a)
 						})
-					})
-					break
+					});
+					break;
+                case "get_topics":
+                    var a = ["topics"];
+                    getTopics([data[1],data[2]],function (data) {
+                        a.push(data);
+                        sendData(ws,a)
+                    });
+                    break;
+				case "get_classes_w_topic":
+					var a = ["classesWTopic"];
+					getClassesWTopic([data[1],data[2]],'classes_1',function (data) {
+						a.push(data);
+						sendData(ws,a);
+					});
+					break;
 				case "get_classes":
-					var a = ["classes"]
+					var a = ["classes"];
 					getClassesGlobal([data[1],data[2]],function(data){
-						a.push(data)
+						a.push(data);
 						sendData(ws,a)
 					})
 					break
 				case "getTestClasses":
 					checkForEmptyData(data, ws, function(data){
-						var a = ["classes"]
+						var a = ["classesWTopic"]
 						var temp = {}
 						var template = {
 										'subject_name'	: 'Mathematics',
@@ -92,6 +106,7 @@ module.exports = function(wss){
 										'teacher'     	: 'Teacher',
 										'days_and_times': '',
 										'room'			: 'Kiely 231',
+                                        'topic'         : 'Liberal Arts'
 									}
 						var counter = 1			
 						var tempTemplate = JSON.parse(JSON.stringify(template)) // copy it

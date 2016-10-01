@@ -89,9 +89,9 @@ testAddDataToTable = function(callback){
 		if(count > 50)
 			clearInterval(interval)
 	}, 50)
-}
+};
 getInstitutions = function(callback){
-	var tries = 0
+	var tries = 0;
 	temp = function(){
 		viewTable(function(result){
 			try{
@@ -99,7 +99,7 @@ getInstitutions = function(callback){
 			}
 			catch(err){
 				if(tries < 3){
-					tries += 1
+					tries += 1;
 					temp()
 				}
 				else{
@@ -107,53 +107,52 @@ getInstitutions = function(callback){
 				}
 			}
 		})
-	}
+	};
 	temp()
+};
+sendQueryNTimes = function(query,params,numberOfTimes,onError,callback){
+    var tries = 0;
+    temp = function(){
+        sendQuery( query,params,function(result){
+            try{
+                if(result["rows"].length > 0)
+                    callback(result["rows"]);
+                else
+                    callback(onError)
+            }
+            catch(err){
+                if(tries < numberOfTimes){
+                    tries += 1;
+                    temp();
+                }
+                else{
+                    if(callback)
+                        callback(onError);
+                }
+            }
+        })
+    };
+    temp()
 }
+getClassesWTopic = function (params, table, callback) {
+    queryDict = {
+        'classes' : 'select distinct * from classes where school = $1 and session = $2',
+        'classes_1' : 'select distinct * from classes_2 where school = $1 and session = $2',
+    };
+    sendQueryNTimes(queryDict[table],params,3,[],callback);
+};
 getClasses = function(params, callback){
-	var tries = 0
-	temp = function(){
-		sendQuery( "select distinct * from classes where school = $1 and session = $2" ,params,function(result){
-			try{
-				callback(result["rows"])
-			}
-			catch(err){
-				if(tries < 3){
-					tries += 1
-					temp()
-				}
-				else{
-					callback([])
-				}
-			}
-		})
-	}
-	temp()
-}
+	getClassesWTopic(params,'classes',callback);
+};
+getTopics = function (params,callback) {
+    console.log('in getTopics');
+    sendQueryNTimes('select distinct topic from classes_2 where school = $1 and session = $2',params,3,[],callback)
+};
 getTeacherInfo = function(params,callback){
-	var tries = 0
-	sql = "select distinct schools.name as schoolName from schools, session where schools.id = session.school and schools.id = $1"
+	sql = "select distinct schools.name as schoolName from schools, session where schools.id = session.school and schools.id = $1";
 	sendQuery2(sql, [params[0]], function(data){
-			temp = function(){
-			sendQuery( "select distinct * from ratemyprofessor where inst like \'%"+ data["schoolname"]  +"%\' and name = $1" ,[params[1]],function(result){
-				try{
-					if(result["rows"].length > 0)
-						callback(result["rows"])
-					else
-						callback(["No Data"])
-				}
-				catch(err){
-					if(tries < 3){
-						tries += 1
-						temp()
-					}
-					else{
-						callback(["No Data"])
-					}
-				}
-			})
-		}
-		temp()
+	    teacherSQL = "select distinct * from ratemyprofessor where inst like \'%"+ data["schoolname"]  +"%\' and name = $1";
+        sendQueryNTimes(teacherSQL, [params[1]], 3, ["No Data"], callback);
 	})
-}
+};
 //testAddDataToTable(function(result){console.log(result)})

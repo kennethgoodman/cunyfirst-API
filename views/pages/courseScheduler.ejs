@@ -65,21 +65,21 @@
                   </p>
               </div>
               <% for(var i=0; i < amountOfTabs; i++) { %>
-                  <div id="menu<%=i+1%>" class="tab-pane fade">
+                  <div id="menu<%=i+1%>" class="tab-pane fade" style="width: 100%;">
                     <!--p> You want <input type="number" name="quantity" min="1" max="5" style="width:40px" value="1" id="NumberOfClassesFromGroup<%=i%>"> classes from this group (You will only get one class for each Department-Class combo)</p-->
                       <table id="groupedTable<%=i+1%>" class="bitacoratable groupedTable" cellspacing="0">
                           <thead>
                               <tr>
                                   <th>Rate My Professor</th><th>Dept</th>
                                   <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                                  <th>Days and Time</th><th>Room</th><th>Status</th>
+                                  <th>Days and Time</th><th>Room</th><th>Topic</th><th>Status</th>
                               </tr>
                           </thead>
                           <tfoot>
                               <tr>
                                   <th>Rate My Professor</th><th>Dept</th>
                                   <th>Class nbr</th><th>Class Section</th><th>Teacher</th>
-                                  <th>Days and Time</th><th>Room</th><th>Status</th>
+                                  <th>Days and Time</th><th>Room</th><th>Topic</th><th>Status</th>
                               </tr>
                           </tfoot>
                       </table>
@@ -88,12 +88,22 @@
             </div>
           </div>
           <div class="col-xs-2 col-md-1 col-lg-1">        
-            <% cores = ["core a","core b"] %>
-            <% for(var i=0; i < cores.length; i++) { %>
-              <button type="button" id="core<%= i %>" >
-                  Add <%= cores[i] %>
-              </button><br>
-            <% } %>
+            <!--<% cores = ["core a","core b"] %>-->
+            <!--<% for(var i=0; i < cores.length; i++) { %>-->
+              <!--<button type="button" id="core<%= i %>" >-->
+                  <!--Add <%= cores[i] %>-->
+              <!--</button><br>-->
+            <!--<% } %>-->
+              <div class="col-xs-6 col-md-6 col-lg-6">
+                  <table id="topicTable" class="table table-hover bitacoratable" cellspacing="0">
+                      <thead>
+                      <tr>
+                          <th>Cores (click on them to search the tables)</th>
+                      </tr>
+                      </thead>
+                  </table>
+              </div>
+              <div class="col-xs-6 col-md-6 col-lg-6"></div>
           </div>
         </div>
         <br><br>

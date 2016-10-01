@@ -60,6 +60,31 @@ ws.onmessage = function (event) {
 
 
       }
+      else if(commandFromServer == "classesWTopic"){
+          data = data[1]
+          for(var i = 1; i <= amountOfTabs; i++){
+              var id = '#groupedTable' + i;
+              var t = $(id).DataTable();
+              t.clear();
+              for(var theClass in data){
+                  var theData = data[theClass];
+                  var topic = theData["topic"]
+                  if( topic == '' ){
+                      topic = 'N/A or none'
+                  }
+                  t.row.add({
+                      "Dept"         : theData["subject_name"].trim(),
+                      "Class nbr"    : theData["subject_code"].trim() + " - " + theData["class_id"],
+                      "Class Section": theData["class_num"],
+                      "Teacher"      : theData["teacher"],
+                      "Days And Time": theData["days_and_times"],
+                      "Room"         : theData["room"],
+                      "Topic"        : theData["topic"]
+                  })
+              }
+              t.draw();
+          }
+      }
       else if(commandFromServer == "classes"){ 
           data = data[1]
           for(var i = 1; i <= amountOfTabs; i++){
@@ -93,7 +118,7 @@ ws.onmessage = function (event) {
           var openClosed = data[4]
           if(data[4] == "CUNYFIRST may be down"){
             var matching = table.rows( function ( idx, data1, node ) { 
-              var nbr = data1["Class nbr"]
+              var nbr = data1["Class nbr"];
               return nbr.substring(0,nbr.indexOf("-") - 1) == data[3] ? true : false;
             });
             matching.every( function () {
@@ -119,7 +144,6 @@ ws.onmessage = function (event) {
         alert(data[1]);
       }
       else if(commandFromServer == "test"){
-        console.log("in test")
         try{
           var start = new Date();
           var t = $('#dataTables').DataTable();
@@ -131,6 +155,21 @@ ws.onmessage = function (event) {
         var end = new Date();
         console.log( end.getTime() - start.getTime())
       }
+      else if(commandFromServer == "topics"){
+          topics = data[1].map( function(obj) { return obj.topic });
+          // var table = $("#topicTable").DataTable();
+          // table.clear();
+          topics.forEach(function (topic) {
+              if(topic.includes("Requirement Designation:") && !topic.includes("Regular Liberal Arts") &&
+                  !topic.includes("Notes") && !topic.includes("Topic")){
+                  $('#topicTable').append('<tr><td>'+topic+'</td></tr>');
+                  // table.row.add({
+                  //     "Topic" : topic
+                  // })
+              }
+          });
+          //table.draw();
+      }
   } catch(err){
       console.log(err)
   }
@@ -138,5 +177,6 @@ ws.onmessage = function (event) {
 ws.onopen = function(err){
   if(err) console.log(err);
   ws.send(JSON.stringify(["get_inst"]));
-  setTimeout( function() { ws.send(JSON.stringify(["getTestClasses"])) }, 500);
-}
+  // setTimeout( function() { ws.send(JSON.stringify(["getTestClasses"])) }, 500);
+  setTimeout( function() { ws.send(JSON.stringify(["get_topics",'QNS01','1169'])) }, 500);
+};
