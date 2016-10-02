@@ -96,7 +96,7 @@ $(document).ready(function() {
         "deferRender": true, 
         searching: true,
         "lengthMenu": [[10, 20, 50, 100], [10, 20, 50, 100]],
-        "pageLength": 20
+        "pageLength": 10
     });
     var currentlyTakingFromGroupTable = $('.currentlyTakingFromGroup').DataTable({
         dom: "tip", //ftipl", // l - show x entries, f - search, p - pagination, t - table, i - showing x to y of z entries
