@@ -610,6 +610,7 @@ $(document).ready(function(){
         }
         //$("#getScheduleConfirm").unbind('click').click( function (e) {
         //    $("#confirmDialog").modal("toggle")
+        CompareSchedulesIndex = {}
         GLOBALschedules = []
         var listOfClasses = []
         for(var i in arrayOfarrays){
