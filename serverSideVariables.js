@@ -7,8 +7,8 @@ require('./database');
 /************** Initialization **************/
 global.list_of_insts_and_sessions = []
 global.counter_for_list_of_insts_and_session = 0
-global.dict_of_classes_for_each_school = { "QNS01": { "1169": null, "1162": null } }
-global.dict_of_count_for_classes_for_each_school = { "QNS01" :  { "1169": 0, "1162": 0 } }
+global.dict_of_classes_for_each_school = { "QNS01": { "1172": null } }
+global.dict_of_count_for_classes_for_each_school = { "QNS01" :  { "1172": 0 } }
 global.startTime = new Date();
 /************** Initialization **************/
 
@@ -18,12 +18,7 @@ getInstitutions(function(result){
 	global.list_of_insts_and_sessions = result
 })
 setTimeout( function(){
-	getClasses(["QNS01","1169"], function(result){
-		global.dict_of_classes_for_each_school["QNS01"]["1169"] = result
-	})
-},1000*5) //start 5 seconds after start
-setTimeout( function(){
-	getClasses(["QNS01","1162"], function(result){
+	getClasses(["QNS01","1172"], function(result){
 		global.dict_of_classes_for_each_school["QNS01"]["1162"] = result
 	})
 },1000*10) //start 10 seconds later

@@ -636,7 +636,7 @@ $(document).ready(function(){
         var e = document.getElementById("inst");
         values = JSON.parse(e.options[e.selectedIndex].value)
         ws.send(JSON.stringify(["get_classes_w_topic",values["schoolCode"], values["sessionCode"]])); // get classes
-        ws.send(JSON.stringify(["get_topics",values["schoolCode"], values["sessionCode"]])); // get topics
+        //ws.send(JSON.stringify(["get_topics",values["schoolCode"], values["sessionCode"]])); // get topics
         $('.currentlyTakingFromGroup').DataTable().clear().draw(); // empty side table
         $(".currentlyTakingFromGroup .dataTables_empty").text("Start selecting classes for them to show up here");
     });

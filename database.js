@@ -136,7 +136,7 @@ sendQueryNTimes = function(query,params,numberOfTimes,onError,callback){
 }
 getClassesWTopic = function (params, table, callback) {
     queryDict = {
-        'classes' : 'select distinct * from classes where school = $1 and session = $2',
+        'classes' : 'select distinct * from classes_1 where school = $1 and session = $2',
         'classes_1' : 'select distinct * from classes_2 where school = $1 and session = $2',
     };
     sendQueryNTimes(queryDict[table],params,3,[],callback);
@@ -145,8 +145,7 @@ getClasses = function(params, callback){
 	getClassesWTopic(params,'classes',callback);
 };
 getTopics = function (params,callback) {
-    console.log('in getTopics');
-    sendQueryNTimes('select distinct topic from classes_1 where school = $1 and session = $2',params,3,[],callback)
+    sendQueryNTimes('select distinct topic from classes_1',[],3,[],callback)
 };
 getTeacherInfo = function(params,callback){
 	sql = "select distinct schools.name as schoolName from schools, session where schools.id = session.school and schools.id = $1";
