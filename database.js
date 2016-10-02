@@ -78,7 +78,7 @@ viewTable = function(callback){
 	sendQuery("SELECT schools.name AS schoolName, session.name, session.id, session.school  \
 			   FROM schools, session \
 			   WHERE schools.id = session.school \
-			   AND (select count(*) from classes where school = session.school and session = session.id) > 0" //eliminate all sessions with no classes
+			   AND (select count(*) from classes_1 where school = session.school and session = session.id) > 0" //eliminate all sessions with no classes
 			   , [], callback)
 }
 testAddDataToTable = function(callback){
@@ -146,7 +146,7 @@ getClasses = function(params, callback){
 };
 getTopics = function (params,callback) {
     console.log('in getTopics');
-    sendQueryNTimes('select distinct topic from classes_2 where school = $1 and session = $2',params,3,[],callback)
+    sendQueryNTimes('select distinct topic from classes_1 where school = $1 and session = $2',params,3,[],callback)
 };
 getTeacherInfo = function(params,callback){
 	sql = "select distinct schools.name as schoolName from schools, session where schools.id = session.school and schools.id = $1";
