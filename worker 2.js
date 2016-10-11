@@ -134,6 +134,7 @@ getSections = function (inst, session, dept, callback){
 
                             temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
                             var section = temp2.substr(temp2.indexOf("</a>") - 5, 5)
+                            if (section.charAt(0) == '>') section = section.substr(1, 4) //fixed 4 digit section # problem
                             try{
                                 struct[classNumber][section] = { "Section" : section }
                             } catch(error){
