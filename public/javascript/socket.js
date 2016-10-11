@@ -147,7 +147,7 @@ ws.onmessage = function (event) {
           });
           //console.log(matching.data())
           matching.every( function () {
-              changeStatus( this, "CUNYfirst may be down" )
+              changeStatus( table, this, "CUNYfirst may be down" )
           });  
         }
         for (i in openClosed){
@@ -155,7 +155,7 @@ ws.onmessage = function (event) {
           var matching = table.rows( function ( idx, data1, node ) { return data1["Class Section"] == i ? true : false;} );
           //console.log(matching.data())
           matching.every( function () {
-              changeStatus( this, openClosed[i] )
+              changeStatus( table, this, openClosed[i] )
           } );  
         }
         //row.child( format( [ data[3][row.data()["Class Section"]],data[1] ] ) );

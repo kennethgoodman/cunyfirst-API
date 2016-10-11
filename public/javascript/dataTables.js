@@ -2,18 +2,17 @@ detCounter = {}
 hiddenRowData = {}
 rowsLookedAt = {}
 
-var setAllChildrenWithDepartment = function (department){
+var setAllChildrenWithDepartment = function (table, department){
     var table = $('#dataTables').DataTable();
     var matching = table.rows( function ( idx, data, node ) {return data["Dept"] === department ?true : false;} );
     //console.log(matching)
     matching.every( function () {
-        table.cell(this, 8).data("checking CUNYFirst")
+        table.cell(this, 7).data("checking CUNYFirst")
     } );  
 }
-var changeStatus = function (row, s){
+var changeStatus = function (table,row, s){
     //console.log("this came")
-    var table = $('#dataTables').DataTable();
-    table.cell(row, 8).data(s) //7 for the 7th column
+    table.cell(row, 7).data(s) //7 for the 7th column
 }
 var blank = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
@@ -108,7 +107,7 @@ $(document).ready(function() {
             tr.toggleClass('row-selected')
             detCounter[department]= "a string"
             //console.log('detCounter[department] is now ' +detCounter[department])
-            setAllChildrenWithDepartment(department)
+            setAllChildrenWithDepartment(table,department)
             tr.toggleClass('selected'); //clicking info doesn't select row 
             var rowData = row.data()
             var e = document.getElementById("inst");
