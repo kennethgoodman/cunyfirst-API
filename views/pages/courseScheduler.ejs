@@ -59,10 +59,18 @@
             </ul>            
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
-                  <h3>How to</h3>
-                  <p> To get started, go through each tab and pick classes. Each tab will represent a different group. <br><br>Ex: You want to take one anthro class and one math class. Tab 1 would contain all the anthro choices and tab 2 will contain all the math choices.
-                  <br><br>The tables take a couple seconds to load once you select a dropdown. Thank you for your patience.
-                  </p>
+                  <h1>How to:</h1>
+                  <p> To get started, go through each tab and pick classes. Each tab will represent a different group. <br><br>Ex: You want to take one anthro class and one math class. Tab 1 would contain all the anthro choices and tab 2 will contain all the math choices. (single click on the classes to select the classes you want to take).</p><br>
+                   <p>If your classes don't show after you "Get Results" there are a couple things to try</p><br>
+                  1. Change the minimum or maximum number of classes you want to see<br>
+                  2. Change the max amount of time between classes<br>
+                  3. Change the slider for each day to represent when you are willing to take classes<br><br>
+                  <p>For your convience, we have easy core searching, just click on a core (on the right side of the screen) to search across all tables </p><br>
+                  <p>For comparing schedules, you can click on the "Compare this schedule" checkbox and click on "Next Schedule"</p><br>
+                  <p>The tables take a couple seconds to load once you select a dropdown. Thank you for your patience.</p>
+                  <br><br>
+                  <h1>An example of what can be done, where each color is a different schedule being compared:</h1><br>
+                  <img src="/images/ScheduleExample.png">
               </div>
               <% for(var i=0; i < amountOfTabs; i++) { %>
                   <div id="menu<%=i+1%>" class="tab-pane fade" style="width: 100%;">
