@@ -6,3 +6,5 @@ TODO.txt
 .DS_Store
 parser_table.py
 .idea
+.idea/
+.idea/*
