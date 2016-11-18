@@ -90,7 +90,38 @@ app.get('/faq', function(request,response){
     response.render('pages/faq');
 })
 app.get('/donate', function(request,response){
-  response.render('pages/donate')
+    response.render('pages/donate')
+})
+app.get('/api/getSchools', function(req, res) {
+  if(addIPAddress(req,'/api/schools')){
+    getInstitutionsGlobal( function(data){
+      res.end( JSON.stringify( data ) )
+    })
+  } else {
+    res.end( JSON.stringify({"Error": "Too many times"}))
+  }
+})
+app.get('/api/getClasses/', function(req,res){
+  if(addIPAddress(req,'/api/getClasses/')){
+    inst = req.query.institution
+    session = req.query.session
+    getClassesWTopic([inst,session],'classes_1',function (data) {
+        res.end( JSON.stringify( data ))
+    });
+  } else {
+    res.end( JSON.stringify({"Error": "Too many times"}))
+  }
+})
+app.get('/api/RMP/', function(req,res) {
+  if(addIPAddress(req,'/api/RMP/')){
+    institution = req.query.institution
+    teacher = req.query.teacher
+    getTeacherInfo([institution,teacher], function(data){
+      res.end( JSON.stringify( data ))
+    })
+  } else {
+    res.end( JSON.stringify({"Error": "Too many times"}))
+  }
 })
 app.get('/courseScheduler', function(request, response){
   response.render('pages/courseScheduler')
@@ -110,7 +141,19 @@ app.use(function(err, req, res, next){
   res.send(err.message || 'There is no page at this link') //error is 404, Maybe create a 404 ejs page
 })
 /**********************************************************************************/
-
+addressThreshold = 5
+remoteAddresses = {}
+addIPAddress = function(req,path){
+  remoteAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  logger.info('remoteAddress: ' + remoteAddress + ' called ' + path + ' with params: ')
+  logger.info(req.query)
+  if(remoteAddress in remoteAddresses){
+    remoteAddresses[remoteAddress] += 1
+  } else {
+    remoteAddresses[remoteAddress] = 1
+  }
+  return remoteAddresses[remoteAddress] <= addressThreshold;
+}
 
 websocket(wss); //set up the websocket
 
