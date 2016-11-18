@@ -154,6 +154,6 @@ addIPAddress = function(req,path){
   }
   return remoteAddresses[remoteAddress] <= addressThreshold;
 }
-
+setInterval( function(){ remoteAddresses = {} }, 1000*60) // every hour restart
 websocket(wss); //set up the websocket
 
