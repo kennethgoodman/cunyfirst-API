@@ -23,8 +23,8 @@ var Xray = require('x-ray');
 var x = Xray();
 var db = require('./database');
 var options = {
-    url: process.env.cunyfirst_search_url,
-    headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
+    uri: process.env.cunyfirst_search_url,
+    headers: {'User-Agent': 'request'},//'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
     jar: request.jar()
 };
 Array.prototype.remove = function(from, to) {
@@ -36,7 +36,7 @@ Array.prototype.remove = function(from, to) {
 var parseDropdownOptions = function(body, selectIndexString, callback){
     var selectIndex = body.indexOf(selectIndexString)
     var selectHtml = body.substring(selectIndex)
-    var selectHtml = selectHtml.substring(selectHtml.indexOf("<option"), selectHtml.indexOf("</select>"))
+    selectHtml = selectHtml.substring(selectHtml.indexOf("<option"), selectHtml.indexOf("</select>"))
 
     optionsString = selectHtml.split('<option value=').join("")
     optionsString = optionsString.replace("&nbsp;","")
@@ -87,6 +87,7 @@ var urlProducerClasses = function (icsid, ICStateNum, session, subject){
 getSections = function (inst, session, dept, callback){
     var dept1= dept; //only here temporarily
     //console.log('requesting '+inst+ ' '+session+ ' '+dept)
+    options['uri'] = 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?&';
     request.post(options, function(err, res, body) {
         if(err) {
             if(global.LOG_CF_DOWN == false) {
@@ -115,12 +116,12 @@ getSections = function (inst, session, dept, callback){
             return
         }
         submit_options = {
-            url: urlProducer(key, ICStateNum, inst, session),
+            uri: urlProducer(key, ICStateNum, inst, session),
             headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
             jar: options.jar
         }
         request.get(submit_options, function(err, res, body){
-            submit_options['url']= urlProducerClasses(key, ++ICStateNum, session, dept)
+            submit_options['uri']= urlProducerClasses(key, ++ICStateNum, session, dept)
             request.get(submit_options, function (err, res, body){
                 var struct = {}
                 body = body.substring(body.indexOf("win0divSSR_CLSRSLT_WRK_GROUPBOX2$"))
@@ -145,7 +146,7 @@ getSections = function (inst, session, dept, callback){
                     for(var j = 1; j < rowsSplit.length; j++){
                         var temp2 = rowsSplit[j]
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
                         var section = temp2.substr(temp2.indexOf("</a>") - 5, 5)
                         if (section.charAt(0) == '>') section= section.substr(1, 4) //fixed 4 digit section # problem
                         try{
@@ -155,72 +156,72 @@ getSections = function (inst, session, dept, callback){
                             break
                         }
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASSNAME"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASSNAME"))
                         var className = temp2.substr(temp2.indexOf("</a>")-25,25)
-                        var className = className.substring(className.indexOf(">")+1, className.indexOf("<"))
+                        className = className.substring(className.indexOf(">")+1, className.indexOf("<"))
                         try{
                             struct[classNumber][section]["className"] = className
                         } catch(error){
                             struct[classNumber][section]["className"] = 'NA'
                         }
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_DAYTIME"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divMTG_DAYTIME"))
                         var dayTime = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                        var dayTime = dayTime.substring(dayTime.indexOf(">")+1, dayTime.indexOf("<"))
+                        dayTime = dayTime.substring(dayTime.indexOf(">")+1, dayTime.indexOf("<"))
                         try{
                             struct[classNumber][section]["Days & Times"] = dayTime
                         } catch(error){
                             struct[classNumber][section]["Days & Times"] = 'NA'
                         }
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_ROOM"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divMTG_ROOM"))
                         var room = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                        var room = room.substring(room.indexOf(">")+1, room.indexOf("<"))
+                        room = room.substring(room.indexOf(">")+1, room.indexOf("<"))
                         try{
                             struct[classNumber][section]["Room"] = room
                         } catch(error){
                             struct[classNumber][section]["Room"] = 'NA'
                         }
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_INSTR"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divMTG_INSTR"))
                         var teacher = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                        var teacher = teacher.substring(teacher.indexOf(">")+1, teacher.indexOf("<"))
+                        teacher = teacher.substring(teacher.indexOf(">")+1, teacher.indexOf("<"))
                         try{
                             struct[classNumber][section]["Instructor"] = teacher
                         } catch(error){
                             struct[classNumber][section]["Instructor"] = 'NA'
                         }
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_TOPIC"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divMTG_TOPIC"))
                         var meetingDays = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                        var meetingDays = meetingDays.substring(meetingDays.indexOf(">")+1, meetingDays.indexOf("<"))
+                        meetingDays = meetingDays.substring(meetingDays.indexOf(">")+1, meetingDays.indexOf("<"))
                         try{
                             struct[classNumber][section]["Dates"] = meetingDays
                         } catch(error){
                             struct[classNumber][section]["Dates"] = 'NA'
                         }
 
-                        var temp2 = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_SSR_STATUS_LONG"))
+                        temp2 = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_SSR_STATUS_LONG"))
                         var status = temp2.substr(temp2.indexOf("alt=") + 5, 12)
-                        var status = status.substring(0, status.indexOf("\""))
+                        status = status.substring(0, status.indexOf("\""))
                         try{
                             struct[classNumber][section]["Status"] = status
                         } catch(error){
                             struct[classNumber][section]["Status"] = 'NA'
                         }
 
-                        var Topic = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_DESCRLONG"))
-                        var Topic = Topic.substring(Topic.indexOf("<span")+1,Topic.indexOf("</span>"))
-                        var Topic = Topic.substring(Topic.indexOf(">")+1)
-                        var Topic = Topic.replace("amp;","")
+                        var Topic = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_DESCRLONG"));
+                        Topic = Topic.substring(Topic.indexOf("<span")+1,Topic.indexOf("</span>"));
+                        Topic = Topic.substring(Topic.indexOf(">")+1);
+                        Topic = Topic.replace("amp;","");
                         try{
-                            struct[classNumber][section]["Topic"] = Topic
+                            struct[classNumber][section]["Topic"] = Topic;
                         } catch(error){
-                            struct[classNumber][section]["Topic"] = 'NA'
+                            struct[classNumber][section]["Topic"] = 'NA';
                         }
 
-                        struct[classNumber][section]["Class Title"] = classNumberAndInfo
-                        struct[classNumber][section]["Dept"] = dept
+                        struct[classNumber][section]["Class Title"] = classNumberAndInfo;
+                        struct[classNumber][section]["Dept"] = dept;
                     }
                 }
 
@@ -228,7 +229,7 @@ getSections = function (inst, session, dept, callback){
                     //logger.log("no keys "+inst+ ' '+session+ ' '+dept1)
                     //logger.log(struct)
                     //global.CUNYFIRST_DOWN = true
-                    callback(struct)
+                    callback(struct);
                 }
                 else{
                     callback(struct);
@@ -236,8 +237,9 @@ getSections = function (inst, session, dept, callback){
             })
         })
     })
-}
+};
 getDept = function(inst, session, callback){
+    options['uri'] = 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?&';
     request.post(options, function(err, res, body) {
         if(err) {
             logger.error(err);
@@ -247,27 +249,28 @@ getDept = function(inst, session, callback){
         var key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
         var ICStateNum = body.split("id=\'ICStateNum\' value=\'")[1].split("\'")[0];
         submit_options = {
-            url: urlProducer(key, ICStateNum, inst, session),
+            uri: urlProducer(key, ICStateNum, inst, session),
             headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
             jar: options.jar
-        }
+        };
         request.get(submit_options, function (err, res, body){
             var selectIndexString = "select name='SSR_CLSRCH_WRK_SUBJECT_SRCH$"
             parseDropdownOptions(body, selectIndexString, callback)
         })
     })
-}
+};
+
 getSession = function (inst, callback){
+    options['uri'] = 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?&';
     request.post(options, function(err, res, body) {
         if(err) {
             logger.error(err);
             return;
         }
-        var parsed = cheerio.load(body);
         var key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
         var ICStateNum = body.split("id=\'ICStateNum\' value=\'")[1].split("\'")[0];
         var submit_options = {
-            url: urlProducer(key, ICStateNum, inst, ''),
+            uri: urlProducer(key, ICStateNum, inst, ''),
             headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
             jar: options.jar
         };
@@ -279,6 +282,7 @@ getSession = function (inst, callback){
 }
 
 getInst = function(callback){
+    options['uri'] = 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?&';
     request.get(options, function(err, res, body) {
         if(err) {
             logger.error(err);
@@ -287,10 +291,13 @@ getInst = function(callback){
         try{
             if(body.length == 0) return;
         } catch(error) {
-            logger.log(error)
+            logger.log(error);
             return false;
         }
         var selectIndexString = "select name='CLASS_SRCH_WRK2_INSTITUTION$31$"
         parseDropdownOptions(body, selectIndexString, callback)
     })
 }
+// getSections('YRK01', '1172', 'WRIT',function (temp) {
+//     logger.log(temp)
+// })
