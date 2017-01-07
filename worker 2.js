@@ -4,6 +4,9 @@ try{
 }catch(err){
     //do nothing if this fails, we are in dev
 }
+http = require("http")
+url  = require("url")
+proxy = url.parse(process.env.PROXIMO_URL)
 var qs = require('querystring');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -51,9 +54,9 @@ var parseDropdownOptions = function(body, selectIndexString, callback){
 }
 
 var classesArray = [];
-var urlProducer = function (icsid, icstate, inst, session){
+var urlProducer = function (icsid, ICStateNum, inst, session){
     return 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?ICAJAX=1&ICNAVTYPEDROPDOWN=0&ICType=Panel&ICElementNum=0&ICStateNum='
-        +icstate+
+        +ICStateNum+
         '&ICAction=CLASS_SRCH_WRK2_STRM$35$&ICXPos=0&ICYPos=0&ResponsetoDiffFrame=-1&TargetFrameName=None&FacetPath=None&ICFocus&ICSaveWarningFilter=0&ICChanged=-1&ICAutoSave=0&ICResubmit=0&ICSID='
         +icsid+
         '=&ICActionPrompt=false&ICBcDomData=undefined&ICFind&ICAddCount&ICAPPCLSDATA&CLASS_SRCH_WRK2_INSTITUTION$31$='
@@ -61,9 +64,9 @@ var urlProducer = function (icsid, icstate, inst, session){
         '&CLASS_SRCH_WRK2_STRM$35$='
         +session
 }
-var urlProducerClasses = function (icsid, icstate, session, subject){
+var urlProducerClasses = function (icsid, ICStateNum, session, subject){
     return 'https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL?ICAJAX=1&ICNAVTYPEDROPDOWN=0&ICType=Panel&ICElementNum=0&ICStateNum='
-        +icstate+
+        +ICStateNum+
         '&ICAction=CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH&ICXPos=0&ICYPos=0&ResponsetoDiffFrame=-1&TargetFrameName=None&FacetPath=None&ICFocus&ICSaveWarningFilter=0&ICChanged=-1&ICAutoSave=0&ICResubmit=0&ICSID='
         +icsid+
         '=&ICActionPrompt=false&ICBcDomData=undefined&ICFind&ICAddCount&ICAPPCLSDATA&CLASS_SRCH_WRK2_STRM$35$='
@@ -75,7 +78,9 @@ var urlProducerClasses = function (icsid, icstate, session, subject){
 
 
 getSections = function (inst, session, dept, callback){
-    request.get(options, function(err, res, body) {
+    var dept1= dept; //only here temporarily
+    //console.log('requesting '+inst+ ' '+session+ ' '+dept)
+    request.post(options, function(err, res, body) {
         if(err) {
             if(global.LOG_CF_DOWN == false) {
                 logger.error("Error %j", err)
@@ -88,6 +93,7 @@ getSections = function (inst, session, dept, callback){
         }
         var parsed = cheerio.load(body);
         var key;
+        var ICStateNum = body.split("id=\'ICStateNum\' value=\'")[1].split("\'")[0];
         try{
             key = body.split("id=\'ICSID\' value=\'")[1].substring(0, 44);
         }
@@ -102,128 +108,128 @@ getSections = function (inst, session, dept, callback){
             return
         }
         submit_options = {
-            url: urlProducer(key, '1', inst, session),
+            url: urlProducer(key, ICStateNum, inst, session),
             headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'},
             jar: options.jar
         }
-        request.get(submit_options, function (err, res, body){
-            request.get(submit_options, function(err, res, body){
-                submit_options['url']= urlProducerClasses(key, '2', session, dept)
-                request.get(submit_options, function (err, res, body){ 
-                    var struct = {}
-                    body = body.substring(body.indexOf("win0divSSR_CLSRSLT_WRK_GROUPBOX2$"))
-                    bodySplit = body.split("win0divSSR_CLSRSLT_WRK_GROUPBOX2$") //split by section
-                    for(var i = 1; i < bodySplit.length; i++){
-                        var temp = bodySplit[i]
-
-                        var classNumberAndInfo = temp.substring(temp.indexOf("/a>")+3, temp.indexOf("</DIV>")).split("&nbsp;").join("")
-                        var classNumber = classNumberAndInfo.split(" ")
-                        var dept = classNumber[0]
-
-                        if(classNumber[1] == '')
-                            classNumber = classNumber[2]
-                        else
-                            classNumber = classNumber[1]
-
-                        struct[classNumber] = {}
-
-                        var tableWithAllClasses = temp.substring(temp.indexOf("ACE_$ICField48"))
-                        rowsSplit = tableWithAllClasses.split("ACE_SSR_CLSRSLT_WRK_GROUPBOX3")
-                        for(var j = 1; j < rowsSplit.length; j++){
-                            var temp2 = rowsSplit[j]
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
-                            var section = temp2.substr(temp2.indexOf("</a>") - 5, 5)
-                            if (section.charAt(0) == '>') section = section.substr(1, 4) //fixed 4 digit section # problem
-                            try{
-                                struct[classNumber][section] = { "Section" : section }
-                            } catch(error){
-                                logger.error("error: %j", error)
-                                break
-                            }
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASSNAME"))
-                            var className = temp2.substr(temp2.indexOf("</a>")-25,25)
-                            className = className.substring(className.indexOf(">")+1, className.indexOf("<"))
-                            try{
-                                struct[classNumber][section]["className"] = className
-                            } catch(error){
-                                struct[classNumber][section]["className"] = 'NA'
-                            }
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_DAYTIME"))
-                            var dayTime = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            dayTime = dayTime.substring(dayTime.indexOf(">")+1, dayTime.indexOf("<"))
-                            try{
-                                struct[classNumber][section]["Days & Times"] = dayTime
-                            } catch(error){
-                                struct[classNumber][section]["Days & Times"] = 'NA'
-                            }
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_ROOM"))
-                            var room = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            room = room.substring(room.indexOf(">")+1, room.indexOf("<"))
-                            try{
-                                struct[classNumber][section]["Room"] = room
-                            } catch(error){
-                                struct[classNumber][section]["Room"] = 'NA'
-                            }
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_INSTR"))
-                            var teacher = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            teacher = teacher.substring(teacher.indexOf(">")+1, teacher.indexOf("<"))
-                            try{
-                                struct[classNumber][section]["Instructor"] = teacher
-                            } catch(error){
-                                struct[classNumber][section]["Instructor"] = 'NA'
-                            }
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divMTG_TOPIC"))
-                            var meetingDays = temp2.substr(temp2.indexOf("</span>")-25, 50)
-                            meetingDays = meetingDays.substring(meetingDays.indexOf(">")+1, meetingDays.indexOf("<"))
-                            try{
-                                struct[classNumber][section]["Dates"] = meetingDays
-                            } catch(error){
-                                struct[classNumber][section]["Dates"] = 'NA'
-                            }
-
-                            temp2 = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_SSR_STATUS_LONG"))
-                            var status = temp2.substr(temp2.indexOf("alt=") + 5, 12)
-                            status = status.substring(0, status.indexOf("\""))
-                            try{
-                                struct[classNumber][section]["Status"] = status
-                            } catch(error){
-                                struct[classNumber][section]["Status"] = 'NA'
-                            }
-
-                            var Topic = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_DESCRLONG"))
-                            Topic = Topic.substring(Topic.indexOf("<span")+1,Topic.indexOf("</span>"))
-                            Topic = Topic.substring(Topic.indexOf(">")+1)
-                            Topic = Topic.replace("amp;","")
-                            try{
-                                struct[classNumber][section]["Topic"] = Topic
-                            } catch(error){
-                                struct[classNumber][section]["Topic"] = 'NA'
-                            }
-
-                            struct[classNumber][section]["Class Title"] = classNumberAndInfo
-                            struct[classNumber][section]["Dept"] = dept
-                        }
-                    }
-                    if(Object.keys(struct).length === 0 && struct.constructor === Object){
-                        logger.log("CF is down");
-                        global.CUNYFIRST_DOWN = true;
-                        callback("CUNYFIRST may be down")
-                    }
-                    else{
-                      callback(struct);  
-                    }
-                })
-            })
+        request.get(submit_options, function(err, res, body){
+            submit_options['url']= urlProducerClasses(key, ++ICStateNum, session, dept)
+            request.get(submit_options, function (err, res, body){ 
+                var struct = {}
+                body = body.substring(body.indexOf("win0divSSR_CLSRSLT_WRK_GROUPBOX2$"))
+                bodySplit = body.split("win0divSSR_CLSRSLT_WRK_GROUPBOX2$") //split by section
                 
+                for(var i = 1; i < bodySplit.length; i++){
+                    var temp = bodySplit[i]
+
+                    var classNumberAndInfo = temp.substring(temp.indexOf("/a>")+3, temp.indexOf("</DIV>")).split("&nbsp;").join("")
+                    var classNumber = classNumberAndInfo.split(" ")
+                    var dept = classNumber[0]
+
+                    if(classNumber[1] == '')
+                        classNumber = classNumber[2]
+                    else
+                        classNumber = classNumber[1]
+
+                    struct[classNumber] = {}
+
+                    var tableWithAllClasses = temp.substring(temp.indexOf("ACE_$ICField48"))
+                    rowsSplit = tableWithAllClasses.split("ACE_SSR_CLSRSLT_WRK_GROUPBOX3")
+                    for(var j = 1; j < rowsSplit.length; j++){
+                        var temp2 = rowsSplit[j]
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASS_NBR"))
+                        var section = temp2.substr(temp2.indexOf("</a>") - 5, 5)
+                        if (section.charAt(0) == '>') section= section.substr(1, 4) //fixed 4 digit section # problem
+                        try{
+                            struct[classNumber][section] = { "Section" : section }
+                        } catch(error){
+                            logger.error("error: %j", error)
+                            break
+                        }
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_CLASSNAME"))
+                        var className = temp2.substr(temp2.indexOf("</a>")-25,25)
+                        var className = className.substring(className.indexOf(">")+1, className.indexOf("<"))
+                        try{
+                            struct[classNumber][section]["className"] = className
+                        } catch(error){
+                            struct[classNumber][section]["className"] = 'NA'
+                        }
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_DAYTIME"))
+                        var dayTime = temp2.substr(temp2.indexOf("</span>")-25, 50)
+                        var dayTime = dayTime.substring(dayTime.indexOf(">")+1, dayTime.indexOf("<")) 
+                        try{
+                            struct[classNumber][section]["Days & Times"] = dayTime
+                        } catch(error){
+                            struct[classNumber][section]["Days & Times"] = 'NA'
+                        }
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_ROOM"))
+                        var room = temp2.substr(temp2.indexOf("</span>")-25, 50)
+                        var room = room.substring(room.indexOf(">")+1, room.indexOf("<")) 
+                        try{
+                            struct[classNumber][section]["Room"] = room
+                        } catch(error){
+                            struct[classNumber][section]["Room"] = 'NA'
+                        }
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_INSTR"))
+                        var teacher = temp2.substr(temp2.indexOf("</span>")-25, 50)
+                        var teacher = teacher.substring(teacher.indexOf(">")+1, teacher.indexOf("<")) 
+                        try{
+                            struct[classNumber][section]["Instructor"] = teacher
+                        } catch(error){
+                            struct[classNumber][section]["Instructor"] = 'NA'
+                        }
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divMTG_TOPIC"))
+                        var meetingDays = temp2.substr(temp2.indexOf("</span>")-25, 50)
+                        var meetingDays = meetingDays.substring(meetingDays.indexOf(">")+1, meetingDays.indexOf("<")) 
+                        try{
+                            struct[classNumber][section]["Dates"] = meetingDays
+                        } catch(error){
+                            struct[classNumber][section]["Dates"] = 'NA'
+                        }
+
+                        var temp2 = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_SSR_STATUS_LONG"))
+                        var status = temp2.substr(temp2.indexOf("alt=") + 5, 12)
+                        var status = status.substring(0, status.indexOf("\"")) 
+                        try{
+                            struct[classNumber][section]["Status"] = status
+                        } catch(error){
+                            struct[classNumber][section]["Status"] = 'NA'
+                        }
+
+                        var Topic = temp2.substr(temp2.indexOf("win0divDERIVED_CLSRCH_DESCRLONG"))
+                        var Topic = Topic.substring(Topic.indexOf("<span")+1,Topic.indexOf("</span>"))
+                        var Topic = Topic.substring(Topic.indexOf(">")+1)
+                        var Topic = Topic.replace("amp;","") 
+                        try{
+                            struct[classNumber][section]["Topic"] = Topic
+                        } catch(error){
+                            struct[classNumber][section]["Topic"] = 'NA'
+                        }
+
+                        struct[classNumber][section]["Class Title"] = classNumberAndInfo
+                        struct[classNumber][section]["Dept"] = dept
+                    }
+                }
+            
+                if(Object.keys(struct).length === 0 && struct.constructor === Object){
+                    //logger.log("no keys "+inst+ ' '+session+ ' '+dept1)
+                    //logger.log(struct)
+                    //global.CUNYFIRST_DOWN = true
+                    callback(struct)
+                }
+                else{
+                  callback(struct);  
+                }
+            })
         })
     })
-};
+}
 getDept = function(inst, session, callback){
 	request.post(options, function(err, res, body) {
         if(err) {
