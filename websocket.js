@@ -136,7 +136,7 @@ module.exports = function(wss){
 						var institution = data[1]
 						var session = data[2]
 						var dept = data[3]
-						getSections(institution,session,dept, function(data){
+						getSections2({'inst':institution,'session':session,'dept':dept}, function(data){
 							a.push(data)
 							sendData(ws,a)
 						})
@@ -199,7 +199,7 @@ module.exports = function(wss){
 			        	sendData(ws,b)
 			        	return
 			        }
-			        getSections(institution,session,dept,function(result){
+					getSections2({'inst':institution,'session':session,'dept':dept},function(result){
 			        	if(result === "CUNYFIRST may be down"){
 			        		logger.log("CF is down")
 			        		global.CUNYFIRST_DOWN = true
@@ -207,7 +207,6 @@ module.exports = function(wss){
 			        		sendData(ws,b)
 			        		return // dont go forward since CF may be down
 			        	}
-		    			//console.log(result)
 		    			try{
 		    				var sstruct= {}
 		    					for (i in result){

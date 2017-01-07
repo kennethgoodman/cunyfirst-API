@@ -298,6 +298,18 @@ getInst = function(callback){
         parseDropdownOptions(body, selectIndexString, callback)
     })
 }
-// getSections('YRK01', '1172', 'WRIT',function (temp) {
-//     logger.log(temp)
-// })
+
+getSections2 = function (triplet,callback){ // for some reason, CF wants the user to select inst, then session, then dept, then search
+    var inst = triplet.inst;
+    var session = triplet.session;
+    var dept = triplet.dept;
+    getInst(function (_){
+        getSession(inst, function(_, _){
+            getDept(inst, session, function(_){
+                getSections(inst, session, dept, function(classes){
+                    callback(triplet, classes)
+                })
+            })
+        })
+    })
+};

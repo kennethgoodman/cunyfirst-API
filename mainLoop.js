@@ -100,30 +100,11 @@ look_at_struct_at_notify_users_of_open = function(item,struct){
     })
 };
 
-loadClasses = function(inst, session, subject, callback){
-    getSections(inst, session, subject, function(result){
-        callback(result)
-    })
-};
-
-
-runTheLoop = function (item){ // for some reason, CF wants the user to select inst, then session, then dept, then search
-    getInst(function (_){
-        getSession(item.inst, function(_, _){
-            getDept(item.inst, item.session, function(_){
-                getSections(item.inst, item.session, item.dept, function(classes){
-                    look_at_struct_at_notify_users_of_open(item,classes)
-                })
-            })
-        })
-    })
-};
-
 queueRead2 = function lambda(){
 	var triplet = queue.shift();
 	if(triplet != undefined){
 		try{
-            runTheLoop(triplet) // getSections(item.inst, item.session, item.dept,look_at_struct_at_notify_users_of_open,true)
+            getSections2(triplet,look_at_struct_at_notify_users_of_open)
 		} catch(err){
 			logger.warn("Error was thrown:\nerror: %j", err);
 		}
