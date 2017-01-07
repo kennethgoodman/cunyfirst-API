@@ -4,27 +4,6 @@ try{
 }catch(err){
     //do nothing if this fails, we are in dev
 }
-arrayify= function(hash, callback){
-    //puts values of a hash into an array
-    var array =[] ;
-    for (i in hash){
-        array.push( hash[i] )
-    }
-    callback(array); //you don't really need to do this via callback, but whatever
-};
-
-function array_flip( trans )
-{
-    var key, tmp_ar = {};
-    for ( key in trans )
-    {
-        if ( trans.hasOwnProperty( key ) )
-        {
-            tmp_ar[trans[key]] = key;
-        }
-    }
-    return tmp_ar;
-}
 
 var db = require('./database');
 var worker = require('./worker');
