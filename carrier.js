@@ -13,8 +13,7 @@ var carriers = {
 	"Ptel": "@ptel.com",
 	"Suncom": "@tms.suncom.com",
 	"Qwest": "@qwestmp.com",
-	"U.S. Cellular": "@email.uscc.net",
-	"other": "not-available"
+	"U.S. Cellular": "@email.uscc.net"
 }
 returnCarriersNames = function(callback) {
 	var a = [];
